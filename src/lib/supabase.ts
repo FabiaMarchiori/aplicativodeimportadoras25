@@ -1,10 +1,12 @@
 
 import { createClient } from '@supabase/supabase-js';
 
-// Estas URLs são preenchidas automaticamente quando o projeto é conectado ao Supabase via Lovable
-const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || '';
-const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY || '';
+// Provide fallback values for development
+// In production, these would be replaced with actual values from environment variables
+const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || 'https://your-supabase-project.supabase.co';
+const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY || 'your-anon-key';
 
+// Create Supabase client
 export const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
 // Tipos para nosso banco de dados

@@ -69,7 +69,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         throw error;
       }
       setProfile(data);
-      setIsAdmin(data?.role === 'admin' || data?.is_admin === true);
+      setIsAdmin(data?.is_admin === true);
     } catch (error) {
       setProfile(null);
       setIsAdmin(false);

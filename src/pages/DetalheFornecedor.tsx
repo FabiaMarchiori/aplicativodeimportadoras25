@@ -1,7 +1,7 @@
 
 import { useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
-import { Fornecedor, supabase } from "@/lib/supabase";
+import { Fornecedor, supabase, mapFornecedor } from "@/lib/supabase";
 import { useAuth } from "@/contexts/AuthContext";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
@@ -34,12 +34,13 @@ export default function DetalheFornecedor() {
       const { data, error } = await supabase
         .from("fornecedores")
         .select("*")
-        .eq("id", id)
+        .eq("id", Number(id))
         .single();
 
       if (error) throw error;
-      setFornecedor(data);
-      setFornecedorEdit(data);
+      const mappedFornecedor = mapFornecedor(data);
+      setFornecedor(mappedFornecedor);
+      setFornecedorEdit(mappedFornecedor);
     } catch (error) {
       console.error("Erro ao carregar fornecedor:", error);
       toast({
@@ -65,8 +66,16 @@ export default function DetalheFornecedor() {
     try {
       const { error } = await supabase
         .from("fornecedores")
-        .update(fornecedorEdit)
-        .eq("id", id);
+        .update({
+          nome_loja: fornecedorEdit.nome,
+          Whatsapp: fornecedorEdit.Whatsapp,
+          Instagram_url: fornecedorEdit.Instagram_url,
+          Endereco: fornecedorEdit.Endereco,
+          logo_url: fornecedorEdit.logo_url,
+          foto_destaque: fornecedorEdit.foto_destaque,
+          localizacao: fornecedorEdit.localizacao
+        })
+        .eq("id", Number(id));
 
       if (error) throw error;
 
@@ -94,19 +103,16 @@ export default function DetalheFornecedor() {
     try {
       setUploading(true);
       
-      // Criar um nome de arquivo único
       const fileExt = file.name.split('.').pop();
       const fileName = `fornecedor-${id}-${field}-${Math.random().toString().substring(2, 10)}.${fileExt}`;
       const filePath = `fornecedores/${fileName}`;
       
-      // Fazer upload do arquivo
       const { error: uploadError, data } = await supabase.storage
         .from('public')
         .upload(filePath, file);
         
       if (uploadError) throw uploadError;
       
-      // Obter a URL pública do arquivo
       const { data: urlData } = supabase.storage
         .from('public')
         .getPublicUrl(filePath);
@@ -114,7 +120,7 @@ export default function DetalheFornecedor() {
       if (urlData) {
         setFornecedorEdit({
           ...fornecedorEdit,
-          [field]: urlData.publicUrl
+          [field === 'logo' ? 'logo_url' : 'foto_destaque']: urlData.publicUrl
         });
       }
     } catch (error) {
@@ -129,17 +135,13 @@ export default function DetalheFornecedor() {
     }
   };
 
-  // Função para formatar o número do WhatsApp para o link
   const formatWhatsAppLink = (number: string) => {
-    // Remove caracteres não numéricos
-    const cleaned = number.replace(/\D/g, '');
+    const cleaned = number?.replace(/\D/g, '');
     return `https://wa.me/${cleaned}`;
   };
 
-  // Função para formatar o link do Instagram
   const formatInstagramLink = (username: string) => {
-    // Remove @ se existir
-    const cleaned = username.replace('@', '');
+    const cleaned = username?.replace('@', '');
     return `https://instagram.com/${cleaned}`;
   };
 
@@ -199,21 +201,21 @@ export default function DetalheFornecedor() {
                 <h3 className="font-semibold text-lg mb-4">Contato</h3>
                 
                 <div className="grid grid-cols-1 gap-4">
-                  {fornecedor.whatsapp && (
+                  {fornecedor.Whatsapp && (
                     <a
-                      href={formatWhatsAppLink(fornecedor.whatsapp)}
+                      href={formatWhatsAppLink(fornecedor.Whatsapp)}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="flex items-center p-3 bg-emerald/10 text-emerald rounded-lg hover:bg-emerald/20 transition-colors"
+                      className="flex items-center p-3 bg-emerald-500/10 text-emerald-600 rounded-lg hover:bg-emerald-500/20 transition-colors"
                     >
                       <Phone className="h-5 w-5 mr-3" />
                       <span>Conversar no WhatsApp</span>
                     </a>
                   )}
                   
-                  {fornecedor.instagram && (
+                  {fornecedor.Instagram_url && (
                     <a
-                      href={formatInstagramLink(fornecedor.instagram)}
+                      href={formatInstagramLink(fornecedor.Instagram_url)}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="flex items-center p-3 bg-purple-500/10 text-purple-600 rounded-lg hover:bg-purple-500/20 transition-colors"
@@ -237,12 +239,12 @@ export default function DetalheFornecedor() {
                 </div>
               </Card>
               
-              {fornecedor.endereco && (
+              {fornecedor.Endereco && (
                 <Card className="p-6">
                   <h3 className="font-semibold text-lg mb-4">Endereço</h3>
                   <div className="flex items-start">
                     <MapPin className="h-5 w-5 mr-3 text-muted-foreground shrink-0 mt-0.5" />
-                    <p className="text-muted-foreground">{fornecedor.endereco}</p>
+                    <p className="text-muted-foreground">{fornecedor.Endereco}</p>
                   </div>
                 </Card>
               )}
@@ -251,7 +253,7 @@ export default function DetalheFornecedor() {
             <Card className="p-6 h-fit">
               <h3 className="font-semibold text-lg mb-4">Instagram</h3>
               
-              {fornecedor.instagram ? (
+              {fornecedor.Instagram_url ? (
                 <div className="relative overflow-hidden rounded-lg border border-border bg-card">
                   <div className="p-3 border-b border-border flex items-center">
                     <div className="w-8 h-8 rounded-full overflow-hidden bg-muted mr-2">
@@ -261,7 +263,7 @@ export default function DetalheFornecedor() {
                         className="w-full h-full object-cover"
                       />
                     </div>
-                    <span className="font-medium">@{fornecedor.instagram}</span>
+                    <span className="font-medium">@{fornecedor.Instagram_url}</span>
                   </div>
                   <div className="aspect-square bg-muted">
                     <img
@@ -292,10 +294,10 @@ export default function DetalheFornecedor() {
                 </div>
               )}
               
-              {fornecedor.instagram && (
+              {fornecedor.Instagram_url && (
                 <div className="mt-4">
                   <Button asChild variant="outline" className="w-full">
-                    <a href={formatInstagramLink(fornecedor.instagram)} target="_blank" rel="noopener noreferrer">
+                    <a href={formatInstagramLink(fornecedor.Instagram_url)} target="_blank" rel="noopener noreferrer">
                       Ver perfil completo
                     </a>
                   </Button>
@@ -330,6 +332,46 @@ export default function DetalheFornecedor() {
               </div>
               
               <div className="space-y-2">
+                <Label htmlFor="whatsapp">WhatsApp</Label>
+                <Input
+                  id="whatsapp"
+                  placeholder="Ex: 5511999999999 (com código do país)"
+                  value={fornecedorEdit.Whatsapp || ""}
+                  onChange={(e) => setFornecedorEdit({ ...fornecedorEdit, Whatsapp: e.target.value })}
+                />
+              </div>
+              
+              <div className="space-y-2">
+                <Label htmlFor="instagram">Instagram</Label>
+                <Input
+                  id="instagram"
+                  placeholder="Ex: nomeperfil (sem @)"
+                  value={fornecedorEdit.Instagram_url || ""}
+                  onChange={(e) => setFornecedorEdit({ ...fornecedorEdit, Instagram_url: e.target.value.replace('@', '') })}
+                />
+              </div>
+              
+              <div className="space-y-2">
+                <Label htmlFor="endereco">Endereço</Label>
+                <Input
+                  id="endereco"
+                  placeholder="Endereço completo"
+                  value={fornecedorEdit.Endereco || ""}
+                  onChange={(e) => setFornecedorEdit({ ...fornecedorEdit, Endereco: e.target.value })}
+                />
+              </div>
+              
+              <div className="space-y-2">
+                <Label htmlFor="localizacao">Localização (Google Maps)</Label>
+                <Input
+                  id="localizacao"
+                  placeholder="Link do Google Maps"
+                  value={fornecedorEdit.localizacao || ""}
+                  onChange={(e) => setFornecedorEdit({ ...fornecedorEdit, localizacao: e.target.value })}
+                />
+              </div>
+
+              <div className="space-y-2">
                 <Label>Logo</Label>
                 <div className="flex flex-col gap-2">
                   <div 
@@ -359,21 +401,16 @@ export default function DetalheFornecedor() {
                       accept="image/*"
                       className="hidden"
                       id="logo"
-                      onChange={(e) => handleFileUpload(e, "logo_url")}
+                      onChange={(e) => handleFileUpload(e, "logo")}
                       disabled={uploading}
                     />
                     <Label htmlFor="logo" className="w-full h-full absolute inset-0 cursor-pointer">
                       <span className="sr-only">Escolher logo</span>
                     </Label>
                   </div>
-                  <Input
-                    placeholder="Ou insira uma URL do logo"
-                    value={fornecedorEdit.logo_url || ""}
-                    onChange={(e) => setFornecedorEdit({ ...fornecedorEdit, logo_url: e.target.value })}
-                  />
                 </div>
               </div>
-              
+
               <div className="space-y-2">
                 <Label>Imagem Destaque</Label>
                 <div className="flex flex-col gap-2">
@@ -404,59 +441,14 @@ export default function DetalheFornecedor() {
                       accept="image/*"
                       className="hidden"
                       id="destaque"
-                      onChange={(e) => handleFileUpload(e, "foto_destaque")}
+                      onChange={(e) => handleFileUpload(e, "destaque")}
                       disabled={uploading}
                     />
                     <Label htmlFor="destaque" className="w-full h-full absolute inset-0 cursor-pointer">
                       <span className="sr-only">Escolher imagem destaque</span>
                     </Label>
                   </div>
-                  <Input
-                    placeholder="Ou insira uma URL da imagem destaque"
-                    value={fornecedorEdit.foto_destaque || ""}
-                    onChange={(e) => setFornecedorEdit({ ...fornecedorEdit, foto_destaque: e.target.value })}
-                  />
                 </div>
-              </div>
-              
-              <div className="space-y-2">
-                <Label htmlFor="whatsapp">WhatsApp</Label>
-                <Input
-                  id="whatsapp"
-                  placeholder="Ex: 5511999999999 (com código do país)"
-                  value={fornecedorEdit.whatsapp || ""}
-                  onChange={(e) => setFornecedorEdit({ ...fornecedorEdit, whatsapp: e.target.value })}
-                />
-              </div>
-              
-              <div className="space-y-2">
-                <Label htmlFor="instagram">Instagram</Label>
-                <Input
-                  id="instagram"
-                  placeholder="Ex: nomeperfil (sem @)"
-                  value={fornecedorEdit.instagram || ""}
-                  onChange={(e) => setFornecedorEdit({ ...fornecedorEdit, instagram: e.target.value.replace('@', '') })}
-                />
-              </div>
-              
-              <div className="space-y-2">
-                <Label htmlFor="endereco">Endereço</Label>
-                <Input
-                  id="endereco"
-                  placeholder="Endereço completo"
-                  value={fornecedorEdit.endereco || ""}
-                  onChange={(e) => setFornecedorEdit({ ...fornecedorEdit, endereco: e.target.value })}
-                />
-              </div>
-              
-              <div className="space-y-2">
-                <Label htmlFor="localizacao">Localização (Google Maps)</Label>
-                <Input
-                  id="localizacao"
-                  placeholder="Link do Google Maps"
-                  value={fornecedorEdit.localizacao || ""}
-                  onChange={(e) => setFornecedorEdit({ ...fornecedorEdit, localizacao: e.target.value })}
-                />
               </div>
             </div>
             <DialogFooter>
@@ -478,3 +470,5 @@ export default function DetalheFornecedor() {
     </div>
   );
 }
+
+export default DetalheFornecedor;

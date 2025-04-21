@@ -1,9 +1,6 @@
 
 import { supabase } from '@/integrations/supabase/client';
 
-// Re-export supabase client
-export { supabase };
-
 // Type definitions used throughout the app
 export type Fornecedor = {
   id: number;
@@ -45,3 +42,6 @@ export const mapCategoria = (dbCategoria: any): Categoria => ({
   imagem_url: dbCategoria.imagem_url,
   created_at: dbCategoria.created_at
 });
+
+// Re-export supabase client
+export { supabase };

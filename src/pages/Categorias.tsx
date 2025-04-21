@@ -1,7 +1,6 @@
-
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { Categoria, supabase } from "@/lib/supabase";
+import { Categoria, supabase, mapCategoria } from "@/lib/supabase";
 import { useAuth } from "@/contexts/AuthContext";
 import FloatingActionButton from "@/components/FloatingActionButton";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
@@ -34,7 +33,8 @@ export default function Categorias() {
         .order("nome");
 
       if (error) throw error;
-      setCategorias(data || []);
+      const mappedCategorias = (data || []).map(mapCategoria);
+      setCategorias(mappedCategorias);
     } catch (error) {
       console.error("Erro ao carregar categorias:", error);
       toast({

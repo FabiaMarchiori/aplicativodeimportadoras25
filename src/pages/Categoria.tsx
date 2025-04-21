@@ -1,7 +1,6 @@
-
 import { useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
-import { Fornecedor, Categoria as CategoriaType, supabase } from "@/lib/supabase";
+import { Fornecedor, Categoria as CategoriaType, supabase, mapFornecedor, mapCategoria } from "@/lib/supabase";
 import { useAuth } from "@/contexts/AuthContext";
 import FloatingActionButton from "@/components/FloatingActionButton";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
@@ -61,7 +60,7 @@ export default function Categoria() {
         .single();
 
       if (error) throw error;
-      setCategoria(data);
+      setCategoria(mapCategoria(data));
     } catch (error) {
       console.error("Erro ao carregar categoria:", error);
       toast({
@@ -79,11 +78,12 @@ export default function Categoria() {
         .from("fornecedores")
         .select("*")
         .eq("categoria_id", id)
-        .order("nome");
+        .order("nome_loja");
 
       if (error) throw error;
-      setFornecedores(data || []);
-      setFilteredFornecedores(data || []);
+      const mappedFornecedores = (data || []).map(mapFornecedor);
+      setFornecedores(mappedFornecedores);
+      setFilteredFornecedores(mappedFornecedores);
     } catch (error) {
       console.error("Erro ao carregar fornecedores:", error);
       toast({

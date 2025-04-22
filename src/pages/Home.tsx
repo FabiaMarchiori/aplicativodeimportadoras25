@@ -1,7 +1,7 @@
 
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { Categoria, supabase } from "@/lib/supabase";
+import { Categoria, supabase, mapCategoria } from "@/lib/supabase";
 import { useAuth } from "@/contexts/AuthContext";
 import FloatingActionButton from "@/components/FloatingActionButton";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
@@ -16,7 +16,7 @@ export default function Home() {
   const [categorias, setCategorias] = useState<Categoria[]>([]);
   const [loading, setLoading] = useState(true);
   const [dialogOpen, setDialogOpen] = useState(false);
-  const [novaCategoria, setNovaCategoria] = useState({ nome: "", imagem_url: "" });
+  const [novaCategoria, setNovaCategoria] = useState({ categoria: "", imagem_url: "" });
   const [uploading, setUploading] = useState(false);
   const { isAdmin } = useAuth();
   const { toast } = useToast();
@@ -31,10 +31,11 @@ export default function Home() {
       const { data, error } = await supabase
         .from("categorias")
         .select("*")
-        .order("nome");
+        .order("categoria");
 
       if (error) throw error;
-      setCategorias(data || []);
+      const mappedCategorias = (data || []).map(mapCategoria);
+      setCategorias(mappedCategorias);
     } catch (error) {
       console.error("Erro ao carregar categorias:", error);
       toast({
@@ -48,7 +49,7 @@ export default function Home() {
   };
 
   const handleAddCategoria = async () => {
-    if (!novaCategoria.nome) {
+    if (!novaCategoria.categoria) {
       toast({
         variant: "destructive",
         title: "Erro",
@@ -61,7 +62,7 @@ export default function Home() {
       const { error } = await supabase
         .from("categorias")
         .insert([{ 
-          nome: novaCategoria.nome, 
+          categoria: novaCategoria.categoria,
           imagem_url: novaCategoria.imagem_url || "https://source.unsplash.com/random/300x200/?shop" 
         }]);
 
@@ -73,7 +74,7 @@ export default function Home() {
       });
 
       setDialogOpen(false);
-      setNovaCategoria({ nome: "", imagem_url: "" });
+      setNovaCategoria({ categoria: "", imagem_url: "" });
       fetchCategorias();
     } catch (error) {
       console.error("Erro ao adicionar categoria:", error);
@@ -143,18 +144,18 @@ export default function Home() {
           {categorias.map((categoria) => (
             <Link
               key={categoria.id}
-              to={`/categoria/${categoria.id}`}
+              to={`/categoria/${categoria.categoria}`}
               className="card-hover rounded-lg overflow-hidden"
             >
               <div className="aspect-square bg-muted relative overflow-hidden rounded-lg">
                 <img
                   src={categoria.imagem_url || "https://source.unsplash.com/random/300x200/?shop"}
-                  alt={categoria.nome}
+                  alt={categoria.categoria}
                   className="w-full h-full object-cover"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
                 <div className="absolute bottom-0 left-0 p-4 w-full">
-                  <h3 className="text-white font-semibold truncate">{categoria.nome}</h3>
+                  <h3 className="text-white font-semibold truncate">{categoria.categoria}</h3>
                 </div>
               </div>
             </Link>

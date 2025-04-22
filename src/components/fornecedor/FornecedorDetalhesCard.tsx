@@ -3,7 +3,7 @@ import React from "react";
 import { Fornecedor } from "@/lib/supabase";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Whatsapp, Instagram } from "lucide-react";
+import { Phone, Instagram } from "lucide-react";
 
 type Props = {
   fornecedor: Fornecedor;
@@ -38,7 +38,7 @@ const FornecedorDetalhesCard: React.FC<Props> = ({ fornecedor }) => {
           <span className="font-medium mr-2">WhatsApp:</span>
           {fornecedor.Whatsapp ? (
             <Button size="sm" variant="outline" className="inline-flex gap-2" onClick={handleWhatsapp}>
-              <Whatsapp className="h-4 w-4" />
+              <Phone className="h-4 w-4" />
               {fornecedor.Whatsapp}
             </Button>
           ) : (

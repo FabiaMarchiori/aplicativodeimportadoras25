@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import { Fornecedor, Categoria as CategoriaType, supabase, mapFornecedor, mapCategoria } from "@/lib/supabase";
@@ -9,7 +10,7 @@ import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/use-toast";
 import { Card } from "@/components/ui/card";
-import { Loader2, ImageIcon, ArrowLeft, SearchIcon, Whatsapp, Instagram } from "lucide-react";
+import { Loader2, ImageIcon, ArrowLeft, SearchIcon, Phone, Instagram } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 export default function Categoria() {
@@ -139,7 +140,7 @@ export default function Categoria() {
                 </div>
                 <div className="flex flex-col gap-1 text-sm text-muted-foreground">
                   <div>
-                    <Whatsapp className="inline-block mr-1 h-4 w-4" /> {fornecedor.Whatsapp || "-"}
+                    <Phone className="inline-block mr-1 h-4 w-4" /> {fornecedor.Whatsapp || "-"}
                   </div>
                   <div>
                     <Instagram className="inline-block mr-1 h-4 w-4" /> {fornecedor.Instagram_url || "-"}

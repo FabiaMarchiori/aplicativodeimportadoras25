@@ -14,7 +14,7 @@ export function FornecedorHeader({ fornecedor, isAdmin, onEditClick }: Fornecedo
   return (
     <header className="mb-6">
       <div className="flex items-center mb-4">
-        <Link to={`/categoria/${fornecedor.categoria_id}`} className="text-primary mr-2">
+        <Link to={`/categoria/${fornecedor.categoria}`} className="text-primary mr-2">
           <ArrowLeft className="h-5 w-5" />
         </Link>
         <h1 className="text-2xl font-bold font-heading">

@@ -34,7 +34,6 @@ export function FornecedorHeader({ fornecedor, isAdmin, onEditClick }: Fornecedo
           alt={fornecedor.nome_loja || fornecedor.nome}
           className="w-full h-48 sm:h-56 md:h-64 object-cover"
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent" />
         
         <div className="absolute bottom-0 left-0 p-4 w-full flex items-end">
           <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-full overflow-hidden bg-white p-1 mr-3 shadow-md">

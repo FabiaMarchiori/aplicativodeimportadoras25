@@ -1,5 +1,6 @@
+
 import { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Categoria, supabase, mapCategoria } from "@/lib/supabase";
 import { useAuth } from "@/contexts/AuthContext";
 import FloatingActionButton from "@/components/FloatingActionButton";
@@ -15,10 +16,11 @@ export default function Categorias() {
   const [categorias, setCategorias] = useState<Categoria[]>([]);
   const [loading, setLoading] = useState(true);
   const [dialogOpen, setDialogOpen] = useState(false);
-  const [novaCategoria, setNovaCategoria] = useState({ nome: "", imagem_url: "" });
+  const [novaCategoria, setNovaCategoria] = useState({ categoria: "", imagem_url: "" });
   const [uploading, setUploading] = useState(false);
   const { isAdmin } = useAuth();
   const { toast } = useToast();
+  const navigate = useNavigate();
 
   useEffect(() => {
     fetchCategorias();
@@ -30,8 +32,7 @@ export default function Categorias() {
       const { data, error } = await supabase
         .from("categorias")
         .select("*")
-        .order("nome");
-
+        .order("categoria");
       if (error) throw error;
       const mappedCategorias = (data || []).map(mapCategoria);
       setCategorias(mappedCategorias);
@@ -48,7 +49,7 @@ export default function Categorias() {
   };
 
   const handleAddCategoria = async () => {
-    if (!novaCategoria.nome) {
+    if (!novaCategoria.categoria) {
       toast({
         variant: "destructive",
         title: "Erro",
@@ -61,7 +62,7 @@ export default function Categorias() {
       const { error } = await supabase
         .from("categorias")
         .insert([{ 
-          nome: novaCategoria.nome, 
+          categoria: novaCategoria.categoria,
           imagem_url: novaCategoria.imagem_url || "https://source.unsplash.com/random/300x200/?shop" 
         }]);
 
@@ -73,7 +74,7 @@ export default function Categorias() {
       });
 
       setDialogOpen(false);
-      setNovaCategoria({ nome: "", imagem_url: "" });
+      setNovaCategoria({ categoria: "", imagem_url: "" });
       fetchCategorias();
     } catch (error) {
       console.error("Erro ao adicionar categoria:", error);
@@ -91,24 +92,16 @@ export default function Categorias() {
 
     try {
       setUploading(true);
-      
-      // Criar um nome de arquivo único
       const fileExt = file.name.split('.').pop();
       const fileName = `categoria-${Math.random().toString().substring(2, 10)}.${fileExt}`;
       const filePath = `categorias/${fileName}`;
-      
-      // Fazer upload do arquivo
-      const { error: uploadError, data } = await supabase.storage
+      const { error: uploadError } = await supabase.storage
         .from('public')
         .upload(filePath, file);
-        
       if (uploadError) throw uploadError;
-      
-      // Obter a URL pública do arquivo
       const { data: urlData } = supabase.storage
         .from('public')
         .getPublicUrl(filePath);
-        
       if (urlData) {
         setNovaCategoria({
           ...novaCategoria,
@@ -135,31 +128,30 @@ export default function Categorias() {
         </Link>
         <h1 className="text-2xl font-bold text-primary font-heading">Categorias</h1>
       </header>
-      
       {loading ? (
         <div className="flex justify-center py-12">
           <Loader2 className="h-8 w-8 animate-spin text-primary" />
         </div>
       ) : (
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-          {categorias.map((categoria) => (
-            <Link
-              key={categoria.id}
-              to={`/categoria/${categoria.id}`}
-              className="card-hover rounded-lg overflow-hidden"
+          {categorias.map((categoriaObj) => (
+            <div
+              key={categoriaObj.id}
+              className="card-hover rounded-lg overflow-hidden cursor-pointer"
+              onClick={() => navigate(`/categoria/${encodeURIComponent(categoriaObj.categoria)}`)}
             >
               <div className="aspect-square bg-muted relative overflow-hidden rounded-lg">
                 <img
-                  src={categoria.imagem_url || "https://source.unsplash.com/random/300x200/?shop"}
-                  alt={categoria.nome}
+                  src={categoriaObj.imagem_url || "https://source.unsplash.com/random/300x200/?shop"}
+                  alt={categoriaObj.categoria}
                   className="w-full h-full object-cover"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
                 <div className="absolute bottom-0 left-0 p-4 w-full">
-                  <h3 className="text-white font-semibold truncate">{categoria.nome}</h3>
+                  <h3 className="text-white font-semibold truncate">{categoriaObj.categoria}</h3>
                 </div>
               </div>
-            </Link>
+            </div>
           ))}
         </div>
       )}
@@ -167,7 +159,6 @@ export default function Categorias() {
       {isAdmin && (
         <>
           <FloatingActionButton onClick={() => setDialogOpen(true)} />
-          
           <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
             <DialogContent>
               <DialogHeader>
@@ -175,14 +166,13 @@ export default function Categorias() {
               </DialogHeader>
               <div className="grid gap-4 py-4">
                 <div className="space-y-2">
-                  <Label htmlFor="nome">Nome da Categoria</Label>
+                  <Label htmlFor="categoria">Nome da Categoria</Label>
                   <Input
-                    id="nome"
-                    value={novaCategoria.nome}
-                    onChange={(e) => setNovaCategoria({ ...novaCategoria, nome: e.target.value })}
+                    id="categoria"
+                    value={novaCategoria.categoria}
+                    onChange={(e) => setNovaCategoria({ ...novaCategoria, categoria: e.target.value })}
                   />
                 </div>
-                
                 <div className="space-y-2">
                   <Label>Imagem</Label>
                   <div className="flex flex-col gap-2">
@@ -248,3 +238,4 @@ export default function Categorias() {
     </div>
   );
 }
+// File is getting long; consider refactoring for maintainability.

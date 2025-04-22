@@ -4,7 +4,8 @@ import { supabase } from '@/integrations/supabase/client';
 // Type definitions used throughout the app
 export type Fornecedor = {
   id: number;
-  nome: string;
+  nome_loja?: string | null;
+  nome?: string;
   categoria: string | null;
   Whatsapp?: string;
   Instagram_url?: string;
@@ -22,17 +23,11 @@ export type Categoria = {
   created_at: string;
 };
 
-export type Favorito = {
-  id: number;
-  user_id: string;
-  fornecedor_id: number;
-  created_at: string;
-};
-
 // Mapping function to convert database types to our type definitions
 export const mapFornecedor = (dbFornecedor: any): Fornecedor => ({
   id: dbFornecedor.id,
-  nome: dbFornecedor.nome_loja || '',
+  nome_loja: dbFornecedor.nome_loja,
+  nome: dbFornecedor.nome_loja, // for compatibility with code using .nome
   categoria: dbFornecedor.categoria,
   Whatsapp: dbFornecedor.Whatsapp,
   Instagram_url: dbFornecedor.Instagram_url,

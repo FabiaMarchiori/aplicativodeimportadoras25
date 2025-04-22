@@ -1,7 +1,7 @@
 
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { Fornecedor, supabase } from "@/lib/supabase";
+import { Fornecedor, supabase, mapFornecedor } from "@/lib/supabase";
 import { useAuth } from "@/contexts/AuthContext";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -26,30 +26,25 @@ export default function Favoritos() {
     try {
       setLoading(true);
       
-      // Primeiro, busque os IDs dos fornecedores favoritos
-      const { data: favoritosData, error: favoritosError } = await supabase
-        .from("favoritos")
-        .select("fornecedor_id")
-        .eq("user_id", user?.id);
+      // Check if the favoritos table exists first
+      const { data, error } = await supabase
+        .from('fornecedores')
+        .select(`
+          *,
+          favoritos!inner(user_id)
+        `)
+        .eq('favoritos.user_id', user?.id);
       
-      if (favoritosError) throw favoritosError;
-      
-      if (favoritosData && favoritosData.length > 0) {
-        // Extrair os IDs dos fornecedores
-        const fornecedorIds = favoritosData.map(fav => fav.fornecedor_id);
-        
-        // Buscar os detalhes dos fornecedores
-        const { data: fornecedoresData, error: fornecedoresError } = await supabase
-          .from("fornecedores")
-          .select("*")
-          .in("id", fornecedorIds);
-        
-        if (fornecedoresError) throw fornecedoresError;
-        
-        setFavoritos(fornecedoresData || []);
-      } else {
+      if (error) {
+        console.error("Error details:", error);
+        // Fallback to default state if table doesn't exist
         setFavoritos([]);
+        return;
       }
+      
+      const mappedFornecedores = (data || []).map(mapFornecedor);
+      setFavoritos(mappedFornecedores);
+      
     } catch (error) {
       console.error("Erro ao carregar favoritos:", error);
       toast({

@@ -21,11 +21,11 @@ export default function Categoria() {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [novoFornecedor, setNovoFornecedor] = useState({
-    nome: "",
+    nome_loja: "",
     logo_url: "",
-    whatsapp: "",
-    instagram: "",
-    endereco: "",
+    Whatsapp: "",
+    Instagram_url: "",
+    Endereco: "",
     localizacao: "",
     foto_destaque: ""
   });
@@ -56,7 +56,7 @@ export default function Categoria() {
       const { data, error } = await supabase
         .from("categorias")
         .select("*")
-        .eq("id", id)
+        .eq("id", parseInt(id as string))
         .single();
 
       if (error) throw error;
@@ -77,7 +77,7 @@ export default function Categoria() {
       const { data, error } = await supabase
         .from("fornecedores")
         .select("*")
-        .eq("categoria_id", id)
+        .eq("categoria", id)
         .order("nome_loja");
 
       if (error) throw error;
@@ -97,7 +97,7 @@ export default function Categoria() {
   };
 
   const handleAddFornecedor = async () => {
-    if (!novoFornecedor.nome) {
+    if (!novoFornecedor.nome_loja) {
       toast({
         variant: "destructive",
         title: "Erro",
@@ -111,7 +111,7 @@ export default function Categoria() {
         .from("fornecedores")
         .insert([{ 
           ...novoFornecedor, 
-          categoria_id: Number(id),
+          categoria: id,
           logo_url: novoFornecedor.logo_url || "https://source.unsplash.com/random/300x300/?logo",
           foto_destaque: novoFornecedor.foto_destaque || "https://source.unsplash.com/random/800x400/?shop"
         }]);
@@ -125,11 +125,11 @@ export default function Categoria() {
 
       setDialogOpen(false);
       setNovoFornecedor({
-        nome: "",
+        nome_loja: "",
         logo_url: "",
-        whatsapp: "",
-        instagram: "",
-        endereco: "",
+        Whatsapp: "",
+        Instagram_url: "",
+        Endereco: "",
         localizacao: "",
         foto_destaque: ""
       });
@@ -194,7 +194,7 @@ export default function Categoria() {
             <ArrowLeft className="h-5 w-5" />
           </Link>
           <h1 className="text-2xl font-bold font-heading">
-            {loading ? "Carregando..." : categoria?.nome || "Categoria"}
+            {loading ? "Carregando..." : categoria?.categoria || "Categoria"}
           </h1>
         </div>
         
@@ -271,8 +271,8 @@ export default function Categoria() {
                   <Label htmlFor="nome">Nome do Fornecedor*</Label>
                   <Input
                     id="nome"
-                    value={novoFornecedor.nome}
-                    onChange={(e) => setNovoFornecedor({ ...novoFornecedor, nome: e.target.value })}
+                    value={novoFornecedor.nome_loja}
+                    onChange={(e) => setNovoFornecedor({ ...novoFornecedor, nome_loja: e.target.value })}
                   />
                 </div>
                 
@@ -371,8 +371,8 @@ export default function Categoria() {
                   <Input
                     id="whatsapp"
                     placeholder="Ex: 5511999999999 (com código do país)"
-                    value={novoFornecedor.whatsapp}
-                    onChange={(e) => setNovoFornecedor({ ...novoFornecedor, whatsapp: e.target.value })}
+                    value={novoFornecedor.Whatsapp}
+                    onChange={(e) => setNovoFornecedor({ ...novoFornecedor, Whatsapp: e.target.value })}
                   />
                 </div>
                 
@@ -381,8 +381,8 @@ export default function Categoria() {
                   <Input
                     id="instagram"
                     placeholder="Ex: @nomeperfil (sem @)"
-                    value={novoFornecedor.instagram}
-                    onChange={(e) => setNovoFornecedor({ ...novoFornecedor, instagram: e.target.value.replace('@', '') })}
+                    value={novoFornecedor.Instagram_url}
+                    onChange={(e) => setNovoFornecedor({ ...novoFornecedor, Instagram_url: e.target.value.replace('@', '') })}
                   />
                 </div>
                 
@@ -391,8 +391,8 @@ export default function Categoria() {
                   <Input
                     id="endereco"
                     placeholder="Endereço completo"
-                    value={novoFornecedor.endereco}
-                    onChange={(e) => setNovoFornecedor({ ...novoFornecedor, endereco: e.target.value })}
+                    value={novoFornecedor.Endereco}
+                    onChange={(e) => setNovoFornecedor({ ...novoFornecedor, Endereco: e.target.value })}
                   />
                 </div>
                 

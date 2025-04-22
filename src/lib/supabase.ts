@@ -5,7 +5,7 @@ import { supabase } from '@/integrations/supabase/client';
 export type Fornecedor = {
   id: number;
   nome: string;
-  categoria_id: number;
+  categoria: string | null;
   Whatsapp?: string;
   Instagram_url?: string;
   Endereco?: string;
@@ -17,8 +17,15 @@ export type Fornecedor = {
 
 export type Categoria = {
   id: number;
-  nome: string;
+  categoria: string;
   imagem_url?: string;
+  created_at: string;
+};
+
+export type Favorito = {
+  id: number;
+  user_id: string;
+  fornecedor_id: number;
   created_at: string;
 };
 
@@ -26,19 +33,19 @@ export type Categoria = {
 export const mapFornecedor = (dbFornecedor: any): Fornecedor => ({
   id: dbFornecedor.id,
   nome: dbFornecedor.nome_loja || '',
-  categoria_id: dbFornecedor.categoria_id || 0,
+  categoria: dbFornecedor.categoria,
   Whatsapp: dbFornecedor.Whatsapp,
   Instagram_url: dbFornecedor.Instagram_url,
   Endereco: dbFornecedor.Endereco,
-  logo_url: dbFornecedor.logo_url,
-  foto_destaque: dbFornecedor.foto_destaque,
-  localizacao: dbFornecedor.localizacao,
+  logo_url: dbFornecedor.logo_url || null,
+  foto_destaque: dbFornecedor.foto_destaque || null,
+  localizacao: dbFornecedor.localizacao || null,
   created_at: dbFornecedor.created_at
 });
 
 export const mapCategoria = (dbCategoria: any): Categoria => ({
   id: dbCategoria.id,
-  nome: dbCategoria.nome,
+  categoria: dbCategoria.categoria,
   imagem_url: dbCategoria.imagem_url,
   created_at: dbCategoria.created_at
 });

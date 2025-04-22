@@ -11,27 +11,28 @@ export type Database = {
     Tables: {
       categorias: {
         Row: {
+          categoria: string
           created_at: string | null
           id: number
           imagem_url: string | null
-          nome: string
         }
         Insert: {
+          categoria: string
           created_at?: string | null
           id?: number
           imagem_url?: string | null
-          nome: string
         }
         Update: {
+          categoria?: string
           created_at?: string | null
           id?: number
           imagem_url?: string | null
-          nome?: string
         }
         Relationships: []
       }
       fornecedores: {
         Row: {
+          categoria: string | null
           created_at: string
           Endereco: string | null
           id: number
@@ -40,6 +41,7 @@ export type Database = {
           Whatsapp: string | null
         }
         Insert: {
+          categoria?: string | null
           created_at?: string
           Endereco?: string | null
           id?: number
@@ -48,6 +50,7 @@ export type Database = {
           Whatsapp?: string | null
         }
         Update: {
+          categoria?: string | null
           created_at?: string
           Endereco?: string | null
           id?: number

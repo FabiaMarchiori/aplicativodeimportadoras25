@@ -10,7 +10,7 @@ import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/use-toast";
 import { Card } from "@/components/ui/card";
-import { Loader2, ImageIcon, ArrowLeft, SearchIcon, Phone, Instagram } from "lucide-react";
+import { Loader2, ImageIcon, ArrowLeft, SearchIcon, Phone, Instagram, Edit } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 export default function Categoria() {
@@ -20,8 +20,12 @@ export default function Categoria() {
   const [filteredFornecedores, setFilteredFornecedores] = useState<Fornecedor[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
+  const [editDialogOpen, setEditDialogOpen] = useState(false);
+  const [editingFornecedor, setEditingFornecedor] = useState<Partial<Fornecedor>>({});
+  const [uploadingLogo, setUploadingLogo] = useState(false);
   const { toast } = useToast();
   const navigate = useNavigate();
+  const { isAdmin } = useAuth();
 
   useEffect(() => {
     if (id) {
@@ -87,16 +91,87 @@ export default function Categoria() {
     }
   };
 
+  const handleFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    try {
+      setUploadingLogo(true);
+      const fileExt = file.name.split('.').pop();
+      const fileName = `fornecedor-logo-${Date.now()}.${fileExt}`;
+      const filePath = `fornecedores/${fileName}`;
+      
+      const { error: uploadError } = await supabase.storage
+        .from('public')
+        .upload(filePath, file);
+        
+      if (uploadError) throw uploadError;
+      
+      const { data: urlData } = supabase.storage
+        .from('public')
+        .getPublicUrl(filePath);
+        
+      if (urlData) {
+        setEditingFornecedor({
+          ...editingFornecedor,
+          logo_url: urlData.publicUrl
+        });
+      }
+    } catch (error) {
+      console.error('Erro ao fazer upload da imagem:', error);
+      toast({
+        variant: "destructive",
+        title: "Erro no upload",
+        description: "Não foi possível fazer o upload da imagem."
+      });
+    } finally {
+      setUploadingLogo(false);
+    }
+  };
+
+  const handleUpdateFornecedor = async () => {
+    if (!editingFornecedor.id) return;
+    
+    try {
+      const { error } = await supabase
+        .from("fornecedores")
+        .update({
+          nome_loja: editingFornecedor.nome_loja,
+          logo_url: editingFornecedor.logo_url
+        })
+        .eq("id", editingFornecedor.id);
+
+      if (error) throw error;
+
+      toast({
+        title: "Fornecedor atualizado",
+        description: "As informações do fornecedor foram atualizadas com sucesso."
+      });
+
+      setEditDialogOpen(false);
+      fetchFornecedores();
+    } catch (error) {
+      console.error("Erro ao atualizar fornecedor:", error);
+      toast({
+        variant: "destructive",
+        title: "Erro ao atualizar fornecedor",
+        description: "Não foi possível atualizar as informações do fornecedor."
+      });
+    }
+  };
+
   return (
     <div className="page-container fade-in">
       <header className="mb-6">
-        <div className="flex items-center mb-4">
-          <Link to="/" className="text-primary mr-2">
-            <ArrowLeft className="h-5 w-5" />
-          </Link>
-          <h1 className="text-2xl font-bold font-heading">
-            {loading ? "Carregando..." : categoria?.categoria || "Categoria"}
-          </h1>
+        <div className="flex items-center justify-between mb-4">
+          <div className="flex items-center">
+            <Link to="/" className="text-primary mr-2">
+              <ArrowLeft className="h-5 w-5" />
+            </Link>
+            <h1 className="text-2xl font-bold font-heading">
+              {loading ? "Carregando..." : categoria?.categoria || "Categoria"}
+            </h1>
+          </div>
         </div>
         <div className="relative">
           <Input
@@ -114,42 +189,40 @@ export default function Categoria() {
           <Loader2 className="h-8 w-8 animate-spin text-primary" />
         </div>
       ) : filteredFornecedores.length > 0 ? (
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 slide-up">
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 slide-up">
           {filteredFornecedores.map((fornecedor) => (
             <Card
               key={fornecedor.id}
-              className="overflow-hidden card-hover cursor-pointer"
+              className="overflow-hidden card-hover cursor-pointer group relative"
               onClick={() => navigate(`/fornecedor/${fornecedor.id}`)}
             >
-              <div className="p-4">
-                <div className="flex items-center gap-3 mb-3">
-                  <div className="w-12 h-12 rounded-full overflow-hidden bg-muted flex items-center justify-center">
-                    {fornecedor.logo_url ? (
-                      <img
-                        src={fornecedor.logo_url}
-                        alt={`Logo ${fornecedor.nome_loja || fornecedor.nome}`}
-                        className="w-full h-full object-cover"
-                      />
-                    ) : (
-                      <div className="text-lg font-bold text-primary">
-                        {(fornecedor.nome_loja || fornecedor.nome || "?").charAt(0)}
-                      </div>
-                    )}
-                  </div>
-                  <h3 className="font-semibold truncate flex-1">{fornecedor.nome_loja || fornecedor.nome}</h3>
+              <div className="aspect-square bg-muted relative overflow-hidden">
+                <img
+                  src={fornecedor.logo_url || "https://source.unsplash.com/random/400x400/?shop"}
+                  alt={fornecedor.nome_loja || fornecedor.nome || ""}
+                  className="w-full h-full object-cover transition-transform group-hover:scale-110"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent" />
+                <div className="absolute bottom-0 left-0 p-3 w-full">
+                  <h3 className="text-white font-medium truncate">
+                    {fornecedor.nome_loja || fornecedor.nome || "Sem nome"}
+                  </h3>
                 </div>
-                <div className="flex flex-col gap-1 text-sm text-muted-foreground">
-                  <div>
-                    <Phone className="inline-block mr-1 h-4 w-4" /> {fornecedor.Whatsapp || "-"}
-                  </div>
-                  <div>
-                    <Instagram className="inline-block mr-1 h-4 w-4" /> {fornecedor.Instagram_url || "-"}
-                  </div>
-                  <div>
-                    <span className="inline-block font-medium mr-1">Endereço:</span>
-                    {fornecedor.Endereco || "-"}
-                  </div>
-                </div>
+                
+                {isAdmin && (
+                  <Button
+                    variant="outline"
+                    size="icon"
+                    className="absolute top-2 right-2 bg-white/80 hover:bg-white opacity-0 group-hover:opacity-100 transition-opacity"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setEditingFornecedor(fornecedor);
+                      setEditDialogOpen(true);
+                    }}
+                  >
+                    <Edit className="h-4 w-4" />
+                  </Button>
+                )}
               </div>
             </Card>
           ))}
@@ -165,8 +238,78 @@ export default function Categoria() {
         </div>
       )}
 
-      {/* Admin logic removed for brevity in this version */}
+      {isAdmin && (
+        <Dialog open={editDialogOpen} onOpenChange={setEditDialogOpen}>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Editar Fornecedor</DialogTitle>
+            </DialogHeader>
+            <div className="grid gap-4 py-4">
+              <div className="space-y-2">
+                <Label htmlFor="nome_loja">Nome do Fornecedor</Label>
+                <Input
+                  id="nome_loja"
+                  value={editingFornecedor.nome_loja || editingFornecedor.nome || ""}
+                  onChange={(e) => setEditingFornecedor({ ...editingFornecedor, nome_loja: e.target.value })}
+                />
+              </div>
+              
+              <div className="space-y-2">
+                <Label>Logo</Label>
+                <div 
+                  className={cn(
+                    "border-2 border-dashed rounded-md p-6 flex flex-col items-center justify-center gap-2",
+                    "hover:border-primary/50 transition-colors cursor-pointer"
+                  )}
+                >
+                  {editingFornecedor.logo_url ? (
+                    <div className="relative w-24 h-24">
+                      <img 
+                        src={editingFornecedor.logo_url} 
+                        alt="Logo" 
+                        className="w-full h-full object-cover rounded-full" 
+                      />
+                    </div>
+                  ) : (
+                    <>
+                      <ImageIcon className="h-8 w-8 text-muted-foreground" />
+                      <p className="text-sm text-muted-foreground">
+                        {uploadingLogo ? "Enviando..." : "Clique para enviar um logo"}
+                      </p>
+                    </>
+                  )}
+                  <Input
+                    type="file"
+                    accept="image/*"
+                    className="hidden"
+                    id="logo"
+                    onChange={handleFileUpload}
+                    disabled={uploadingLogo}
+                  />
+                  <Label htmlFor="logo" className="w-full h-full absolute inset-0 cursor-pointer">
+                    <span className="sr-only">Escolher logo</span>
+                  </Label>
+                </div>
+              </div>
+            </div>
+            <DialogFooter>
+              <Button variant="outline" onClick={() => setEditDialogOpen(false)}>
+                Cancelar
+              </Button>
+              <Button onClick={handleUpdateFornecedor} disabled={uploadingLogo}>
+                {uploadingLogo ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Enviando...
+                  </>
+                ) : (
+                  "Salvar Alterações"
+                )}
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+      )}
     </div>
   );
 }
-// File is getting long. Consider refactoring for maintainability.

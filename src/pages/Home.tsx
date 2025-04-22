@@ -145,7 +145,7 @@ export default function Home() {
             <Link
               key={categoria.id}
               to={`/categoria/${categoria.categoria}`}
-              className="card-hover rounded-lg overflow-hidden"
+              className="card-hover rounded-lg overflow-hidden shadow-md transition-transform hover:scale-105"
             >
               <div className="aspect-square bg-muted relative overflow-hidden rounded-lg">
                 <img
@@ -174,11 +174,11 @@ export default function Home() {
               </DialogHeader>
               <div className="grid gap-4 py-4">
                 <div className="space-y-2">
-                  <Label htmlFor="nome">Nome da Categoria</Label>
+                  <Label htmlFor="categoria">Nome da Categoria</Label>
                   <Input
-                    id="nome"
-                    value={novaCategoria.nome}
-                    onChange={(e) => setNovaCategoria({ ...novaCategoria, nome: e.target.value })}
+                    id="categoria"
+                    value={novaCategoria.categoria}
+                    onChange={(e) => setNovaCategoria({ ...novaCategoria, categoria: e.target.value })}
                   />
                 </div>
                 

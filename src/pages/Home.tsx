@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { Categoria, supabase, mapCategoria } from "@/lib/supabase";
@@ -131,8 +130,8 @@ export default function Home() {
   return (
     <div className="page-container fade-in">
       <header className="mb-8 text-center">
-        <h1 className="text-3xl font-bold text-primary font-heading">FornecedorHub</h1>
-        <p className="text-muted-foreground">Encontre os melhores fornecedores</p>
+        <h1 className="text-3xl font-bold text-primary font-heading mb-2">FornecedorHub</h1>
+        <p className="text-muted-foreground mb-6">Encontre os melhores fornecedores</p>
       </header>
       
       {loading ? (
@@ -140,22 +139,21 @@ export default function Home() {
           <Loader2 className="h-8 w-8 animate-spin text-primary" />
         </div>
       ) : (
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 px-2 mb-12">
           {categorias.map((categoria) => (
             <Link
               key={categoria.id}
               to={`/categoria/${categoria.categoria}`}
-              className="card-hover rounded-lg overflow-hidden shadow-md transition-transform hover:scale-105"
+              className="transition-transform hover:scale-105 outline-none"
             >
-              <div className="aspect-square bg-muted relative overflow-hidden rounded-lg">
+              <div className="flex flex-col items-center border-2 border-yellow-400 rounded-2xl shadow bg-white hover:shadow-lg transition-all">
                 <img
-                  src={categoria.imagem_url || "https://source.unsplash.com/random/300x200/?shop"}
+                  src={categoria.imagem_url || "https://images.unsplash.com/photo-1488590528505-98d2b5aba04b"}
                   alt={categoria.categoria}
-                  className="w-full h-full object-cover"
+                  className="w-full h-44 object-cover rounded-t-2xl"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
-                <div className="absolute bottom-0 left-0 p-4 w-full">
-                  <h3 className="text-white font-semibold truncate">{categoria.categoria}</h3>
+                <div className="p-4 flex flex-col items-center">
+                  <h3 className="text-lg font-bold text-yellow-700 mb-1 text-center">{categoria.categoria}</h3>
                 </div>
               </div>
             </Link>

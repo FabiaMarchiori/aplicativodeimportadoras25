@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import { Fornecedor, Categoria as CategoriaType, supabase, mapFornecedor, mapCategoria } from "@/lib/supabase";
@@ -189,40 +188,22 @@ export default function Categoria() {
           <Loader2 className="h-8 w-8 animate-spin text-primary" />
         </div>
       ) : filteredFornecedores.length > 0 ? (
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 slide-up">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 px-2 mb-10">
           {filteredFornecedores.map((fornecedor) => (
             <Card
               key={fornecedor.id}
-              className="overflow-hidden card-hover cursor-pointer group relative"
+              className="overflow-hidden cursor-pointer group border-2 border-yellow-400 rounded-xl bg-white shadow transition-all hover:shadow-lg"
               onClick={() => navigate(`/fornecedor/${fornecedor.id}`)}
             >
-              <div className="aspect-square bg-muted relative overflow-hidden">
-                <img
-                  src={fornecedor.logo_url || "https://source.unsplash.com/random/400x400/?shop"}
-                  alt={fornecedor.nome_loja || fornecedor.nome || ""}
-                  className="w-full h-full object-cover transition-transform group-hover:scale-110"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent" />
-                <div className="absolute bottom-0 left-0 p-3 w-full">
-                  <h3 className="text-white font-medium truncate">
-                    {fornecedor.nome_loja || fornecedor.nome || "Sem nome"}
-                  </h3>
-                </div>
-                
-                {isAdmin && (
-                  <Button
-                    variant="outline"
-                    size="icon"
-                    className="absolute top-2 right-2 bg-white/80 hover:bg-white opacity-0 group-hover:opacity-100 transition-opacity"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      setEditingFornecedor(fornecedor);
-                      setEditDialogOpen(true);
-                    }}
-                  >
-                    <Edit className="h-4 w-4" />
-                  </Button>
-                )}
+              <img
+                src={fornecedor.logo_url || "https://images.unsplash.com/photo-1488590528505-98d2b5aba04b"}
+                alt={fornecedor.nome_loja || fornecedor.nome || ""}
+                className="w-full h-44 object-cover"
+              />
+              <div className="p-3 flex flex-col items-center">
+                <h3 className="text-base font-semibold text-yellow-700 text-center truncate">
+                  {fornecedor.nome_loja || fornecedor.nome || "Sem nome"}
+                </h3>
               </div>
             </Card>
           ))}

@@ -28,7 +28,7 @@ export function FornecedorContato({ fornecedor }: FornecedorContatoProps) {
             href={formatWhatsAppLink(fornecedor.Whatsapp)}
             target="_blank"
             rel="noopener noreferrer"
-            className="flex items-center p-4 bg-emerald-500/10 text-emerald-600 rounded-lg hover:bg-emerald-500/20 transition-colors"
+            className="flex items-center p-4 bg-emerald-500/10 text-yellow-600 border-2 border-yellow-500 rounded-lg hover:bg-yellow-100 transition-colors"
           >
             <Phone className="h-6 w-6 mr-3" />
             <div>
@@ -43,7 +43,7 @@ export function FornecedorContato({ fornecedor }: FornecedorContatoProps) {
             href={formatInstagramLink(fornecedor.Instagram_url)}
             target="_blank"
             rel="noopener noreferrer"
-            className="flex items-center p-4 bg-purple-500/10 text-purple-600 rounded-lg hover:bg-purple-500/20 transition-colors"
+            className="flex items-center p-4 bg-purple-500/10 text-yellow-600 border-2 border-yellow-500 rounded-lg hover:bg-yellow-100 transition-colors"
           >
             <Instagram className="h-6 w-6 mr-3" />
             <div>
@@ -62,7 +62,7 @@ export function FornecedorContato({ fornecedor }: FornecedorContatoProps) {
             href={fornecedor.localizacao}
             target="_blank"
             rel="noopener noreferrer"
-            className="flex items-center p-4 bg-red-500/10 text-red-600 rounded-lg hover:bg-red-500/20 transition-colors"
+            className="flex items-center p-4 bg-red-500/10 text-yellow-600 border-2 border-yellow-500 rounded-lg hover:bg-yellow-100 transition-colors"
           >
             <MapPin className="h-6 w-6 mr-3" />
             <div>
@@ -75,3 +75,4 @@ export function FornecedorContato({ fornecedor }: FornecedorContatoProps) {
     </Card>
   );
 }
+

@@ -1,6 +1,6 @@
 
 import { Link } from "react-router-dom";
-import { ArrowLeft, Edit, MapPin } from "lucide-react";
+import { ArrowLeft, MapPin, Edit } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Fornecedor } from "@/lib/supabase";
 
@@ -18,7 +18,7 @@ export function FornecedorHeader({ fornecedor, isAdmin, onEditClick }: Fornecedo
   };
 
   return (
-    <header className="mb-6">
+    <header>
       <div className="flex items-center mb-4">
         <Link to={`/categoria/${fornecedor.categoria}`} className="text-primary mr-2">
           <ArrowLeft className="h-5 w-5" />
@@ -28,34 +28,12 @@ export function FornecedorHeader({ fornecedor, isAdmin, onEditClick }: Fornecedo
         </h1>
       </div>
 
-      <div className="relative rounded-xl overflow-hidden mb-6 shadow-lg">
+      <div className="relative rounded-xl overflow-hidden shadow-lg">
         <img
           src={fornecedor.foto_destaque || "https://source.unsplash.com/random/800x400/?shop"}
           alt={fornecedor.nome_loja || fornecedor.nome}
           className="w-full h-48 sm:h-56 md:h-64 object-cover"
         />
-        
-        <div className="absolute bottom-0 left-0 p-4 w-full flex items-end">
-          <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-full overflow-hidden bg-white p-1 mr-3 shadow-md">
-            <img
-              src={fornecedor.logo_url || "https://source.unsplash.com/random/100x100/?logo"}
-              alt={`Logo ${fornecedor.nome_loja || fornecedor.nome}`}
-              className="w-full h-full object-cover rounded-full"
-            />
-          </div>
-          <div className="flex-1">
-            <h2 className="text-white text-xl sm:text-2xl font-bold truncate">{fornecedor.nome_loja || fornecedor.nome}</h2>
-            {fornecedor.Endereco && (
-              <div 
-                className="flex items-center text-white/90 text-sm cursor-pointer hover:underline mt-1"
-                onClick={handleOpenMap}
-              >
-                <MapPin className="h-4 w-4 mr-1" />
-                <span className="line-clamp-1">{fornecedor.Endereco}</span>
-              </div>
-            )}
-          </div>
-        </div>
         
         {isAdmin && (
           <Button 

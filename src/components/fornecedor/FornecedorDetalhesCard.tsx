@@ -1,4 +1,3 @@
-
 import React from "react";
 import { Fornecedor } from "@/lib/supabase";
 import { Card } from "@/components/ui/card";
@@ -45,8 +44,8 @@ const FornecedorDetalhesCard: React.FC<Props> = ({ fornecedor, isAdmin, onEditCl
       {/* Cards de contato */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 w-full mb-8">
         {/* Whatsapp */}
-        <Card className="flex flex-col items-center border-2 border-[#009739] py-4 px-3 bg-white shadow-none">
-          <Phone className="h-6 w-6 mb-2 text-[#009739]" />
+        <div className="flex flex-col items-center gap-2">
+          <Phone className="h-6 w-6 text-[#009739]" />
           <Button
             variant="outline"
             className="border-[#009739] text-[#009739] hover:bg-green-100 w-full"
@@ -54,23 +53,23 @@ const FornecedorDetalhesCard: React.FC<Props> = ({ fornecedor, isAdmin, onEditCl
           >
             WhatsApp
           </Button>
-        </Card>
+        </div>
         
         {/* Instagram */}
-        <Card className="flex flex-col items-center border-2 border-[#009739] py-4 px-3 bg-white shadow-none">
-          <Instagram className="h-6 w-6 mb-2 text-[#009739]" />
+        <div className="flex flex-col items-center gap-2">
+          <Instagram className="h-6 w-6 text-[#009739]" />
           <Button
             variant="outline"
             className="border-[#009739] text-[#009739] hover:bg-green-100 w-full"
             onClick={() => window.open(`https://instagram.com/${fornecedor.Instagram_url?.replace(/^@/, "") || ""}`, "_blank")}
           >
-            {fornecedor.Instagram_url ? `@${fornecedor.Instagram_url.replace(/^@/, "")}` : "Perfil do Instagram"}
+            Perfil do fornecedor
           </Button>
-        </Card>
+        </div>
         
         {/* Endereço / Mapa */}
-        <Card className="flex flex-col items-center border-2 border-[#009739] py-4 px-3 bg-white shadow-none">
-          <MapPin className="h-6 w-6 mb-2 text-[#009739]" />
+        <div className="flex flex-col items-center gap-2">
+          <MapPin className="h-6 w-6 text-[#009739]" />
           <Button
             variant="outline"
             className="border-[#009739] text-[#009739] hover:bg-green-100 w-full"
@@ -79,7 +78,7 @@ const FornecedorDetalhesCard: React.FC<Props> = ({ fornecedor, isAdmin, onEditCl
           >
             Abrir Mapa
           </Button>
-        </Card>
+        </div>
       </div>
 
       {/* Mockup celular instagram */}

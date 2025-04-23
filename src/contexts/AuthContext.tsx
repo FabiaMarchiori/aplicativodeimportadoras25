@@ -1,4 +1,3 @@
-
 import { createContext, useContext, useEffect, useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import type { Database } from '@/integrations/supabase/types';
@@ -25,6 +24,27 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [profile, setProfile] = useState<Profile | null>(null);
   const [loading, setLoading] = useState(true);
   const [isAdmin, setIsAdmin] = useState(false);
+
+  async function fetchProfile(userId: string) {
+    try {
+      const { data, error } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('id', userId)
+        .maybeSingle();
+
+      if (error) {
+        throw error;
+      }
+      
+      setProfile(data);
+      setIsAdmin(data?.is_admin === true);
+    } catch (error) {
+      console.error('Error fetching profile:', error);
+      setProfile(null);
+      setIsAdmin(false);
+    }
+  }
 
   useEffect(() => {
     // Setup auth state change listener BEFORE fetching the session
@@ -57,34 +77,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     return () => subscription.unsubscribe();
   }, []);
 
-  async function fetchProfile(userId: string) {
-    try {
-      const { data, error } = await supabase
-        .from('profiles')
-        .select('*')
-        .eq('id', userId)
-        .maybeSingle();
-
-      if (error) {
-        throw error;
-      }
-      setProfile(data);
-      setIsAdmin(data?.is_admin === true);
-    } catch (error) {
-      setProfile(null);
-      setIsAdmin(false);
-    }
-  }
-
   const signIn = async (email: string, password: string) => {
     const { error } = await supabase.auth.signInWithPassword({ email, password });
     return { error };
   };
 
   const signUp = async (email: string, password: string) => {
-    // Sign up user with email and password
     const { data, error } = await supabase.auth.signUp({ email, password });
-    // The user row in 'profiles' should be created by trigger/function in your DB (handle_new_user)
     return { data, error };
   };
 

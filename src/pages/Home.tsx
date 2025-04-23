@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Categoria, supabase, mapCategoria } from "@/lib/supabase";
@@ -150,13 +151,15 @@ export default function Home() {
               className="cursor-pointer hover:scale-105 transition-transform"
               onClick={() => navigate(`/categoria/${encodeURIComponent(categoria.categoria)}`)}
             >
-              <div className="bg-white rounded-lg shadow-md overflow-hidden">
-                <img
-                  src={categoria.imagem_url || "https://source.unsplash.com/random/300x200/?shop"}
-                  alt={categoria.categoria}
-                  className="w-full h-48 object-cover"
-                />
-                <div className="p-4 text-center">
+              <div className="bg-white rounded-lg shadow-md overflow-hidden h-full flex flex-col">
+                <div className="w-full h-48 flex items-center justify-center p-4">
+                  <img
+                    src={categoria.imagem_url || "https://source.unsplash.com/random/300x200/?shop"}
+                    alt={categoria.categoria}
+                    className="max-w-full max-h-full object-contain rounded"
+                  />
+                </div>
+                <div className="p-4 text-center flex-grow flex items-center justify-center">
                   <h3 className="font-bold text-primary">{categoria.categoria}</h3>
                 </div>
               </div>

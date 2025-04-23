@@ -37,6 +37,7 @@ export type Database = {
           Endereco: string | null
           id: number
           Instagram_url: string | null
+          logo_url: string | null
           nome_loja: string | null
           Whatsapp: string | null
         }
@@ -46,6 +47,7 @@ export type Database = {
           Endereco?: string | null
           id?: number
           Instagram_url?: string | null
+          logo_url?: string | null
           nome_loja?: string | null
           Whatsapp?: string | null
         }
@@ -55,6 +57,7 @@ export type Database = {
           Endereco?: string | null
           id?: number
           Instagram_url?: string | null
+          logo_url?: string | null
           nome_loja?: string | null
           Whatsapp?: string | null
         }

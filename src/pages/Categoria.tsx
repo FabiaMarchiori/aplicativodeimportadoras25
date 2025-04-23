@@ -195,11 +195,13 @@ export default function Categoria() {
               className="overflow-hidden cursor-pointer group border-2 border-yellow-400 rounded-xl bg-white shadow transition-all hover:shadow-lg"
               onClick={() => navigate(`/fornecedor/${fornecedor.id}`)}
             >
-              <img
-                src={fornecedor.logo_url || "https://images.unsplash.com/photo-1488590528505-98d2b5aba04b"}
-                alt={fornecedor.nome_loja || fornecedor.nome || ""}
-                className="w-full h-44 object-cover"
-              />
+              <div className="w-full h-44 flex items-center justify-center p-4">
+                <img
+                  src={fornecedor.logo_url || "/placeholder.svg"}
+                  alt={`Logo ${fornecedor.nome_loja || fornecedor.nome || ""}`}
+                  className="max-w-full max-h-full object-contain rounded"
+                />
+              </div>
               <div className="p-3 flex flex-col items-center">
                 <h3 className="text-base font-semibold text-yellow-700 text-center truncate">
                   {fornecedor.nome_loja || fornecedor.nome || "Sem nome"}

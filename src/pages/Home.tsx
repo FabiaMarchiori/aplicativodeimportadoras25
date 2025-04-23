@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Categoria, supabase, mapCategoria } from "@/lib/supabase";
 import { useAuth } from "@/contexts/AuthContext";
 import FloatingActionButton from "@/components/FloatingActionButton";
@@ -19,6 +19,7 @@ export default function Home() {
   const [uploading, setUploading] = useState(false);
   const { isAdmin } = useAuth();
   const { toast } = useToast();
+  const navigate = useNavigate();
 
   useEffect(() => {
     fetchCategorias();
@@ -129,38 +130,42 @@ export default function Home() {
 
   return (
     <div className="page-container fade-in">
-      <header className="mb-8 text-center">
-        <h1 className="text-3xl font-bold text-primary font-heading mb-2">FornecedorHub</h1>
-        <p className="text-muted-foreground mb-6">Encontre os melhores fornecedores</p>
-      </header>
+      {/* New Banner Section */}
+      <div className="bg-white rounded-lg shadow-md mb-8 p-6 text-center">
+        <h1 className="text-3xl font-bold text-primary mb-4">Importadoras da 25 de Março</h1>
+        <p className="text-muted-foreground max-w-2xl mx-auto leading-relaxed">
+          Explore nossa seleção exclusiva de fornecedores da região da 25 de Março, organizados por categorias para facilitar sua busca. Encontre tudo o que precisa para seu negócio em um só lugar.
+        </p>
+      </div>
       
       {loading ? (
         <div className="flex justify-center py-12">
           <Loader2 className="h-8 w-8 animate-spin text-primary" />
         </div>
       ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 px-2 mb-12">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
           {categorias.map((categoria) => (
-            <Link
-              key={categoria.id}
-              to={`/categoria/${categoria.categoria}`}
-              className="transition-transform hover:scale-105 outline-none"
+            <div 
+              key={categoria.id} 
+              className="cursor-pointer hover:scale-105 transition-transform"
+              onClick={() => navigate(`/categoria/${encodeURIComponent(categoria.categoria)}`)}
             >
-              <div className="flex flex-col items-center border-2 border-yellow-400 rounded-2xl shadow bg-white hover:shadow-lg transition-all">
+              <div className="bg-white rounded-lg shadow-md overflow-hidden">
                 <img
-                  src={categoria.imagem_url || "https://images.unsplash.com/photo-1488590528505-98d2b5aba04b"}
+                  src={categoria.imagem_url || "https://source.unsplash.com/random/300x200/?shop"}
                   alt={categoria.categoria}
-                  className="w-full h-44 object-cover rounded-t-2xl"
+                  className="w-full h-48 object-cover"
                 />
-                <div className="p-4 flex flex-col items-center">
-                  <h3 className="text-lg font-bold text-yellow-700 mb-1 text-center">{categoria.categoria}</h3>
+                <div className="p-4 text-center">
+                  <h3 className="font-bold text-primary">{categoria.categoria}</h3>
                 </div>
               </div>
-            </Link>
+            </div>
           ))}
         </div>
       )}
 
+      {/* Existing dialog for adding categories */}
       {isAdmin && (
         <>
           <FloatingActionButton onClick={() => setDialogOpen(true)} />

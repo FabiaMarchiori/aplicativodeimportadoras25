@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Categoria, supabase, mapCategoria } from "@/lib/supabase";
@@ -172,29 +171,29 @@ export default function Categorias() {
         </Link>
         <h1 className="text-2xl font-bold text-primary font-heading">Categorias</h1>
       </header>
+      
       {loading ? (
         <div className="flex justify-center py-12">
           <Loader2 className="h-8 w-8 animate-spin text-primary" />
         </div>
       ) : (
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-          {categorias.map((categoriaObj) => (
-            <div
-              key={categoriaObj.id}
-              className="card-hover rounded-lg overflow-hidden cursor-pointer group relative"
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
+          {categorias.map((categoria) => (
+            <div 
+              key={categoria.id} 
+              className="relative group cursor-pointer hover:scale-105 transition-transform"
             >
               <div 
-                className="aspect-square bg-muted relative overflow-hidden rounded-lg"
-                onClick={() => navigate(`/categoria/${encodeURIComponent(categoriaObj.categoria)}`)}
+                onClick={() => navigate(`/categoria/${encodeURIComponent(categoria.categoria)}`)}
+                className="bg-white rounded-lg shadow-md overflow-hidden"
               >
                 <img
-                  src={categoriaObj.imagem_url || "https://source.unsplash.com/random/300x200/?shop"}
-                  alt={categoriaObj.categoria}
-                  className="w-full h-full object-cover transition-transform group-hover:scale-105"
+                  src={categoria.imagem_url || "https://source.unsplash.com/random/300x200/?shop"}
+                  alt={categoria.categoria}
+                  className="w-full h-48 object-cover"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
-                <div className="absolute bottom-0 left-0 p-4 w-full">
-                  <h3 className="text-white font-semibold truncate">{categoriaObj.categoria}</h3>
+                <div className="p-4 text-center">
+                  <h3 className="font-bold text-primary">{categoria.categoria}</h3>
                 </div>
               </div>
               
@@ -205,7 +204,7 @@ export default function Categorias() {
                   className="absolute top-2 right-2 bg-white/80 hover:bg-white opacity-0 group-hover:opacity-100 transition-opacity"
                   onClick={(e) => {
                     e.stopPropagation();
-                    setEditingCategoria(categoriaObj);
+                    setEditingCategoria(categoria);
                     setEditDialogOpen(true);
                   }}
                 >
@@ -221,7 +220,7 @@ export default function Categorias() {
         <>
           <FloatingActionButton onClick={() => setAddDialogOpen(true)} />
           
-          {/* Dialog para adicionar nova categoria */}
+          {/* Dialog for adding a new category */}
           <Dialog open={addDialogOpen} onOpenChange={setAddDialogOpen}>
             <DialogContent>
               <DialogHeader>
@@ -297,7 +296,7 @@ export default function Categorias() {
             </DialogContent>
           </Dialog>
           
-          {/* Dialog para editar categoria existente */}
+          {/* Dialog for editing an existing category */}
           <Dialog open={editDialogOpen} onOpenChange={setEditDialogOpen}>
             <DialogContent>
               <DialogHeader>

@@ -59,8 +59,17 @@ export function FornecedorEditDialog({
             <Label htmlFor="nome">Nome do Fornecedor*</Label>
             <Input
               id="nome"
-              value={fornecedorEdit.nome || ""}
-              onChange={(e) => setFornecedorEdit({ ...fornecedorEdit, nome: e.target.value })}
+              value={fornecedorEdit.nome_loja || ""}
+              onChange={(e) => setFornecedorEdit({ ...fornecedorEdit, nome_loja: e.target.value })}
+            />
+          </div>
+          
+          <div className="space-y-2">
+            <Label htmlFor="categoria">Categoria</Label>
+            <Input
+              id="categoria"
+              value={fornecedorEdit.categoria || ""}
+              onChange={(e) => setFornecedorEdit({ ...fornecedorEdit, categoria: e.target.value })}
             />
           </div>
           
@@ -96,16 +105,6 @@ export function FornecedorEditDialog({
               onChange={(e) => setFornecedorEdit({ ...fornecedorEdit, Endereco: e.target.value })}
             />
           </div>
-          
-          <div className="space-y-2">
-            <Label htmlFor="localizacao">Localização (Google Maps)</Label>
-            <Input
-              id="localizacao"
-              placeholder="Link do Google Maps"
-              value={fornecedorEdit.localizacao || ""}
-              onChange={(e) => setFornecedorEdit({ ...fornecedorEdit, localizacao: e.target.value })}
-            />
-          </div>
 
           <ImageUploadField
             label="Logo"
@@ -126,7 +125,11 @@ export function FornecedorEditDialog({
         </div>
         <DialogFooter>
           <Button variant="outline" onClick={onClose}>Cancelar</Button>
-          <Button onClick={handleSave} disabled={uploading}>
+          <Button 
+            onClick={handleSave} 
+            disabled={uploading}
+            className="bg-[#009739] hover:bg-[#007a2e]"
+          >
             {uploading ? (
               <>
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
@@ -159,7 +162,7 @@ function ImageUploadField({ label, id, imageUrl, onUpload, uploading, isWide }: 
         <div 
           className={cn(
             "border-2 border-dashed rounded-md p-4 flex flex-col items-center justify-center gap-2",
-            "hover:border-primary/50 transition-colors cursor-pointer"
+            "hover:border-[#009739]/50 transition-colors cursor-pointer"
           )}
         >
           {imageUrl ? (

@@ -53,6 +53,7 @@ const DetalheFornecedor = () => {
         .from("fornecedores")
         .update({
           nome_loja: updatedFornecedor.nome_loja || updatedFornecedor.nome,
+          categoria: updatedFornecedor.categoria,
           Whatsapp: updatedFornecedor.Whatsapp,
           Instagram_url: updatedFornecedor.Instagram_url,
           Endereco: updatedFornecedor.Endereco,
@@ -85,7 +86,7 @@ const DetalheFornecedor = () => {
     <div className="page-container fade-in pb-24">
       {loading ? (
         <div className="flex justify-center py-12">
-          <Loader2 className="h-8 w-8 animate-spin text-primary" />
+          <Loader2 className="h-8 w-8 animate-spin text-[#009739]" />
         </div>
       ) : fornecedor ? (
         <>

@@ -1,3 +1,4 @@
+
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Fornecedor, supabase, mapFornecedor } from "@/lib/supabase";
@@ -13,9 +14,8 @@ const Categoria = () => {
 
   useEffect(() => {
     if (categoriaNome) {
-      fetchFornecedoresPorCategoria(categoriaNome);
+      fetchFornecedoresPorCategoria(decodeURIComponent(categoriaNome));
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [categoriaNome]);
 
   const fetchFornecedoresPorCategoria = async (categoria: string) => {
@@ -46,13 +46,13 @@ const Categoria = () => {
   };
 
   return (
-    <div className="page-container fade-in">
+    <div className="page-container fade-in bg-white">
       <h1 className="text-2xl font-bold text-center text-black mb-4">
-        {categoriaNome}
+        {decodeURIComponent(categoriaNome || "")}
       </h1>
       {loading ? (
         <div className="flex justify-center py-12">
-          <Loader2 className="h-8 w-8 animate-spin text-yellow-600" />
+          <Loader2 className="h-8 w-8 animate-spin text-black" />
         </div>
       ) : fornecedores.length > 0 ? (
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-6 mt-8">

@@ -1,3 +1,4 @@
+
 import React from "react";
 import { Fornecedor } from "@/lib/supabase";
 import { Card } from "@/components/ui/card";
@@ -17,80 +18,82 @@ const FornecedorDetalhesCard: React.FC<Props> = ({ fornecedor, isAdmin, onEditCl
     return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(address)}`;
   };
 
+  // Helper function to format the address for display
+  const formatAddress = (address: string | undefined) => {
+    if (!address) return "Endereço não informado";
+    return address;
+  };
+
+  // Get only the username part if the full URL is provided
+  const getInstagramUsername = (instagramUrl: string | undefined) => {
+    if (!instagramUrl) return "";
+    if (instagramUrl.startsWith("@")) return instagramUrl;
+    
+    // Extract username if it's a full URL
+    const match = instagramUrl.match(/instagram\.com\/([^/?]+)/);
+    return match ? `@${match[1]}` : instagramUrl;
+  };
+
   return (
     <div className="w-full max-w-2xl mx-auto flex flex-col items-center mt-6">
-      {/* Logo e informações do fornecedor */}
-      <div className="flex flex-col items-center mb-8">
-        <div className="relative w-28 h-28 mb-4">
-          <img
-            src={fornecedor.logo_url || "https://images.unsplash.com/photo-1488590528505-98d2b5aba04b"}
-            alt={`Logo ${fornecedor.nome_loja || fornecedor.nome}`}
-            className="w-28 h-28 rounded-full object-cover border-4 border-[#009739] shadow"
-          />
-          {isAdmin && (
-            <Button
-              size="sm"
-              className="absolute bottom-2 left-1/2 -translate-x-1/2 px-3 py-1 text-xs bg-white border border-[#009739] text-[#009739] shadow hover:bg-green-100"
-              onClick={onEditClick}
-            >
-              <ImageIcon className="w-4 h-4 mr-1" /> Enviar Imagem
-            </Button>
-          )}
-        </div>
-        <h2 className="text-2xl font-bold font-heading text-center mb-1 text-[#009739]">{fornecedor.nome_loja || fornecedor.nome}</h2>
-        <p className="text-gray-500 text-center text-sm mb-4">{fornecedor.categoria}</p>
-      </div>
-
-      {/* Cards de contato */}
+      {/* Contact cards - WhatsApp, Instagram, Address */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 w-full mb-8">
-        {/* Whatsapp */}
-        <div className="flex flex-col items-center gap-2">
-          <Phone className="h-6 w-6 text-[#009739]" />
+        {/* WhatsApp */}
+        <Card className="p-6 flex flex-col items-center gap-3 border-2 border-yellow-400">
+          <Phone className="h-8 w-8 text-yellow-600" />
           <Button
             variant="outline"
-            className="border-[#009739] text-[#009739] hover:bg-green-100 w-full"
+            className="border-yellow-500 text-yellow-600 hover:bg-yellow-50 w-full"
             onClick={() => window.open(`https://wa.me/${fornecedor.Whatsapp?.replace(/\D/g, "") || ""}`, "_blank")}
           >
-            WhatsApp
+            Abrir Conversa
           </Button>
-        </div>
+        </Card>
         
         {/* Instagram */}
-        <div className="flex flex-col items-center gap-2">
-          <Instagram className="h-6 w-6 text-[#009739]" />
+        <Card className="p-6 flex flex-col items-center gap-3 border-2 border-yellow-400">
+          <Instagram className="h-8 w-8 text-yellow-600" />
+          <p className="text-center font-medium text-sm">
+            {getInstagramUsername(fornecedor.Instagram_url)}
+          </p>
           <Button
             variant="outline"
-            className="border-[#009739] text-[#009739] hover:bg-green-100 w-full"
-            onClick={() => window.open(`https://instagram.com/${fornecedor.Instagram_url?.replace(/^@/, "") || ""}`, "_blank")}
+            className="border-yellow-500 text-yellow-600 hover:bg-yellow-50 w-full"
+            onClick={() => fornecedor.Instagram_url && window.open(fornecedor.Instagram_url, "_blank")}
+            disabled={!fornecedor.Instagram_url}
           >
-            Perfil do fornecedor
+            Ver Página
           </Button>
-        </div>
+        </Card>
         
         {/* Endereço / Mapa */}
-        <div className="flex flex-col items-center gap-2">
-          <MapPin className="h-6 w-6 text-[#009739]" />
+        <Card className="p-6 flex flex-col items-center gap-3 border-2 border-yellow-400">
+          <MapPin className="h-8 w-8 text-yellow-600" />
+          <p className="text-center text-sm">
+            {formatAddress(fornecedor.Endereco)}
+          </p>
           <Button
             variant="outline"
-            className="border-[#009739] text-[#009739] hover:bg-green-100 w-full"
+            className="border-yellow-500 text-yellow-600 hover:bg-yellow-50 w-full"
             onClick={() => fornecedor.Endereco && window.open(generateMapsUrl(fornecedor.Endereco), "_blank")}
             disabled={!fornecedor.Endereco}
           >
             Abrir Mapa
           </Button>
-        </div>
+        </Card>
       </div>
 
-      {/* Mockup celular instagram */}
+      {/* Mockup celular com a imagem do Instagram */}
       <div className="flex flex-col items-center w-full mt-4 mb-10">
-        <div className="w-[320px] h-[600px] rounded-xl border-2 border-black bg-gray-100 flex flex-col items-center justify-center shadow-lg relative">
+        <h2 className="text-xl text-yellow-600 font-medium mb-4">Instagram</h2>
+        <div className="w-[320px] h-[600px] rounded-xl border-4 border-yellow-400 bg-gray-100 flex flex-col items-center justify-center shadow-lg relative">
           {/* Notch */}
           <div className="absolute top-0 left-1/2 -translate-x-1/2 mt-2 w-28 h-4 rounded-b-2xl bg-black/80" />
-          {fornecedor.foto_destaque ? (
+          {fornecedor.mockup_url ? (
             <img
-              src={fornecedor.foto_destaque}
+              src={fornecedor.mockup_url}
               alt="Imagem do Instagram"
-              className="w-[270px] h-[480px] object-cover rounded-lg mt-8"
+              className="w-[270px] h-[480px] object-contain rounded-lg mt-8"
             />
           ) : (
             <div className="flex flex-col items-center justify-center w-full h-full opacity-40 mt-8">

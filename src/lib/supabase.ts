@@ -12,6 +12,7 @@ export type Fornecedor = {
   Endereco?: string;
   logo_url?: string;
   foto_destaque?: string;
+  mockup_url?: string;
   localizacao?: string;
   created_at: string;
 };
@@ -34,6 +35,7 @@ export const mapFornecedor = (dbFornecedor: any): Fornecedor => ({
   Endereco: dbFornecedor.Endereco,
   logo_url: dbFornecedor.logo_url || null,
   foto_destaque: dbFornecedor.foto_destaque || null,
+  mockup_url: dbFornecedor.mockup_url || null,
   localizacao: dbFornecedor.localizacao || null,
   created_at: dbFornecedor.created_at
 });

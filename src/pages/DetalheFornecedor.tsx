@@ -59,6 +59,7 @@ const DetalheFornecedor = () => {
           Endereco: updatedFornecedor.Endereco,
           logo_url: updatedFornecedor.logo_url,
           foto_destaque: updatedFornecedor.foto_destaque,
+          mockup_url: updatedFornecedor.mockup_url,
           localizacao: updatedFornecedor.localizacao
         })
         .eq("id", fornecedor?.id || 0);
@@ -86,7 +87,7 @@ const DetalheFornecedor = () => {
     <div className="page-container fade-in pb-24">
       {loading ? (
         <div className="flex justify-center py-12">
-          <Loader2 className="h-8 w-8 animate-spin text-[#009739]" />
+          <Loader2 className="h-8 w-8 animate-spin text-yellow-600" />
         </div>
       ) : fornecedor ? (
         <>

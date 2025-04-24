@@ -192,21 +192,19 @@ export default function Categoria() {
           {filteredFornecedores.map((fornecedor) => (
             <Card
               key={fornecedor.id}
-              className="overflow-hidden cursor-pointer group border-2 border-yellow-400 rounded-xl bg-white shadow transition-all hover:shadow-lg"
+              className="overflow-hidden cursor-pointer group p-4 flex flex-col items-center border-2 border-yellow-400 rounded-xl bg-white shadow transition-all hover:shadow-lg"
               onClick={() => navigate(`/fornecedor/${fornecedor.id}`)}
             >
-              <div className="w-full h-44 flex items-center justify-center p-4">
+              <div className="w-24 h-24 rounded-full border-4 border-yellow-400 flex items-center justify-center overflow-hidden mb-3">
                 <img
                   src={fornecedor.logo_url || "/placeholder.svg"}
                   alt={`Logo ${fornecedor.nome_loja || fornecedor.nome || ""}`}
-                  className="max-w-full max-h-full object-contain rounded"
+                  className="w-20 h-20 object-contain"
                 />
               </div>
-              <div className="p-3 flex flex-col items-center">
-                <h3 className="text-base font-semibold text-yellow-700 text-center truncate">
-                  {fornecedor.nome_loja || fornecedor.nome || "Sem nome"}
-                </h3>
-              </div>
+              <h3 className="text-base font-semibold text-yellow-700 text-center">
+                {fornecedor.nome_loja || fornecedor.nome || "Sem nome"}
+              </h3>
             </Card>
           ))}
         </div>

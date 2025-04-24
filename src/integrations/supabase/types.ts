@@ -38,6 +38,7 @@ export type Database = {
           id: number
           Instagram_url: string | null
           logo_url: string | null
+          mockup_url: string | null
           nome_loja: string | null
           Whatsapp: string | null
         }
@@ -48,6 +49,7 @@ export type Database = {
           id?: number
           Instagram_url?: string | null
           logo_url?: string | null
+          mockup_url?: string | null
           nome_loja?: string | null
           Whatsapp?: string | null
         }
@@ -58,6 +60,7 @@ export type Database = {
           id?: number
           Instagram_url?: string | null
           logo_url?: string | null
+          mockup_url?: string | null
           nome_loja?: string | null
           Whatsapp?: string | null
         }

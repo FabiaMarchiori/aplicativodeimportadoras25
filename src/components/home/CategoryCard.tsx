@@ -12,7 +12,7 @@ const CategoryCard = ({ categoria }: CategoryCardProps) => {
   return (
     <div 
       className="cursor-pointer hover:scale-105 transition-transform"
-      onClick={() => navigate(`/categoria/${encodeURIComponent(categoria.categoria)}`)}
+      onClick={() => navigate(`/categoria/${categoria.categoria}`)}
     >
       <div className="bg-white rounded-lg shadow-md overflow-hidden h-full flex flex-col border-2 border-black">
         <div className="w-full h-48 flex items-center justify-center p-4">

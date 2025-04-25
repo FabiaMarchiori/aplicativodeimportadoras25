@@ -1,3 +1,4 @@
+
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Fornecedor, supabase, mapFornecedor } from "@/lib/supabase";
@@ -52,7 +53,7 @@ const Categoria = () => {
       </h1>
       {loading ? (
         <div className="flex justify-center py-12">
-          <Loader2 className="h-8 w-8 animate-spin text-yellow-600" />
+          <Loader2 className="h-8 w-8 animate-spin text-black" />
         </div>
       ) : fornecedores.length > 0 ? (
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-6 mt-8">
@@ -76,7 +77,7 @@ const Categoria = () => {
           ))}
         </div>
       ) : (
-        <div className="text-center py-12 text-muted-foreground">
+        <div className="text-center py-12 text-black">
           <p className="text-lg">Nenhum fornecedor encontrado nesta categoria.</p>
         </div>
       )}

@@ -1,11 +1,14 @@
 
+import React from 'react';
+
 const HomeBanner = () => {
   return (
     <div className="bg-white rounded-lg shadow-md mb-8 p-6 text-center">
-      <h1 className="text-3xl font-bold text-primary mb-4">Importadoras da 25 de Março</h1>
-      <p className="text-muted-foreground max-w-2xl mx-auto leading-relaxed">
-        Explore nossa seleção exclusiva de fornecedores da região da 25 de Março, organizados por categorias para facilitar sua busca. Encontre tudo o que precisa para seu negócio em um só lugar.
-      </p>
+      <img 
+        src="/lovable-uploads/31b06368-3039-46b9-b933-fba7e884c198.png" 
+        alt="Importadoras da 25 de Março" 
+        className="w-full h-auto mb-4 rounded-lg"
+      />
     </div>
   );
 };

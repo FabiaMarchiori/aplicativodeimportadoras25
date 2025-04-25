@@ -160,7 +160,7 @@ export default function Categoria() {
   };
 
   return (
-    <div className="page-container fade-in">
+    <div className="page-container fade-in bg-white">
       <header className="mb-6">
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center">
@@ -192,17 +192,17 @@ export default function Categoria() {
           {filteredFornecedores.map((fornecedor) => (
             <Card
               key={fornecedor.id}
-              className="overflow-hidden cursor-pointer group p-4 flex flex-col items-center border-2 border-yellow-400 rounded-xl bg-white shadow transition-all hover:shadow-lg"
+              className="overflow-hidden cursor-pointer group p-4 flex flex-col items-center border-0 rounded-xl bg-white shadow transition-all hover:shadow-lg"
               onClick={() => navigate(`/fornecedor/${fornecedor.id}`)}
             >
-              <div className="w-24 h-24 rounded-full border-4 border-yellow-400 flex items-center justify-center overflow-hidden mb-3">
+              <div className="w-24 h-24 rounded-full border-4 border-[#D3B9B2] flex items-center justify-center overflow-hidden mb-3">
                 <img
                   src={fornecedor.logo_url || "/placeholder.svg"}
                   alt={`Logo ${fornecedor.nome_loja || fornecedor.nome || ""}`}
                   className="w-20 h-20 object-contain"
                 />
               </div>
-              <h3 className="text-base font-semibold text-yellow-700 text-center">
+              <h3 className="text-base font-semibold text-[#322523] text-center">
                 {fornecedor.nome_loja || fornecedor.nome || "Sem nome"}
               </h3>
             </Card>

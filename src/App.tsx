@@ -1,3 +1,4 @@
+
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -8,6 +9,7 @@ import { AdminBadge } from "./components/AdminBadge";
 import BottomNavigation from "./components/BottomNavigation";
 import Home from "./pages/Home";
 import Login from "./pages/Login";
+import ResetPassword from "./pages/ResetPassword";
 import Categorias from "./pages/Categorias";
 import Categoria from "./pages/Categoria";
 import DetalheFornecedor from "./pages/DetalheFornecedor";
@@ -28,6 +30,7 @@ function AppContent() {
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/login" element={<Login />} />
+          <Route path="/reset-password" element={<ResetPassword />} />
           <Route path="/categorias" element={<Categorias />} />
           <Route path="/categoria/:id" element={<Categoria />} />
           <Route path="/fornecedor/:id" element={<DetalheFornecedor />} />

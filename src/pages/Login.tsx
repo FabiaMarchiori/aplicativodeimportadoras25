@@ -10,6 +10,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { AlertCircle } from "lucide-react";
 import { toast } from "@/components/ui/use-toast";
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { supabase } from "@/integrations/supabase/client";
 
 export default function Login() {
   const [isLoading, setIsLoading] = useState(false);
@@ -17,6 +19,9 @@ export default function Login() {
   const navigate = useNavigate();
   const location = useLocation();
   const { signIn, signUp, user } = useAuth();
+  const [forgotPasswordOpen, setForgotPasswordOpen] = useState(false);
+  const [resetEmail, setResetEmail] = useState("");
+  const [isResettingPassword, setIsResettingPassword] = useState(false);
 
   // Form data para login
   const [loginData, setLoginData] = useState({
@@ -102,6 +107,35 @@ export default function Login() {
     setIsLoading(false);
   };
 
+  const handleForgotPassword = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsResettingPassword(true);
+    setError("");
+
+    try {
+      const { error } = await supabase.auth.resetPasswordForEmail(resetEmail, {
+        redirectTo: `${window.location.origin}/reset-password`,
+      });
+
+      if (error) {
+        throw error;
+      }
+
+      toast({
+        title: "E-mail enviado",
+        description: "Verifique sua caixa de entrada para redefinir sua senha.",
+        duration: 5000
+      });
+      
+      setForgotPasswordOpen(false);
+    } catch (error: any) {
+      console.error("Erro ao enviar e-mail de recuperação:", error);
+      setError(error.message || "Erro ao solicitar redefinição de senha");
+    } finally {
+      setIsResettingPassword(false);
+    }
+  };
+
   return (
     <div className="page-container flex flex-col items-center justify-center min-h-screen p-4 fade-in">
       <div className="w-full max-w-md">
@@ -146,9 +180,14 @@ export default function Login() {
                   <div className="space-y-2">
                     <div className="flex items-center justify-between">
                       <Label htmlFor="password">Senha</Label>
-                      <Link to="/recuperar-senha" className="text-xs text-primary hover:underline">
+                      <Button 
+                        type="button" 
+                        variant="link" 
+                        className="p-0 h-auto text-xs text-primary hover:underline"
+                        onClick={() => setForgotPasswordOpen(true)}
+                      >
                         Esqueceu a senha?
-                      </Link>
+                      </Button>
                     </div>
                     <Input
                       id="password"
@@ -226,6 +265,57 @@ export default function Login() {
           </TabsContent>
         </Tabs>
       </div>
+
+      {/* Modal de Esqueci minha senha */}
+      <Dialog open={forgotPasswordOpen} onOpenChange={setForgotPasswordOpen}>
+        <DialogContent className="sm:max-w-[425px]">
+          <DialogHeader>
+            <DialogTitle>Recuperar senha</DialogTitle>
+            <DialogDescription>
+              Digite seu e-mail para receber um link de redefinição de senha.
+            </DialogDescription>
+          </DialogHeader>
+          <form onSubmit={handleForgotPassword}>
+            <div className="grid gap-4 py-4">
+              {error && (
+                <Alert variant="destructive">
+                  <AlertCircle className="h-4 w-4" />
+                  <AlertDescription>{error}</AlertDescription>
+                </Alert>
+              )}
+              <div className="grid grid-cols-4 items-center gap-4">
+                <Label htmlFor="reset-email" className="col-span-4">
+                  E-mail
+                </Label>
+                <Input
+                  id="reset-email"
+                  type="email"
+                  placeholder="seu@email.com"
+                  value={resetEmail}
+                  onChange={(e) => setResetEmail(e.target.value)}
+                  className="col-span-4"
+                  required
+                />
+              </div>
+            </div>
+            <DialogFooter>
+              <Button 
+                type="button" 
+                variant="outline" 
+                onClick={() => setForgotPasswordOpen(false)}
+              >
+                Cancelar
+              </Button>
+              <Button 
+                type="submit" 
+                disabled={isResettingPassword}
+              >
+                {isResettingPassword ? "Enviando..." : "Enviar link"}
+              </Button>
+            </DialogFooter>
+          </form>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

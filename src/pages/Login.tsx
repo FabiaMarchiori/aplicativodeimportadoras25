@@ -1,6 +1,6 @@
 
-import { useState } from "react";
-import { useNavigate, Link } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { useNavigate, Link, useLocation } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -9,12 +9,14 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { AlertCircle } from "lucide-react";
+import { toast } from "@/components/ui/use-toast";
 
 export default function Login() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
   const navigate = useNavigate();
-  const { signIn, signUp } = useAuth();
+  const location = useLocation();
+  const { signIn, signUp, user } = useAuth();
 
   // Form data para login
   const [loginData, setLoginData] = useState({
@@ -29,6 +31,14 @@ export default function Login() {
     confirmPassword: ""
   });
 
+  // Redirect if already logged in
+  useEffect(() => {
+    if (user) {
+      const from = location.state?.from?.pathname || '/';
+      navigate(from, { replace: true });
+    }
+  }, [user, navigate, location]);
+
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
@@ -37,10 +47,17 @@ export default function Login() {
     const { error } = await signIn(loginData.email, loginData.password);
     
     if (error) {
-      setError("E-mail ou senha inválidos");
+      console.error("Login error:", error);
+      setError(error.message || "E-mail ou senha inválidos");
       setIsLoading(false);
       return;
     }
+
+    toast({
+      title: "Login bem-sucedido",
+      description: "Você foi autenticado com sucesso.",
+      duration: 3000
+    });
 
     setIsLoading(false);
     navigate("/");
@@ -57,7 +74,7 @@ export default function Login() {
       return;
     }
 
-    const { error } = await signUp(registerData.email, registerData.password);
+    const { error, data } = await signUp(registerData.email, registerData.password);
     
     if (error) {
       setError(error.message || "Erro ao criar conta");
@@ -65,8 +82,24 @@ export default function Login() {
       return;
     }
 
+    if (data) {
+      toast({
+        title: "Registro bem-sucedido",
+        description: "Sua conta foi criada. Verifique seu e-mail para confirmar o registro.",
+        duration: 5000
+      });
+      
+      // Switch to login tab after successful registration
+      const tabsElement = document.querySelector('[role="tablist"]');
+      if (tabsElement) {
+        const loginTab = tabsElement.querySelector('[data-state="inactive"][value="login"]');
+        if (loginTab instanceof HTMLElement) {
+          loginTab.click();
+        }
+      }
+    }
+
     setIsLoading(false);
-    navigate("/");
   };
 
   return (

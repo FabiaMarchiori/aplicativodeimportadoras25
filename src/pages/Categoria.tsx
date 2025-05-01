@@ -6,6 +6,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import SearchHeader from "@/components/categoria/SearchHeader";
 import FornecedorGrid from "@/components/categoria/FornecedorGrid";
 import EditFornecedorDialog from "@/components/categoria/EditFornecedorDialog";
+import CategoriaBanner from "@/components/categoria/CategoriaBanner";
 import { useCategoriaData } from "@/hooks/useCategoriaData";
 
 export default function Categoria() {
@@ -25,6 +26,8 @@ export default function Categoria() {
 
   return (
     <div className="page-container fade-in bg-white">
+      <CategoriaBanner />
+      
       <SearchHeader 
         categoria={categoria} 
         loading={loading} 

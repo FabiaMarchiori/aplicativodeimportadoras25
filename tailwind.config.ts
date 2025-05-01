@@ -1,3 +1,4 @@
+
 import type { Config } from "tailwindcss";
 
 export default {
@@ -58,6 +59,8 @@ export default {
 				},
                 petrol: '#0F4C75',
                 emerald: '#3AAFA9',
+                cyanBlue: '#3CBBC7',
+                vibrantYellow: '#FBE02F',
 				sidebar: {
 					DEFAULT: 'hsl(var(--sidebar-background))',
 					foreground: 'hsl(var(--sidebar-foreground))',

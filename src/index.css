@@ -1,3 +1,4 @@
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -13,16 +14,16 @@
     --popover: 0 0% 100%;
     --popover-foreground: 222.2 84% 4.9%;
 
-    --primary: 202 75% 26%;
-    --primary-foreground: 210 40% 98%;
+    --primary: 187 54% 51%;
+    --primary-foreground: 0 0% 100%;
 
-    --secondary: 174 48% 46%;
+    --secondary: 54 96% 59%;
     --secondary-foreground: 222.2 47.4% 11.2%;
 
     --muted: 210 40% 96.1%;
     --muted-foreground: 215.4 16.3% 46.9%;
 
-    --accent: 174 48% 46%;
+    --accent: 54 96% 59%;
     --accent-foreground: 222.2 47.4% 11.2%;
 
     --destructive: 0 84.2% 60.2%;
@@ -30,7 +31,7 @@
 
     --border: 214.3 31.8% 91.4%;
     --input: 214.3 31.8% 91.4%;
-    --ring: 202 75% 26%;
+    --ring: 187 54% 51%;
 
     --radius: 0.75rem;
 
@@ -110,7 +111,7 @@
   }
 
   .nav-icon {
-    @apply h-6 w-6 text-muted-foreground group-hover:text-primary;
+    @apply h-6 w-6 text-foreground group-hover:text-foreground;
   }
 
   .fade-in {

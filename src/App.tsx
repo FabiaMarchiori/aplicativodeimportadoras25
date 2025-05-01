@@ -18,6 +18,9 @@ import Favoritos from "./pages/Favoritos";
 import Perfil from "./pages/Perfil";
 import NotFound from "./pages/NotFound";
 
+// Atualizando o título do documento
+document.title = "Lista de Importadora da 25 de Março";
+
 const queryClient = new QueryClient();
 
 function AppContent() {

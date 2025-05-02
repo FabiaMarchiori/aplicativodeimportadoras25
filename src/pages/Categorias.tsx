@@ -165,6 +165,15 @@ export default function Categorias() {
 
   return (
     <div className="page-container fade-in">
+      {/* Novo banner na página de categorias */}
+      <div className="bg-white rounded-lg shadow-md mb-6 p-6 text-center">
+        <img 
+          src="/lovable-uploads/c92ac12e-7146-412e-a111-d65792a2ef9b.png" 
+          alt="Importadoras da 25 de Março" 
+          className="w-full h-auto rounded-lg"
+        />
+      </div>
+
       <header className="flex items-center mb-6">
         <Link to="/" className="text-primary mr-2">
           <ArrowLeft className="h-5 w-5" />

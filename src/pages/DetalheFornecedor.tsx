@@ -87,7 +87,7 @@ const DetalheFornecedor = () => {
     <div className="page-container fade-in pb-24">
       {loading ? (
         <div className="flex justify-center py-12">
-          <Loader2 className="h-8 w-8 animate-spin text-yellow-600" />
+          <Loader2 className="h-8 w-8 animate-spin text-[#3CBBC7]" />
         </div>
       ) : fornecedor ? (
         <>

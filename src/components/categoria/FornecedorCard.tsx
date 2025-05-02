@@ -11,20 +11,20 @@ export default function FornecedorCard({ fornecedor }: FornecedorCardProps) {
   const navigate = useNavigate();
   
   return (
-    <Card
-      className="overflow-hidden cursor-pointer group p-4 flex flex-col items-center border-0 rounded-xl bg-white shadow transition-all hover:shadow-lg"
+    <div
+      className="cursor-pointer group flex flex-col items-center"
       onClick={() => navigate(`/fornecedor/${fornecedor.id}`)}
     >
-      <div className="w-24 h-24 rounded-full border-4 border-[#D3B9B2] flex items-center justify-center overflow-hidden mb-3">
+      <div className="w-32 h-32 md:w-36 md:h-36 rounded-full border-4 border-[#3CBBC7] flex items-center justify-center overflow-hidden mb-3 transition-transform duration-300 hover:scale-110">
         <img
           src={fornecedor.logo_url || "/placeholder.svg"}
           alt={`Logo ${fornecedor.nome_loja || fornecedor.nome || ""}`}
-          className="w-20 h-20 object-contain"
+          className="w-full h-full object-cover"
         />
       </div>
-      <h3 className="text-base font-semibold text-[#322523] text-center">
+      <h3 className="text-base font-semibold text-center text-[#322523] mt-2">
         {fornecedor.nome_loja || fornecedor.nome || "Sem nome"}
       </h3>
-    </Card>
+    </div>
   );
 }

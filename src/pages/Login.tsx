@@ -140,7 +140,7 @@ export default function Login() {
     <div className="page-container flex flex-col items-center justify-center min-h-screen p-4 fade-in">
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
-          <h1 className="text-2xl font-bold text-primary">FornecedorHub</h1>
+          <h1 className="text-2xl font-bold text-primary">Importadoras da 25 de Março</h1>
           <p className="text-muted-foreground">Seu diretório de fornecedores</p>
         </div>
 

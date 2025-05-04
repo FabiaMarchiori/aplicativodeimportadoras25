@@ -3,10 +3,10 @@ import React from 'react';
 
 const SearchBanner = () => {
   return (
-    <div className="bg-white rounded-lg shadow-md mb-6 p-6 text-center">
+    <div className="mb-6 text-center">
       <img 
-        src="/lovable-uploads/624f60f9-b6b7-41ba-94f8-07c39283cb5c.png" 
-        alt="Buscar Fornecedores" 
+        src="/lovable-uploads/4c5afb76-8ad2-49aa-b0ab-9c672bc8e692.png" 
+        alt="Importadoras da 25 de Março" 
         className="w-full h-auto rounded-lg"
       />
     </div>

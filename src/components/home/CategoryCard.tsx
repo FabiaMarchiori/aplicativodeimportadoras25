@@ -19,7 +19,7 @@ const CategoryCard = ({ categoria }: CategoryCardProps) => {
           <img
             src={categoria.imagem_url || "https://source.unsplash.com/random/300x200/?shop"}
             alt={categoria.categoria}
-            className="max-w-full max-h-full object-contain rounded"
+            className="max-w-full max-h-full object-contain"
           />
         </div>
         <div className="text-center">

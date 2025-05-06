@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Categoria, supabase, mapCategoria } from "@/lib/supabase";
@@ -166,11 +167,11 @@ export default function Categorias() {
   return (
     <div className="page-container fade-in">
       {/* Novo banner na página de categorias */}
-      <div className="bg-white rounded-lg shadow-md mb-6 p-6 text-center">
+      <div className="bg-white mb-6 p-0 text-center">
         <img 
           src="/lovable-uploads/c92ac12e-7146-412e-a111-d65792a2ef9b.png" 
           alt="Importadoras da 25 de Março" 
-          className="w-full h-auto rounded-lg"
+          className="w-full h-auto"
         />
       </div>
 
@@ -194,15 +195,17 @@ export default function Categorias() {
             >
               <div 
                 onClick={() => navigate(`/categoria/${encodeURIComponent(categoria.categoria)}`)}
-                className="bg-white rounded-lg shadow-md overflow-hidden"
+                className="flex flex-col items-center"
               >
-                <img
-                  src={categoria.imagem_url || "https://source.unsplash.com/random/300x200/?shop"}
-                  alt={categoria.categoria}
-                  className="w-full h-48 object-cover"
-                />
-                <div className="p-4 text-center">
-                  <h3 className="font-bold text-primary">{categoria.categoria}</h3>
+                <div className="w-full h-48 flex items-center justify-center">
+                  <img
+                    src={categoria.imagem_url || "https://source.unsplash.com/random/300x200/?shop"}
+                    alt={categoria.categoria}
+                    className="max-w-full max-h-full object-contain"
+                  />
+                </div>
+                <div className="p-2 text-center">
+                  <h3 className="font-bold text-[#3CBBC7]">{categoria.categoria}</h3>
                 </div>
               </div>
               

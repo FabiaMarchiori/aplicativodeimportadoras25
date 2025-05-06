@@ -39,11 +39,11 @@ const FornecedorDetalhesCard: React.FC<Props> = ({ fornecedor, isAdmin, onEditCl
       {/* Contact cards - WhatsApp, Instagram, Address */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 w-full mb-8">
         {/* WhatsApp */}
-        <Card className="p-6 flex flex-col items-center gap-3 border-2 border-[#3CBBC7]">
-          <Phone className="h-8 w-8 text-[#3CBBC7]" />
+        <Card className="p-6 flex flex-col items-center gap-3 bg-[#3CBBC7] border-none">
+          <Phone className="h-8 w-8 text-white" />
           <Button
             variant="outline"
-            className="border-[#3CBBC7] text-[#322523] hover:bg-[#FBE02F]/20 w-full hover:border-[#FBE02F]"
+            className="border-white text-white bg-transparent hover:bg-white/20 w-full hover:text-white"
             onClick={() => window.open(`https://wa.me/${fornecedor.Whatsapp?.replace(/\D/g, "") || ""}`, "_blank")}
           >
             Abrir Conversa
@@ -51,14 +51,14 @@ const FornecedorDetalhesCard: React.FC<Props> = ({ fornecedor, isAdmin, onEditCl
         </Card>
         
         {/* Instagram */}
-        <Card className="p-6 flex flex-col items-center gap-3 border-2 border-[#3CBBC7]">
-          <Instagram className="h-8 w-8 text-[#3CBBC7]" />
-          <p className="text-center font-medium text-sm text-[#322523]">
+        <Card className="p-6 flex flex-col items-center gap-3 bg-[#3CBBC7] border-none">
+          <Instagram className="h-8 w-8 text-white" />
+          <p className="text-center font-medium text-sm text-white">
             {getInstagramUsername(fornecedor.Instagram_url)}
           </p>
           <Button
             variant="outline"
-            className="border-[#3CBBC7] text-[#322523] hover:bg-[#FBE02F]/20 w-full hover:border-[#FBE02F]"
+            className="border-white text-white bg-transparent hover:bg-white/20 w-full hover:text-white"
             onClick={() => fornecedor.Instagram_url && window.open(fornecedor.Instagram_url, "_blank")}
             disabled={!fornecedor.Instagram_url}
           >
@@ -67,14 +67,14 @@ const FornecedorDetalhesCard: React.FC<Props> = ({ fornecedor, isAdmin, onEditCl
         </Card>
         
         {/* Endereço / Mapa */}
-        <Card className="p-6 flex flex-col items-center gap-3 border-2 border-[#3CBBC7]">
-          <MapPin className="h-8 w-8 text-[#3CBBC7]" />
-          <p className="text-center text-sm text-[#322523]">
+        <Card className="p-6 flex flex-col items-center gap-3 bg-[#3CBBC7] border-none">
+          <MapPin className="h-8 w-8 text-white" />
+          <p className="text-center text-sm text-white">
             {formatAddress(fornecedor.Endereco)}
           </p>
           <Button
-            variant="outline"
-            className="border-[#3CBBC7] text-[#322523] hover:bg-[#FBE02F]/20 w-full hover:border-[#FBE02F]"
+            variant="outline" 
+            className="border-white text-white bg-transparent hover:bg-white/20 w-full hover:text-white"
             onClick={() => fornecedor.Endereco && window.open(generateMapsUrl(fornecedor.Endereco), "_blank")}
             disabled={!fornecedor.Endereco}
           >

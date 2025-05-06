@@ -14,7 +14,7 @@ export function FornecedorInstagram({ fornecedor }: FornecedorInstagramProps) {
   };
 
   return (
-    <Card className="overflow-hidden h-full">
+    <Card className="overflow-hidden h-full bg-white">
       {fornecedor.Instagram_url ? (
         <div className="relative h-full flex flex-col">
           {/* Mockup do celular */}

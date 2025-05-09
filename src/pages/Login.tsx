@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { useNavigate, Link, useLocation } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
@@ -39,6 +38,7 @@ export default function Login() {
   // Redirect if already logged in
   useEffect(() => {
     if (user) {
+      // Redirect to the page the user was trying to access, or home if none
       const from = location.state?.from?.pathname || '/';
       navigate(from, { replace: true });
     }

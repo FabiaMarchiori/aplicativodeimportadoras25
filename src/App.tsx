@@ -7,6 +7,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider, useAuth } from "./contexts/AuthContext";
 import { AdminBadge } from "./components/AdminBadge";
 import BottomNavigation from "./components/BottomNavigation";
+import PrivateRoute from "./components/PrivateRoute";
 import Home from "./pages/Home";
 import Login from "./pages/Login";
 import ResetPassword from "./pages/ResetPassword";
@@ -31,16 +32,51 @@ function AppContent() {
       {isAdmin && <AdminBadge />}
       <div className="pb-16">
         <Routes>
-          <Route path="/" element={<Home />} />
+          {/* Rotas públicas */}
           <Route path="/login" element={<Login />} />
           <Route path="/reset-password" element={<ResetPassword />} />
-          <Route path="/categorias" element={<Categorias />} />
-          <Route path="/categoria/:id" element={<Categoria />} />
-          <Route path="/fornecedor/:id" element={<DetalheFornecedor />} />
-          <Route path="/buscar" element={<Busca />} />
-          <Route path="/favoritos" element={<Favoritos />} />
-          <Route path="/perfil" element={<Perfil />} />
-          <Route path="*" element={<NotFound />} />
+          
+          {/* Rotas privadas (protegidas) */}
+          <Route path="/" element={
+            <PrivateRoute>
+              <Home />
+            </PrivateRoute>
+          } />
+          <Route path="/categorias" element={
+            <PrivateRoute>
+              <Categorias />
+            </PrivateRoute>
+          } />
+          <Route path="/categoria/:id" element={
+            <PrivateRoute>
+              <Categoria />
+            </PrivateRoute>
+          } />
+          <Route path="/fornecedor/:id" element={
+            <PrivateRoute>
+              <DetalheFornecedor />
+            </PrivateRoute>
+          } />
+          <Route path="/buscar" element={
+            <PrivateRoute>
+              <Busca />
+            </PrivateRoute>
+          } />
+          <Route path="/favoritos" element={
+            <PrivateRoute>
+              <Favoritos />
+            </PrivateRoute>
+          } />
+          <Route path="/perfil" element={
+            <PrivateRoute>
+              <Perfil />
+            </PrivateRoute>
+          } />
+          <Route path="*" element={
+            <PrivateRoute>
+              <NotFound />
+            </PrivateRoute>
+          } />
         </Routes>
       </div>
       <BottomNavigation />

@@ -33,19 +33,17 @@ export default function BottomNavigation() {
           label="Buscar" 
           active={isActive('/buscar')}
         />
-        {user && (
-          <NavItem 
-            to="/favoritos" 
-            icon={<Heart className="nav-icon" />} 
-            label="Favoritos" 
-            active={isActive('/favoritos')}
-          />
-        )}
         <NavItem 
-          to={user ? "/perfil" : "/login"} 
+          to="/favoritos" 
+          icon={<Heart className="nav-icon" />} 
+          label="Favoritos" 
+          active={isActive('/favoritos')}
+        />
+        <NavItem 
+          to="/perfil" 
           icon={<User className="nav-icon" />} 
-          label={user ? "Perfil" : "Login"} 
-          active={isActive('/perfil') || isActive('/login')}
+          label="Perfil" 
+          active={isActive('/perfil')}
         />
       </div>
     </nav>

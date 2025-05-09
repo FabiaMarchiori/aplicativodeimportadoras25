@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { Fornecedor, supabase, mapFornecedor } from "@/lib/supabase";
@@ -64,17 +63,7 @@ export default function Favoritos() {
         <p className="text-muted-foreground">Fornecedores que você salvou</p>
       </header>
 
-      {!user ? (
-        <div className="text-center py-12">
-          <Heart className="h-12 w-12 mx-auto text-muted-foreground/50 mb-4" />
-          <p className="text-muted-foreground mb-4">
-            Faça login para ver seus fornecedores favoritos
-          </p>
-          <Button asChild>
-            <Link to="/login">Login</Link>
-          </Button>
-        </div>
-      ) : loading ? (
+      {loading ? (
         <div className="flex justify-center py-12">
           <Loader2 className="h-8 w-8 animate-spin text-primary" />
         </div>

@@ -14,16 +14,16 @@
     --popover: 0 0% 100%;
     --popover-foreground: 222.2 84% 4.9%;
 
-    --primary: 187 54% 51%;
+    --primary: 187 54% 57%; /* Ajustado para #5FB9C3 */
     --primary-foreground: 0 0% 100%;
 
-    --secondary: 54 96% 59%;
+    --secondary: 48 94% 55%; /* Ajustado para #F9C820 */
     --secondary-foreground: 222.2 47.4% 11.2%;
 
     --muted: 210 40% 96.1%;
     --muted-foreground: 215.4 16.3% 46.9%;
 
-    --accent: 54 96% 59%;
+    --accent: 48 94% 55%; /* Ajustado para #F9C820 */
     --accent-foreground: 222.2 47.4% 11.2%;
 
     --destructive: 0 84.2% 60.2%;
@@ -31,7 +31,7 @@
 
     --border: 214.3 31.8% 91.4%;
     --input: 214.3 31.8% 91.4%;
-    --ring: 187 54% 51%;
+    --ring: 187 54% 57%; /* Ajustado para #5FB9C3 */
 
     --radius: 0.75rem;
 
@@ -114,6 +114,24 @@
     @apply h-6 w-6 text-foreground group-hover:text-foreground;
   }
 
+  /* Estilos específicos para as páginas de autenticação */
+  .login-container {
+    @apply bg-[#5FB9C3] text-white min-h-screen;
+  }
+
+  .login-card {
+    @apply bg-[#5FB9C3] text-white border-white/10;
+  }
+
+  .register-container {
+    @apply bg-[#1981A7] text-white min-h-screen;
+  }
+
+  .register-card {
+    @apply bg-[#1981A7] text-white border-white/10;
+  }
+
+  /* Outras utilitárias */
   .fade-in {
     animation: fadeIn 0.5s ease-in-out;
   }

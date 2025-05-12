@@ -59,8 +59,8 @@ export default {
 				},
                 petrol: '#0F4C75',
                 emerald: '#3AAFA9',
-                cyanBlue: '#3CBBC7',
-                vibrantYellow: '#FBE02F',
+                cyanBlue: '#5FB9C3',  // Atualizado para a nova cor azul
+                vibrantYellow: '#F9C820', // Atualizado para a nova cor amarela
 				sidebar: {
 					DEFAULT: 'hsl(var(--sidebar-background))',
 					foreground: 'hsl(var(--sidebar-foreground))',

@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { useNavigate, Link, useLocation } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
@@ -21,6 +22,7 @@ export default function Login() {
   const [forgotPasswordOpen, setForgotPasswordOpen] = useState(false);
   const [resetEmail, setResetEmail] = useState("");
   const [isResettingPassword, setIsResettingPassword] = useState(false);
+  const [activeTab, setActiveTab] = useState("login");
 
   // Form data para login
   const [loginData, setLoginData] = useState({
@@ -95,13 +97,7 @@ export default function Login() {
       });
       
       // Switch to login tab after successful registration
-      const tabsElement = document.querySelector('[role="tablist"]');
-      if (tabsElement) {
-        const loginTab = tabsElement.querySelector('[data-state="inactive"][value="login"]');
-        if (loginTab instanceof HTMLElement) {
-          loginTab.click();
-        }
-      }
+      setActiveTab("login");
     }
 
     setIsLoading(false);
@@ -136,25 +132,43 @@ export default function Login() {
     }
   };
 
+  // Determinar classes com base na guia ativa
+  const containerClass = activeTab === "login" ? "login-container" : "register-container";
+
   return (
-    <div className="page-container flex flex-col items-center justify-center min-h-screen p-4 fade-in">
+    <div className={`flex flex-col items-center justify-center min-h-screen p-4 fade-in ${containerClass}`}>
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
-          <h1 className="text-2xl font-bold text-primary">Importadoras da 25 de Março</h1>
-          <p className="text-muted-foreground">Seu diretório de fornecedores</p>
+          <h1 className="text-2xl font-bold text-white">Importadoras da 25 de Março</h1>
+          <p className="text-white opacity-90">Seu diretório de fornecedores</p>
         </div>
 
-        <Tabs defaultValue="login" className="w-full">
-          <TabsList className="grid w-full grid-cols-2">
-            <TabsTrigger value="login">Login</TabsTrigger>
-            <TabsTrigger value="register">Cadastro</TabsTrigger>
+        <Tabs 
+          defaultValue="login" 
+          value={activeTab}
+          onValueChange={setActiveTab}
+          className="w-full"
+        >
+          <TabsList className="grid w-full grid-cols-2 bg-white/10 text-white">
+            <TabsTrigger 
+              value="login" 
+              className="data-[state=active]:bg-white/20 text-white"
+            >
+              Login
+            </TabsTrigger>
+            <TabsTrigger 
+              value="register" 
+              className="data-[state=active]:bg-white/20 text-white"
+            >
+              Cadastro
+            </TabsTrigger>
           </TabsList>
           
           <TabsContent value="login" className="mt-4">
-            <Card>
-              <CardHeader>
-                <CardTitle>Entrar</CardTitle>
-                <CardDescription>
+            <Card className={activeTab === "login" ? "login-card border-white/20" : ""}>
+              <CardHeader className="text-white">
+                <CardTitle className="text-white">Entrar</CardTitle>
+                <CardDescription className="text-white/80">
                   Acesse sua conta para gerenciar seus fornecedores
                 </CardDescription>
               </CardHeader>
@@ -167,7 +181,7 @@ export default function Login() {
                     </Alert>
                   )}
                   <div className="space-y-2">
-                    <Label htmlFor="email">E-mail</Label>
+                    <Label htmlFor="email" className="text-white">E-mail</Label>
                     <Input
                       id="email"
                       type="email"
@@ -175,15 +189,16 @@ export default function Login() {
                       value={loginData.email}
                       onChange={(e) => setLoginData({ ...loginData, email: e.target.value })}
                       required
+                      className="bg-white/10 text-white border-white/30 placeholder:text-white/60"
                     />
                   </div>
                   <div className="space-y-2">
                     <div className="flex items-center justify-between">
-                      <Label htmlFor="password">Senha</Label>
+                      <Label htmlFor="password" className="text-white">Senha</Label>
                       <Button 
                         type="button" 
                         variant="link" 
-                        className="p-0 h-auto text-xs text-primary hover:underline"
+                        className="p-0 h-auto text-xs text-white hover:text-white/80"
                         onClick={() => setForgotPasswordOpen(true)}
                       >
                         Esqueceu a senha?
@@ -195,11 +210,16 @@ export default function Login() {
                       value={loginData.password}
                       onChange={(e) => setLoginData({ ...loginData, password: e.target.value })}
                       required
+                      className="bg-white/10 text-white border-white/30"
                     />
                   </div>
                 </CardContent>
                 <CardFooter>
-                  <Button type="submit" className="w-full" disabled={isLoading}>
+                  <Button 
+                    type="submit" 
+                    className="w-full bg-white text-[#5FB9C3] hover:bg-white/90" 
+                    disabled={isLoading}
+                  >
                     {isLoading ? "Entrando..." : "Entrar"}
                   </Button>
                 </CardFooter>
@@ -208,10 +228,10 @@ export default function Login() {
           </TabsContent>
           
           <TabsContent value="register" className="mt-4">
-            <Card>
-              <CardHeader>
-                <CardTitle>Criar Conta</CardTitle>
-                <CardDescription>
+            <Card className={activeTab === "register" ? "register-card border-white/20" : ""}>
+              <CardHeader className="text-white">
+                <CardTitle className="text-white">Criar Conta</CardTitle>
+                <CardDescription className="text-white/80">
                   Cadastre-se para ter acesso a todos os fornecedores
                 </CardDescription>
               </CardHeader>
@@ -224,7 +244,7 @@ export default function Login() {
                     </Alert>
                   )}
                   <div className="space-y-2">
-                    <Label htmlFor="register-email">E-mail</Label>
+                    <Label htmlFor="register-email" className="text-white">E-mail</Label>
                     <Input
                       id="register-email"
                       type="email"
@@ -232,31 +252,38 @@ export default function Login() {
                       value={registerData.email}
                       onChange={(e) => setRegisterData({ ...registerData, email: e.target.value })}
                       required
+                      className="bg-white/10 text-white border-white/30 placeholder:text-white/60"
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="register-password">Senha</Label>
+                    <Label htmlFor="register-password" className="text-white">Senha</Label>
                     <Input
                       id="register-password"
                       type="password"
                       value={registerData.password}
                       onChange={(e) => setRegisterData({ ...registerData, password: e.target.value })}
                       required
+                      className="bg-white/10 text-white border-white/30"
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="confirm-password">Confirmar Senha</Label>
+                    <Label htmlFor="confirm-password" className="text-white">Confirmar Senha</Label>
                     <Input
                       id="confirm-password"
                       type="password"
                       value={registerData.confirmPassword}
                       onChange={(e) => setRegisterData({ ...registerData, confirmPassword: e.target.value })}
                       required
+                      className="bg-white/10 text-white border-white/30"
                     />
                   </div>
                 </CardContent>
                 <CardFooter>
-                  <Button type="submit" className="w-full" disabled={isLoading}>
+                  <Button 
+                    type="submit" 
+                    className="w-full bg-white text-[#1981A7] hover:bg-white/90" 
+                    disabled={isLoading}
+                  >
                     {isLoading ? "Criando conta..." : "Criar Conta"}
                   </Button>
                 </CardFooter>
@@ -268,10 +295,10 @@ export default function Login() {
 
       {/* Modal de Esqueci minha senha */}
       <Dialog open={forgotPasswordOpen} onOpenChange={setForgotPasswordOpen}>
-        <DialogContent className="sm:max-w-[425px]">
+        <DialogContent className="bg-[#5FB9C3] text-white border-white/20 sm:max-w-[425px]">
           <DialogHeader>
-            <DialogTitle>Recuperar senha</DialogTitle>
-            <DialogDescription>
+            <DialogTitle className="text-white">Recuperar senha</DialogTitle>
+            <DialogDescription className="text-white/80">
               Digite seu e-mail para receber um link de redefinição de senha.
             </DialogDescription>
           </DialogHeader>
@@ -284,7 +311,7 @@ export default function Login() {
                 </Alert>
               )}
               <div className="grid grid-cols-4 items-center gap-4">
-                <Label htmlFor="reset-email" className="col-span-4">
+                <Label htmlFor="reset-email" className="col-span-4 text-white">
                   E-mail
                 </Label>
                 <Input
@@ -293,7 +320,7 @@ export default function Login() {
                   placeholder="seu@email.com"
                   value={resetEmail}
                   onChange={(e) => setResetEmail(e.target.value)}
-                  className="col-span-4"
+                  className="col-span-4 bg-white/10 text-white border-white/30 placeholder:text-white/60"
                   required
                 />
               </div>
@@ -303,12 +330,14 @@ export default function Login() {
                 type="button" 
                 variant="outline" 
                 onClick={() => setForgotPasswordOpen(false)}
+                className="border-white/20 text-white hover:bg-white/10"
               >
                 Cancelar
               </Button>
               <Button 
                 type="submit" 
                 disabled={isResettingPassword}
+                className="bg-white text-[#5FB9C3] hover:bg-white/90"
               >
                 {isResettingPassword ? "Enviando..." : "Enviar link"}
               </Button>

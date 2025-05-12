@@ -13,7 +13,7 @@ export default function BottomNavigation() {
   };
 
   return (
-    <nav className="fixed bottom-0 left-0 right-0 z-50 bg-vibrantYellow shadow-md">
+    <nav className="fixed bottom-0 left-0 right-0 z-50 bg-[#F9C820] shadow-md">
       <div className="flex justify-around items-center h-16">
         <NavItem 
           to="/" 
@@ -64,8 +64,8 @@ function NavItem({ to, icon, label, active }: NavItemProps) {
       className={cn(
         "flex flex-col items-center justify-center px-2 py-1 rounded-md transition-colors group",
         active
-          ? "text-cyanBlue font-medium"
-          : "text-foreground hover:text-cyanBlue"
+          ? "text-[#5FB9C3] font-medium"  // Atualizado para a nova cor azul
+          : "text-foreground hover:text-[#5FB9C3]"  // Atualizado para a nova cor azul
       )}
     >
       {icon}

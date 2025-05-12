@@ -10,15 +10,15 @@ const buttonVariants = cva(
   {
     variants: {
       variant: {
-        default: "bg-cyanBlue text-white hover:bg-cyanBlue/90",
+        default: "bg-[#5FB9C3] text-white hover:bg-[#5FB9C3]/90",  // Atualizado para usar a nova cor azul
         destructive:
           "bg-destructive text-destructive-foreground hover:bg-destructive/90",
         outline:
           "border border-input bg-background hover:bg-accent hover:text-accent-foreground",
         secondary:
-          "bg-secondary text-secondary-foreground hover:bg-secondary/80",
+          "bg-[#F9C820] text-secondary-foreground hover:bg-[#F9C820]/80",  // Atualizado para usar a nova cor amarela
         ghost: "hover:bg-accent hover:text-accent-foreground",
-        link: "text-cyanBlue underline-offset-4 hover:underline",
+        link: "text-[#5FB9C3] underline-offset-4 hover:underline",  // Atualizado para usar a nova cor azul
       },
       size: {
         default: "h-10 px-4 py-2",

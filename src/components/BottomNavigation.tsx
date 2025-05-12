@@ -17,31 +17,31 @@ export default function BottomNavigation() {
       <div className="flex justify-around items-center h-16">
         <NavItem 
           to="/" 
-          icon={<Home className="nav-icon" />} 
+          icon={<Home className="nav-icon text-white" />} 
           label="Início" 
           active={isActive('/')}
         />
         <NavItem 
           to="/categorias" 
-          icon={<Grid className="nav-icon" />} 
+          icon={<Grid className="nav-icon text-white" />} 
           label="Categorias" 
           active={isActive('/categorias')}
         />
         <NavItem 
           to="/buscar" 
-          icon={<Search className="nav-icon" />} 
+          icon={<Search className="nav-icon text-white" />} 
           label="Buscar" 
           active={isActive('/buscar')}
         />
         <NavItem 
           to="/favoritos" 
-          icon={<Heart className="nav-icon" />} 
+          icon={<Heart className="nav-icon text-white" />} 
           label="Favoritos" 
           active={isActive('/favoritos')}
         />
         <NavItem 
           to="/perfil" 
-          icon={<User className="nav-icon" />} 
+          icon={<User className="nav-icon text-white" />} 
           label="Perfil" 
           active={isActive('/perfil')}
         />
@@ -64,12 +64,12 @@ function NavItem({ to, icon, label, active }: NavItemProps) {
       className={cn(
         "flex flex-col items-center justify-center px-2 py-1 rounded-md transition-colors group",
         active
-          ? "text-[#5FB9C3] font-medium"  // Atualizado para a nova cor azul
-          : "text-foreground hover:text-[#5FB9C3]"  // Atualizado para a nova cor azul
+          ? "text-[#5FB9C3] font-medium"  // Mantendo a cor azul para o ícone ativo
+          : "text-white hover:text-[#5FB9C3]"  // Alterado para branco quando não ativo com hover azul
       )}
     >
       {icon}
-      <span className="text-xs mt-1 font-medium">{label}</span>
+      <span className="text-xs mt-1 font-medium text-white">{label}</span>
     </Link>
   );
 }

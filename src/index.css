@@ -1,4 +1,3 @@
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -111,7 +110,7 @@
   }
 
   .nav-icon {
-    @apply h-6 w-6 text-foreground group-hover:text-foreground;
+    @apply h-6 w-6 text-white group-hover:text-foreground;
   }
 
   /* Estilos específicos para as páginas de autenticação */

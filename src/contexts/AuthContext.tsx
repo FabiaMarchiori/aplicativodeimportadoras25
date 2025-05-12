@@ -79,13 +79,36 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   const signIn = async (email: string, password: string) => {
-    const { error } = await supabase.auth.signInWithPassword({ email, password });
-    return { error };
+    try {
+      const { error } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+        options: {
+          captchaToken: 'disabled' // Isso irá desabilitar a verificação de captcha
+        }
+      });
+      return { error };
+    } catch (error) {
+      console.error('Error during sign in:', error);
+      return { error };
+    }
   };
 
   const signUp = async (email: string, password: string) => {
-    const { data, error } = await supabase.auth.signUp({ email, password });
-    return { data, error };
+    try {
+      const { data, error } = await supabase.auth.signUp({
+        email,
+        password,
+        options: {
+          captchaToken: 'disabled', // Isso irá desabilitar a verificação de captcha
+          emailRedirectTo: window.location.origin + '/login'
+        }
+      });
+      return { data, error };
+    } catch (error) {
+      console.error('Error during sign up:', error);
+      return { data: null, error };
+    }
   };
 
   const signOut = async () => {

@@ -16,7 +16,7 @@ const CategoriaGrid = ({ categorias, onEdit }: CategoriaGridProps) => {
   const { isAdmin } = useAuth();
   
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
+    <div className="grid grid-cols-3 sm:grid-cols-3 md:grid-cols-4 gap-4">
       {categorias.map((categoria) => (
         <div 
           key={categoria.id} 
@@ -26,7 +26,7 @@ const CategoriaGrid = ({ categorias, onEdit }: CategoriaGridProps) => {
             onClick={() => navigate(`/categoria/${encodeURIComponent(categoria.categoria)}`)}
             className="flex flex-col items-center"
           >
-            <div className="w-full h-48 flex items-center justify-center">
+            <div className="w-full aspect-square flex items-center justify-center">
               <img
                 src={categoria.imagem_url || "https://source.unsplash.com/random/300x200/?shop"}
                 alt={categoria.categoria}

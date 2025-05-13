@@ -15,7 +15,7 @@ const CategoryCard = ({ categoria }: CategoryCardProps) => {
       onClick={() => navigate(`/categoria/${encodeURIComponent(categoria.categoria)}`)}
     >
       <div className="flex flex-col items-center justify-center h-full">
-        <div className="w-full h-48 flex items-center justify-center mb-3">
+        <div className="w-full aspect-square flex items-center justify-center mb-3">
           <img
             src={categoria.imagem_url || "https://source.unsplash.com/random/300x200/?shop"}
             alt={categoria.categoria}

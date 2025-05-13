@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
@@ -6,7 +5,6 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Switch } from "@/components/ui/switch";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { Loader2, User, LogOut, ShieldAlert } from "lucide-react";
 import { supabase } from "@/lib/supabase";
@@ -102,81 +100,84 @@ export default function Perfil() {
   }
 
   return (
-    <div className="page-container max-w-md mx-auto fade-in">
-      <header className="text-center mb-6">
-        <h1 className="text-2xl font-bold">Meu Perfil</h1>
-      </header>
+    <div className="min-h-screen bg-[#1981A7] text-white">
+      <div className="page-container max-w-md mx-auto fade-in pt-6">
+        <header className="text-center mb-6">
+          <h1 className="text-2xl font-bold text-white">Meu Perfil</h1>
+        </header>
 
-      <Card className="mb-6">
-        <CardHeader>
-          <div className="flex justify-center mb-2">
-            <div className="w-20 h-20 rounded-full bg-primary/10 flex items-center justify-center">
-              <User className="h-10 w-10 text-primary" />
+        <Card className="mb-6 bg-[#1981A7] border-white/10">
+          <CardHeader>
+            <div className="flex justify-center mb-2">
+              <div className="w-20 h-20 rounded-full bg-white/10 flex items-center justify-center">
+                <User className="h-10 w-10 text-white" />
+              </div>
             </div>
-          </div>
-          <CardTitle className="text-center">{user.email}</CardTitle>
-          {isAdmin && (
-            <CardDescription className="flex items-center justify-center gap-1 mt-1 text-primary">
-              <ShieldAlert className="h-4 w-4" />
-              Administrador
-            </CardDescription>
-          )}
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="space-y-1">
-            <div className="flex justify-between items-center">
-              <Label htmlFor="email">E-mail</Label>
+            <CardTitle className="text-center text-white">{user.email}</CardTitle>
+            {isAdmin && (
+              <CardDescription className="flex items-center justify-center gap-1 mt-1 text-white">
+                <ShieldAlert className="h-4 w-4" />
+                Administrador
+              </CardDescription>
+            )}
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="space-y-1">
+              <div className="flex justify-between items-center">
+                <Label htmlFor="email" className="text-white">E-mail</Label>
+              </div>
+              <Input id="email" value={user.email || ""} disabled className="bg-white/10 text-white border-white/20" />
             </div>
-            <Input id="email" value={user.email || ""} disabled />
-          </div>
-          <div className="space-y-1">
-            <div className="flex justify-between items-center">
-              <Label htmlFor="criado">Conta criada em</Label>
+            <div className="space-y-1">
+              <div className="flex justify-between items-center">
+                <Label htmlFor="criado" className="text-white">Conta criada em</Label>
+              </div>
+              <Input
+                id="criado"
+                value={
+                  user.created_at
+                    ? new Date(user.created_at).toLocaleDateString('pt-BR')
+                    : ""
+                }
+                disabled
+                className="bg-white/10 text-white border-white/20"
+              />
             </div>
-            <Input
-              id="criado"
-              value={
-                user.created_at
-                  ? new Date(user.created_at).toLocaleDateString('pt-BR')
-                  : ""
-              }
-              disabled
-            />
-          </div>
-        </CardContent>
-        <CardFooter className="flex flex-col space-y-2">
-          <Button
-            variant="outline"
-            className="w-full"
-            onClick={() => setModalOpen(true)}
-          >
-            Alterar senha
-          </Button>
-          <Button
-            variant="destructive"
-            className="w-full"
-            onClick={handleSignOut}
-          >
-            <LogOut className="mr-2 h-4 w-4" />
-            Sair
-          </Button>
-        </CardFooter>
-      </Card>
+          </CardContent>
+          <CardFooter className="flex flex-col space-y-2">
+            <Button
+              variant="outline"
+              className="w-full border-white text-white hover:bg-white/10"
+              onClick={() => setModalOpen(true)}
+            >
+              Alterar senha
+            </Button>
+            <Button
+              variant="destructive"
+              className="w-full"
+              onClick={handleSignOut}
+            >
+              <LogOut className="mr-2 h-4 w-4" />
+              Sair
+            </Button>
+          </CardFooter>
+        </Card>
+      </div>
 
       <Dialog open={modalOpen} onOpenChange={setModalOpen}>
-        <DialogContent>
+        <DialogContent className="bg-[#1981A7] text-white border-white/10">
           <DialogHeader>
-            <DialogTitle>Alterar senha</DialogTitle>
+            <DialogTitle className="text-white">Alterar senha</DialogTitle>
           </DialogHeader>
           <form onSubmit={handleChangePassword}>
             <div className="space-y-4 py-4">
               {error && (
-                <div className="text-sm font-medium text-destructive mb-2">
+                <div className="text-sm font-medium text-red-400 mb-2">
                   {error}
                 </div>
               )}
               <div className="space-y-2">
-                <Label htmlFor="current-password">Senha atual</Label>
+                <Label htmlFor="current-password" className="text-white">Senha atual</Label>
                 <Input
                   id="current-password"
                   type="password"
@@ -187,11 +188,12 @@ export default function Perfil() {
                       currentPassword: e.target.value,
                     })
                   }
+                  className="bg-white/10 text-white border-white/20"
                   required
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="new-password">Nova senha</Label>
+                <Label htmlFor="new-password" className="text-white">Nova senha</Label>
                 <Input
                   id="new-password"
                   type="password"
@@ -199,11 +201,12 @@ export default function Perfil() {
                   onChange={(e) =>
                     setPassword({ ...password, newPassword: e.target.value })
                   }
+                  className="bg-white/10 text-white border-white/20"
                   required
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="confirm-password">Confirmar nova senha</Label>
+                <Label htmlFor="confirm-password" className="text-white">Confirmar nova senha</Label>
                 <Input
                   id="confirm-password"
                   type="password"
@@ -214,15 +217,16 @@ export default function Perfil() {
                       confirmPassword: e.target.value,
                     })
                   }
+                  className="bg-white/10 text-white border-white/20"
                   required
                 />
               </div>
             </div>
             <DialogFooter>
-              <Button type="button" variant="outline" onClick={() => setModalOpen(false)}>
+              <Button type="button" variant="outline" onClick={() => setModalOpen(false)} className="border-white text-white hover:bg-white/10">
                 Cancelar
               </Button>
-              <Button type="submit" disabled={isLoading}>
+              <Button type="submit" disabled={isLoading} className="bg-white text-[#1981A7] hover:bg-white/90">
                 {isLoading ? (
                   <>
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />

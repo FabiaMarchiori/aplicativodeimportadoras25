@@ -52,7 +52,7 @@ export default function Home() {
           <Loader2 className="h-8 w-8 animate-spin text-primary" />
         </div>
       ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
+        <div className="grid grid-cols-3 sm:grid-cols-3 md:grid-cols-4 gap-4">
           {categorias.map((categoria) => (
             <CategoryCard key={categoria.id} categoria={categoria} />
           ))}

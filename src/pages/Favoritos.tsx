@@ -74,12 +74,12 @@ export default function Favoritos() {
             <Card key={fornecedor.id} className="overflow-hidden card-hover">
               <CardContent className="p-4">
                 <div className="flex items-center gap-3 mb-3">
-                  <div className="w-12 h-12 rounded-full overflow-hidden bg-muted flex items-center justify-center p-1">
+                  <div className="w-12 h-12 rounded-full overflow-hidden bg-muted flex items-center justify-center p-0.5">
                     {fornecedor.logo_url ? (
                       <img
                         src={fornecedor.logo_url}
                         alt={`Logo ${fornecedor.nome}`}
-                        className="w-full h-full object-contain"
+                        className="w-full h-full object-contain transform scale-125"
                       />
                     ) : (
                       <div className="text-lg font-bold text-primary">

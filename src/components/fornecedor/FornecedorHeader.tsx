@@ -15,12 +15,12 @@ export function FornecedorHeader({ fornecedor, isAdmin, onEditClick }: Fornecedo
     <header className="mb-6">
       <div className="flex flex-col items-center">
         <div className="mb-6">
-          <div className="w-36 h-36 border-4 border-[#3CBBC7] shadow-md rounded-full flex items-center justify-center overflow-hidden p-3">
+          <div className="w-36 h-36 border-4 border-[#3CBBC7] shadow-md rounded-full flex items-center justify-center overflow-hidden p-1">
             {fornecedor.logo_url ? (
               <img 
                 src={fornecedor.logo_url} 
                 alt={fornecedor.nome} 
-                className="w-full h-full object-contain" 
+                className="w-full h-full object-contain transform scale-125" 
               />
             ) : (
               <div className="w-full h-full bg-[#3CBBC7]/10 text-[#3CBBC7] text-4xl rounded-full flex items-center justify-center">

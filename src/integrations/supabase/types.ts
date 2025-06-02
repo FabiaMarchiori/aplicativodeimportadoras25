@@ -30,6 +30,35 @@ export type Database = {
         }
         Relationships: []
       }
+      favoritos: {
+        Row: {
+          created_at: string
+          fornecedor_id: number
+          id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          fornecedor_id: number
+          id?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          fornecedor_id?: number
+          id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "favoritos_fornecedor_id_fkey"
+            columns: ["fornecedor_id"]
+            isOneToOne: false
+            referencedRelation: "fornecedores"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       fornecedores: {
         Row: {
           categoria: string | null

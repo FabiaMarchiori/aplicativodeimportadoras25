@@ -1,18 +1,21 @@
 
 import { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
 import { Fornecedor, supabase, mapFornecedor } from "@/lib/supabase";
 import { useAuth } from "@/contexts/AuthContext";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/use-toast";
 import { Heart, Loader2 } from "lucide-react";
+import { Link } from "react-router-dom";
+import { FavoritoButton } from "@/components/FavoritoButton";
+import { useFavoritos } from "@/hooks/useFavoritos";
 
 export default function Favoritos() {
   const [favoritos, setFavoritos] = useState<Fornecedor[]>([]);
   const [loading, setLoading] = useState(true);
   const { user } = useAuth();
   const { toast } = useToast();
+  const { toggleFavorito, isFavorito, refetchFavoritos } = useFavoritos();
 
   useEffect(() => {
     if (user) {
@@ -26,7 +29,6 @@ export default function Favoritos() {
     try {
       setLoading(true);
       
-      // Check if the favoritos table exists first
       const { data, error } = await supabase
         .from('fornecedores')
         .select(`
@@ -37,7 +39,6 @@ export default function Favoritos() {
       
       if (error) {
         console.error("Error details:", error);
-        // Fallback to default state if table doesn't exist
         setFavoritos([]);
         return;
       }
@@ -57,6 +58,13 @@ export default function Favoritos() {
     }
   };
 
+  const handleToggleFavorito = async (fornecedorId: number) => {
+    await toggleFavorito(fornecedorId);
+    // Recarregar a lista de favoritos após remoção
+    await fetchFavoritos();
+    await refetchFavoritos();
+  };
+
   return (
     <div className="page-container fade-in">
       <header className="mb-6 text-center">
@@ -71,7 +79,14 @@ export default function Favoritos() {
       ) : favoritos.length > 0 ? (
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 slide-up">
           {favoritos.map((fornecedor) => (
-            <Card key={fornecedor.id} className="overflow-hidden card-hover">
+            <Card key={fornecedor.id} className="overflow-hidden card-hover relative">
+              <FavoritoButton
+                isFavorito={isFavorito(fornecedor.id)}
+                onToggle={() => handleToggleFavorito(fornecedor.id)}
+                size="sm"
+                className="absolute top-2 right-2 z-10"
+              />
+              
               <CardContent className="p-4">
                 <div className="flex items-center gap-3 mb-3">
                   <div className="w-12 h-12 rounded-full overflow-hidden bg-muted flex items-center justify-center p-0.5">

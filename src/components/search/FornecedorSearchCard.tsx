@@ -3,14 +3,25 @@ import { Fornecedor } from "@/lib/supabase";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
+import { FavoritoButton } from "@/components/FavoritoButton";
+import { useFavoritos } from "@/hooks/useFavoritos";
 
 type FornecedorSearchCardProps = {
   fornecedor: Fornecedor;
 };
 
 export default function FornecedorSearchCard({ fornecedor }: FornecedorSearchCardProps) {
+  const { toggleFavorito, isFavorito } = useFavoritos();
+
   return (
-    <Card className="overflow-hidden card-hover border-[#3CBBC7]/20">
+    <Card className="overflow-hidden card-hover border-[#3CBBC7]/20 relative">
+      <FavoritoButton
+        isFavorito={isFavorito(fornecedor.id)}
+        onToggle={() => toggleFavorito(fornecedor.id)}
+        size="sm"
+        className="absolute top-2 right-2 z-10"
+      />
+      
       <CardContent className="p-4">
         <div className="flex items-center gap-3 mb-3">
           <div className="w-12 h-12 rounded-full overflow-hidden bg-muted flex items-center justify-center border-2 border-[#3CBBC7] p-0.5">

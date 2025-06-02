@@ -15,10 +15,19 @@ export function FornecedorHeader({ fornecedor, isAdmin, onEditClick }: Fornecedo
     <header className="mb-6">
       <div className="flex flex-col items-center">
         <div className="mb-6">
-          <Avatar className="w-36 h-36 border-4 border-[#3CBBC7] shadow-md">
-            <AvatarImage src={fornecedor.logo_url || ''} alt={fornecedor.nome} className="object-cover" />
-            <AvatarFallback className="bg-[#3CBBC7]/10 text-[#3CBBC7] text-4xl">{fornecedor.nome?.charAt(0)}</AvatarFallback>
-          </Avatar>
+          <div className="w-36 h-36 border-4 border-[#3CBBC7] shadow-md rounded-full flex items-center justify-center overflow-hidden p-3">
+            {fornecedor.logo_url ? (
+              <img 
+                src={fornecedor.logo_url} 
+                alt={fornecedor.nome} 
+                className="w-full h-full object-contain" 
+              />
+            ) : (
+              <div className="w-full h-full bg-[#3CBBC7]/10 text-[#3CBBC7] text-4xl rounded-full flex items-center justify-center">
+                {fornecedor.nome?.charAt(0)}
+              </div>
+            )}
+          </div>
         </div>
         <h1 className="text-3xl font-bold text-[#322523]">{fornecedor.nome_loja || fornecedor.nome}</h1>
         <p className="text-gray-500 text-lg">{fornecedor.categoria}</p>

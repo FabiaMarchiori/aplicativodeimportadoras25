@@ -19,17 +19,34 @@ const FavoritosRecentes = () => {
   const fetchFavoritosRecentes = async () => {
     try {
       const { data, error } = await supabase
-        .from('fornecedores')
+        .from('favoritos')
         .select(`
-          *,
-          favoritos!inner(user_id, created_at)
+          created_at,
+          fornecedores (
+            id,
+            nome_loja,
+            categoria,
+            Whatsapp,
+            Instagram_url,
+            Endereco,
+            logo_url,
+            foto_destaque,
+            mockup_url,
+            localizacao,
+            created_at
+          )
         `)
-        .eq('favoritos.user_id', user?.id)
-        .order('favoritos.created_at', { ascending: false })
+        .eq('user_id', user?.id)
+        .order('created_at', { ascending: false })
         .limit(3);
       
       if (error) throw error;
-      const mappedFornecedores = (data || []).map(mapFornecedor);
+      
+      // Mapear os dados corretamente considerando a nova estrutura
+      const mappedFornecedores = (data || [])
+        .filter(item => item.fornecedores) // Filtrar apenas itens com fornecedores válidos
+        .map(item => mapFornecedor(item.fornecedores));
+      
       setFavoritosRecentes(mappedFornecedores);
     } catch (error) {
       console.error("Erro ao carregar favoritos recentes:", error);

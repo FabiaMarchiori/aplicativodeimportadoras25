@@ -5,6 +5,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { useAuth } from "@/contexts/AuthContext";
 import { Link } from "react-router-dom";
 import { Heart } from "lucide-react";
+import { safeLog } from "@/utils/safeLogger";
 
 const FavoritosRecentes = () => {
   const [favoritosRecentes, setFavoritosRecentes] = useState<Fornecedor[]>([]);
@@ -49,7 +50,7 @@ const FavoritosRecentes = () => {
       
       setFavoritosRecentes(mappedFornecedores);
     } catch (error) {
-      console.error("Erro ao carregar favoritos recentes:", error);
+      safeLog.error("Erro ao carregar favoritos recentes", error);
     }
   };
 

@@ -3,11 +3,13 @@ import { useAuth } from "@/contexts/AuthContext";
 import FloatingActionButton from "@/components/FloatingActionButton";
 import { useState } from "react";
 import AddCategoryDialog from "@/components/home/AddCategoryDialog";
-import WelcomeSection from "@/components/home/WelcomeSection";
+import HeroSection from "@/components/home/HeroSection";
+import QuickActions from "@/components/home/QuickActions";
+import BenefitsSection from "@/components/home/BenefitsSection";
 import DestaquesSemana from "@/components/home/DestaquesSemana";
 import FavoritosRecentes from "@/components/home/FavoritosRecentes";
-import BonusSection from "@/components/home/BonusSection";
 import CategoriasCarousel from "@/components/home/CategoriasCarousel";
+import BonusSection from "@/components/home/BonusSection";
 import PromoBanner from "@/components/home/PromoBanner";
 
 export default function Home() {
@@ -16,11 +18,13 @@ export default function Home() {
 
   return (
     <div className="page-container fade-in">
-      <WelcomeSection />
+      <HeroSection />
+      <QuickActions />
+      <BenefitsSection />
       <DestaquesSemana />
       <FavoritosRecentes />
-      <BonusSection />
       <CategoriasCarousel />
+      <BonusSection />
       <PromoBanner />
 
       {isAdmin && (

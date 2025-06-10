@@ -6,13 +6,35 @@ import type { Database } from './types';
 const SUPABASE_URL = "https://ospnuclymrxjoqwyolfn.supabase.co";
 const SUPABASE_PUBLISHABLE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9zcG51Y2x5bXJ4am9xd3lvbGZuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDQyMjA4MTYsImV4cCI6MjA1OTc5NjgxNn0.oKyrWC5sdoA9Cyrl5fZDz9eWGqrN3ORqNdPMQHJJjkQ";
 
+// Check if localStorage is available
+const isLocalStorageAvailable = () => {
+  try {
+    if (typeof window !== 'undefined' && window.localStorage) {
+      const test = '__localStorage_test__';
+      localStorage.setItem(test, test);
+      localStorage.removeItem(test);
+      return true;
+    }
+    return false;
+  } catch (e) {
+    return false;
+  }
+};
+
+// Fallback storage for when localStorage is not available
+const fallbackStorage = {
+  getItem: (key: string) => null,
+  setItem: (key: string, value: string) => {},
+  removeItem: (key: string) => {},
+};
+
 // Import the supabase client like this:
 // import { supabase } from "@/integrations/supabase/client";
 
 export const supabase = createClient<Database>(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY, {
   auth: {
-    storage: localStorage,
-    persistSession: true,
+    storage: isLocalStorageAvailable() ? localStorage : fallbackStorage,
+    persistSession: isLocalStorageAvailable(),
     autoRefreshToken: true,
   }
 });

@@ -6,10 +6,7 @@ import AddCategoryDialog from "@/components/home/AddCategoryDialog";
 import HeroSection from "@/components/home/HeroSection";
 import QuickActions from "@/components/home/QuickActions";
 import BenefitsSection from "@/components/home/BenefitsSection";
-import DestaquesSemana from "@/components/home/DestaquesSemana";
 import FavoritosRecentes from "@/components/home/FavoritosRecentes";
-import CategoriasCarousel from "@/components/home/CategoriasCarousel";
-import BonusSection from "@/components/home/BonusSection";
 import PromoBanner from "@/components/home/PromoBanner";
 
 export default function Home() {
@@ -25,10 +22,7 @@ export default function Home() {
       <HeroSection />
       <QuickActions />
       <BenefitsSection />
-      <DestaquesSemana />
       <FavoritosRecentes />
-      <CategoriasCarousel />
-      <BonusSection />
       <PromoBanner />
 
       {isAdmin && (

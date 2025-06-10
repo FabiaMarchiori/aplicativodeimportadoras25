@@ -14,7 +14,11 @@ import PromoBanner from "@/components/home/PromoBanner";
 
 export default function Home() {
   const [dialogOpen, setDialogOpen] = useState(false);
-  const { isAdmin } = useAuth();
+  const { isAdmin, user } = useAuth();
+
+  console.log("Componente Home renderizado");
+  console.log("Usuário:", user);
+  console.log("É admin:", isAdmin);
 
   return (
     <div className="page-container fade-in">

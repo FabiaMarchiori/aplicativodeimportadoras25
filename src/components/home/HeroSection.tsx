@@ -15,10 +15,13 @@ const HeroSection = () => {
     avaliacoes: 0
   });
 
+  console.log("HeroSection renderizado - user:", user);
+
   const firstName = user?.user_metadata?.first_name || "Visitante";
 
   // Animação dos contadores
   useEffect(() => {
+    console.log("Iniciando animação dos contadores");
     const targetCounts = {
       fornecedores: 500,
       categorias: 50,
@@ -45,6 +48,7 @@ const HeroSection = () => {
       if (currentStep >= steps) {
         clearInterval(timer);
         setCounts(targetCounts);
+        console.log("Animação dos contadores concluída");
       }
     }, stepDuration);
 

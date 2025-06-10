@@ -12,7 +12,7 @@ const HeroSection = () => {
     fornecedores: 0,
     categorias: 0,
     usuarios: 0,
-    avaliacoes: 0
+    produtos: 0
   });
 
   console.log("HeroSection renderizado - user:", user);
@@ -23,10 +23,10 @@ const HeroSection = () => {
   useEffect(() => {
     console.log("Iniciando animação dos contadores");
     const targetCounts = {
-      fornecedores: 500,
-      categorias: 50,
+      fornecedores: 200,
+      categorias: 15,
       usuarios: 2000,
-      avaliacoes: 1500
+      produtos: 1500
     };
 
     const duration = 2000; // 2 segundos
@@ -42,7 +42,7 @@ const HeroSection = () => {
         fornecedores: Math.floor(targetCounts.fornecedores * progress),
         categorias: Math.floor(targetCounts.categorias * progress),
         usuarios: Math.floor(targetCounts.usuarios * progress),
-        avaliacoes: Math.floor(targetCounts.avaliacoes * progress)
+        produtos: Math.floor(targetCounts.produtos * progress)
       });
 
       if (currentStep >= steps) {
@@ -139,10 +139,10 @@ const HeroSection = () => {
                 <div className="flex items-center justify-center mb-2">
                   <Star className="h-6 w-6 text-[#F9C820] mr-2" />
                   <span className="text-3xl font-bold text-white">
-                    {counts.avaliacoes.toLocaleString()}+
+                    {counts.produtos.toLocaleString()}+
                   </span>
                 </div>
-                <p className="text-white/80 text-sm">Avaliações</p>
+                <p className="text-white/80 text-sm">Produtos</p>
               </div>
             </div>
           </div>

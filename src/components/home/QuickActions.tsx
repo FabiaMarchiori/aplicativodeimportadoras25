@@ -15,11 +15,11 @@ const QuickActions = () => {
       action: () => navigate('/buscar')
     },
     {
-      title: "Ver Mapa",
-      description: "Navegue pela região",
-      icon: MapPin,
-      color: "from-[#F9C820] to-[#E6B41D]",
-      action: () => console.log("Mapa em breve")
+      title: "Busca Categorias",
+      description: "Encontre a Categoria ideal",
+      icon: List,
+      color: "from-purple-500 to-purple-600",
+      action: () => navigate('/categorias')
     },
     {
       title: "Meus Favoritos",
@@ -29,11 +29,11 @@ const QuickActions = () => {
       action: () => navigate('/favoritos')
     },
     {
-      title: "Criar Roteiro",
-      description: "Planeje sua visita",
-      icon: List,
-      color: "from-purple-500 to-purple-600",
-      action: () => console.log("Roteiro em breve")
+      title: "Ir para os Bônus",
+      description: "Navegue pela área de Membro",
+      icon: MapPin,
+      color: "from-[#F9C820] to-[#E6B41D]",
+      action: () => console.log("Bônus em breve")
     }
   ];
 

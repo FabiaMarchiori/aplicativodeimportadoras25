@@ -9,6 +9,7 @@ import { AlertCircle } from "lucide-react";
 import { toast } from "@/components/ui/use-toast";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { useNavigate } from "react-router-dom";
+import { GoogleAuthButton } from "./GoogleAuthButton";
 
 type LoginFormProps = {
   onForgotPassword: () => void;
@@ -57,14 +58,28 @@ export function LoginForm({ onForgotPassword }: LoginFormProps) {
           Acesse sua conta para gerenciar seus fornecedores
         </CardDescription>
       </CardHeader>
-      <form onSubmit={handleLogin}>
-        <CardContent className="space-y-4">
-          {error && (
-            <Alert variant="destructive">
-              <AlertCircle className="h-4 w-4" />
-              <AlertDescription>{error}</AlertDescription>
-            </Alert>
-          )}
+      <CardContent className="space-y-4">
+        {error && (
+          <Alert variant="destructive">
+            <AlertCircle className="h-4 w-4" />
+            <AlertDescription>{error}</AlertDescription>
+          </Alert>
+        )}
+
+        {/* Google Auth Button */}
+        <GoogleAuthButton mode="login" />
+        
+        {/* Divider */}
+        <div className="relative">
+          <div className="absolute inset-0 flex items-center">
+            <span className="w-full border-t border-white/30" />
+          </div>
+          <div className="relative flex justify-center text-xs uppercase">
+            <span className="bg-transparent px-2 text-white/70">Ou continue com</span>
+          </div>
+        </div>
+
+        <form onSubmit={handleLogin} className="space-y-4">
           <div className="space-y-2">
             <Label htmlFor="email" className="text-white">E-mail</Label>
             <Input
@@ -98,8 +113,6 @@ export function LoginForm({ onForgotPassword }: LoginFormProps) {
               className="bg-white/10 text-white border-white/30"
             />
           </div>
-        </CardContent>
-        <CardFooter>
           <Button 
             type="submit" 
             className="w-full bg-white text-[#5FB9C3] hover:bg-white/90" 
@@ -107,8 +120,8 @@ export function LoginForm({ onForgotPassword }: LoginFormProps) {
           >
             {isLoading ? "Entrando..." : "Entrar"}
           </Button>
-        </CardFooter>
-      </form>
+        </form>
+      </CardContent>
     </Card>
   );
 }

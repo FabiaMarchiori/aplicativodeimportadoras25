@@ -8,6 +8,7 @@ import { Alert, AlertDescription } from "@/components/ui/alert";
 import { AlertCircle } from "lucide-react";
 import { toast } from "@/components/ui/use-toast";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { GoogleAuthButton } from "./GoogleAuthButton";
 
 export function RegisterForm() {
   const [isLoading, setIsLoading] = useState(false);
@@ -59,14 +60,28 @@ export function RegisterForm() {
           Cadastre-se para ter acesso a todos os fornecedores
         </CardDescription>
       </CardHeader>
-      <form onSubmit={handleRegister}>
-        <CardContent className="space-y-4">
-          {error && (
-            <Alert variant="destructive">
-              <AlertCircle className="h-4 w-4" />
-              <AlertDescription>{error}</AlertDescription>
-            </Alert>
-          )}
+      <CardContent className="space-y-4">
+        {error && (
+          <Alert variant="destructive">
+            <AlertCircle className="h-4 w-4" />
+            <AlertDescription>{error}</AlertDescription>
+          </Alert>
+        )}
+
+        {/* Google Auth Button */}
+        <GoogleAuthButton mode="signup" />
+        
+        {/* Divider */}
+        <div className="relative">
+          <div className="absolute inset-0 flex items-center">
+            <span className="w-full border-t border-white/30" />
+          </div>
+          <div className="relative flex justify-center text-xs uppercase">
+            <span className="bg-transparent px-2 text-white/70">Ou continue com</span>
+          </div>
+        </div>
+
+        <form onSubmit={handleRegister} className="space-y-4">
           <div className="space-y-2">
             <Label htmlFor="register-email" className="text-white">E-mail</Label>
             <Input
@@ -101,8 +116,6 @@ export function RegisterForm() {
               className="bg-white/10 text-white border-white/30"
             />
           </div>
-        </CardContent>
-        <CardFooter>
           <Button 
             type="submit" 
             className="w-full bg-white text-[#1981A7] hover:bg-white/90" 
@@ -110,8 +123,8 @@ export function RegisterForm() {
           >
             {isLoading ? "Criando conta..." : "Criar Conta"}
           </Button>
-        </CardFooter>
-      </form>
+        </form>
+      </CardContent>
     </Card>
   );
 }

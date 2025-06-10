@@ -53,11 +53,11 @@ const HeroSection = () => {
 
   return (
     <div className="relative overflow-hidden rounded-xl mb-8">
-      {/* Background com gradiente overlay */}
+      {/* Background com gradiente limpo (sem imagem) */}
       <div 
         className="relative bg-cover bg-center min-h-[400px] flex items-center"
         style={{
-          backgroundImage: `linear-gradient(135deg, rgba(95, 185, 195, 0.9) 0%, rgba(60, 187, 199, 0.8) 100%), url('/lovable-uploads/335dae59-b826-4bb7-9190-7b17674eca53.png')`
+          background: `linear-gradient(135deg, rgba(95, 185, 195, 0.9) 0%, rgba(60, 187, 199, 0.8) 100%)`
         }}
       >
         <div className="container mx-auto px-6 py-12">

@@ -31,14 +31,38 @@ export default function Busca() {
   const fetchFornecedores = async () => {
     try {
       setLoading(true);
+      
+      // Usando consulta com DISTINCT ON para evitar duplicação por nome_loja
       const { data, error } = await supabase
-        .from("fornecedores")
-        .select("*")
-        .order("nome_loja");
+        .rpc('get_distinct_fornecedores');
 
-      if (error) throw error;
-      const mappedFornecedores = (data || []).map(mapFornecedor);
-      setFornecedores(mappedFornecedores);
+      if (error) {
+        // Fallback para consulta direta caso a função RPC não exista
+        console.warn("RPC function not found, using direct query with distinct");
+        const { data: fallbackData, error: fallbackError } = await supabase
+          .from("fornecedores")
+          .select("*")
+          .order("nome_loja", { ascending: true })
+          .order("id", { ascending: true });
+          
+        if (fallbackError) throw fallbackError;
+        
+        // Remover duplicatas manualmente baseado no nome_loja
+        const uniqueFornecedores = fallbackData?.reduce((acc: any[], current: any) => {
+          const exists = acc.find(item => item.nome_loja === current.nome_loja);
+          if (!exists) {
+            acc.push(current);
+          }
+          return acc;
+        }, []) || [];
+        
+        const mappedFornecedores = uniqueFornecedores.map(mapFornecedor);
+        setFornecedores(mappedFornecedores);
+      } else {
+        const mappedFornecedores = (data || []).map(mapFornecedor);
+        setFornecedores(mappedFornecedores);
+      }
+      
       setLoading(false);
     } catch (error) {
       console.error("Erro ao buscar fornecedores:", error);

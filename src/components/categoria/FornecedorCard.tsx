@@ -14,7 +14,7 @@ export default function FornecedorCard({ fornecedor }: FornecedorCardProps) {
   const { toggleFavorito, isFavorito } = useFavoritos();
   
   return (
-    <div className="cursor-pointer group flex flex-col items-center relative">
+    <div className="cursor-pointer group flex flex-col items-center relative w-full">
       <FavoritoButton
         isFavorito={isFavorito(fornecedor.id)}
         onToggle={() => toggleFavorito(fornecedor.id)}
@@ -24,16 +24,16 @@ export default function FornecedorCard({ fornecedor }: FornecedorCardProps) {
       
       <div
         onClick={() => navigate(`/fornecedor/${fornecedor.id}`)}
-        className="flex flex-col items-center"
+        className="flex flex-col items-center w-full"
       >
-        <div className="w-32 h-32 md:w-36 md:h-36 rounded-full border-4 border-[#3CBBC7] flex items-center justify-center overflow-hidden mb-3 transition-transform duration-300 hover:scale-110 p-1">
+        <div className="w-20 h-20 xs:w-24 xs:h-24 sm:w-28 sm:h-28 md:w-32 md:h-32 lg:w-36 lg:h-36 rounded-full border-3 sm:border-4 border-[#3CBBC7] flex items-center justify-center overflow-hidden mb-2 sm:mb-3 transition-transform duration-300 hover:scale-110 p-0.5 sm:p-1">
           <img
             src={fornecedor.logo_url || "/placeholder.svg"}
             alt={`Logo ${fornecedor.nome_loja || fornecedor.nome || ""}`}
-            className="w-full h-full object-contain transform scale-125"
+            className="w-full h-full object-contain max-h-full max-w-full"
           />
         </div>
-        <h3 className="text-base font-semibold text-center text-[#322523] mt-2">
+        <h3 className="text-xs xs:text-sm sm:text-base font-semibold text-center text-[#322523] mt-1 sm:mt-2 leading-tight px-1 line-clamp-2">
           {fornecedor.nome_loja || fornecedor.nome || "Sem nome"}
         </h3>
       </div>

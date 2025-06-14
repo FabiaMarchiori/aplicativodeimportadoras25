@@ -15,23 +15,46 @@ export function GoogleAuthButton({ mode }: GoogleAuthButtonProps) {
     setIsLoading(true);
     
     try {
+      console.log('Iniciando autenticação com Google...');
+      console.log('URL atual:', window.location.href);
+      console.log('Origin:', window.location.origin);
+      
+      // Usar a URL atual como redirectTo
+      const redirectTo = window.location.origin;
+      
       const { error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
         options: {
-          redirectTo: window.location.origin
+          redirectTo: redirectTo,
+          queryParams: {
+            access_type: 'offline',
+            prompt: 'consent',
+          }
         }
       });
 
       if (error) {
-        console.error("Google auth error:", error);
+        console.error("Erro na autenticação Google:", error);
+        let errorMessage = "Não foi possível fazer login com Google";
+        
+        if (error.message.includes('redirect')) {
+          errorMessage = "Erro de redirecionamento. Verifique as configurações de URL no Supabase.";
+        } else if (error.message.includes('popup')) {
+          errorMessage = "Popup bloqueado. Permita popups para este site e tente novamente.";
+        } else if (error.message.includes('cors')) {
+          errorMessage = "Erro de CORS. Verifique as configurações de domínio.";
+        }
+        
         toast({
           variant: "destructive",
           title: "Erro no login com Google",
-          description: error.message || "Não foi possível fazer login com Google",
+          description: errorMessage,
         });
+      } else {
+        console.log('Redirecionamento para Google iniciado com sucesso');
       }
     } catch (error) {
-      console.error("Google auth error:", error);
+      console.error("Erro inesperado na autenticação Google:", error);
       toast({
         variant: "destructive",
         title: "Erro",

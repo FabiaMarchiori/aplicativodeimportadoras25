@@ -27,7 +27,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [isAdmin, setIsAdmin] = useState(false);
   const [profileFetched, setProfileFetched] = useState(false);
 
-  console.log('AuthContext - Estado atual:', { user: !!user, loading, profileFetched });
+  console.log('AuthContext - Estado atual:', { user: !!user, loading, profileFetched, currentUrl: window.location.href });
 
   async function fetchProfile(userId: string) {
     if (profileFetched) {
@@ -63,10 +63,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     let mounted = true;
+    console.log('AuthContext - Inicializando...');
 
-    // Setup auth state change listener ANTES de buscar a sessão
     const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
-      console.log('Auth state changed:', event, !!session);
+      console.log('Auth state changed:', event, !!session, 'URL:', window.location.href);
       
       if (!mounted) return;
 
@@ -74,7 +74,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setUser(session?.user ?? null);
 
       if (session?.user && !profileFetched) {
-        // Usar setTimeout para evitar problemas de concorrência
         setTimeout(() => {
           if (mounted) {
             fetchProfile(session.user.id);
@@ -89,7 +88,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setLoading(false);
     });
 
-    // Buscar sessão inicial
     supabase.auth.getSession().then(({ data: { session }, error }) => {
       if (error) {
         console.error('Erro ao buscar sessão inicial:', error);
@@ -120,13 +118,16 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const signIn = async (email: string, password: string) => {
     try {
-      const { error } = await supabase.auth.signInWithPassword({
+      console.log('Tentando fazer login com Supabase...');
+      console.log('URL base do Supabase:', supabase.supabaseUrl);
+      
+      const { error, data } = await supabase.auth.signInWithPassword({
         email,
         password,
-        options: {
-          captchaToken: 'disabled'
-        }
       });
+      
+      console.log('Resposta do login:', { error, data: !!data });
+      
       return { error };
     } catch (error) {
       console.error('Error during sign in:', error);
@@ -136,14 +137,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const signUp = async (email: string, password: string) => {
     try {
+      console.log('Tentando registrar usuário...');
       const { data, error } = await supabase.auth.signUp({
         email,
         password,
         options: {
-          captchaToken: 'disabled',
           emailRedirectTo: window.location.origin + '/login'
         }
       });
+      console.log('Resposta do registro:', { error, data: !!data });
       return { data, error };
     } catch (error) {
       console.error('Error during sign up:', error);
@@ -152,6 +154,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   };
 
   const signOut = async () => {
+    console.log('Fazendo logout...');
     setProfileFetched(false);
     await supabase.auth.signOut();
   };

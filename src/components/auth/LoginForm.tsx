@@ -25,31 +25,85 @@ export function LoginForm({ onForgotPassword }: LoginFormProps) {
     password: ""
   });
 
+  const getErrorMessage = (error: any) => {
+    console.log('Erro de login detalhado:', error);
+    
+    if (!error) return "Erro desconhecido";
+    
+    const errorMessage = error.message || error.error_description || error.toString();
+    
+    // Mapear erros específicos para mensagens mais claras
+    if (errorMessage.includes('Invalid login credentials')) {
+      return "E-mail ou senha incorretos. Verifique suas credenciais e tente novamente.";
+    }
+    
+    if (errorMessage.includes('Email not confirmed')) {
+      return "Por favor, confirme seu e-mail antes de fazer login.";
+    }
+    
+    if (errorMessage.includes('Too many requests')) {
+      return "Muitas tentativas de login. Aguarde alguns minutos e tente novamente.";
+    }
+    
+    if (errorMessage.includes('connection refused') || errorMessage.includes('fetch')) {
+      return "Problema de conexão. Verifique sua internet e tente novamente.";
+    }
+    
+    if (errorMessage.includes('CORS')) {
+      return "Erro de configuração. Tente atualizar a página.";
+    }
+    
+    return errorMessage;
+  };
+
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
     setError("");
 
-    console.log('Tentando fazer login...');
+    console.log('Iniciando processo de login para:', loginData.email);
+    console.log('URL atual:', window.location.href);
+    console.log('Domain atual:', window.location.hostname);
 
-    const { error } = await signIn(loginData.email, loginData.password);
-    
-    if (error) {
-      console.error("Login error:", error);
-      setError(error.message || "E-mail ou senha inválidos");
+    try {
+      const { error } = await signIn(loginData.email, loginData.password);
+      
+      if (error) {
+        console.error("Erro no login:", error);
+        const userFriendlyError = getErrorMessage(error);
+        setError(userFriendlyError);
+        
+        toast({
+          variant: "destructive",
+          title: "Erro no login",
+          description: userFriendlyError,
+          duration: 5000
+        });
+        setIsLoading(false);
+        return;
+      }
+
+      console.log('Login realizado com sucesso');
+      toast({
+        title: "Login bem-sucedido",
+        description: "Você foi autenticado com sucesso.",
+        duration: 3000
+      });
+
       setIsLoading(false);
-      return;
+    } catch (error) {
+      console.error("Erro inesperado no login:", error);
+      const userFriendlyError = getErrorMessage(error);
+      setError(userFriendlyError);
+      
+      toast({
+        variant: "destructive",
+        title: "Erro inesperado",
+        description: userFriendlyError,
+        duration: 5000
+      });
+      setIsLoading(false);
     }
-
-    console.log('Login bem-sucedido');
-    toast({
-      title: "Login bem-sucedido",
-      description: "Você foi autenticado com sucesso.",
-      duration: 3000
-    });
-
-    setIsLoading(false);
-    // Não precisa navegar manualmente - o AuthContext vai lidar com isso
   };
 
   return (
@@ -141,6 +195,13 @@ export function LoginForm({ onForgotPassword }: LoginFormProps) {
             {isLoading ? "Entrando..." : "Entrar"}
           </Button>
         </form>
+
+        {/* Debug info em desenvolvimento */}
+        {process.env.NODE_ENV === 'development' && (
+          <div className="text-xs text-white/50 mt-4 p-2 bg-black/20 rounded">
+            <p>Debug: {window.location.href}</p>
+          </div>
+        )}
       </CardContent>
     </Card>
   );

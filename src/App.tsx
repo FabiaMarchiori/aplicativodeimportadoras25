@@ -8,6 +8,7 @@ import { AuthProvider, useAuth } from "./contexts/AuthContext";
 import { AdminBadge } from "./components/AdminBadge";
 import BottomNavigation from "./components/BottomNavigation";
 import PrivateRoute from "./components/PrivateRoute";
+import Index from "./pages/Index";
 import Home from "./pages/Home";
 import Login from "./pages/Login";
 import ResetPassword from "./pages/ResetPassword";
@@ -36,8 +37,11 @@ function AppContent() {
           <Route path="/login" element={<Login />} />
           <Route path="/reset-password" element={<ResetPassword />} />
           
+          {/* Rota de redirecionamento */}
+          <Route path="/" element={<Index />} />
+
           {/* Rotas privadas (protegidas) */}
-          <Route path="/" element={
+          <Route path="/home" element={
             <PrivateRoute>
               <Home />
             </PrivateRoute>

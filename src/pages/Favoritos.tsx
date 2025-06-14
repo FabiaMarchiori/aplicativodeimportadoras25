@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { Fornecedor, supabase, mapFornecedor } from "@/lib/supabase";
 import { useAuth } from "@/contexts/AuthContext";
@@ -122,7 +121,7 @@ export default function Favoritos() {
             Você ainda não tem favoritos
           </p>
           <Button variant="link" asChild className="mt-2">
-            <Link to="/">Explorar fornecedores</Link>
+            <Link to="/home">Explorar fornecedores</Link>
           </Button>
         </div>
       )}

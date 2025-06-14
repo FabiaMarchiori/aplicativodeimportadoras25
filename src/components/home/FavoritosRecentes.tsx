@@ -68,12 +68,12 @@ const FavoritosRecentes = () => {
             <Card className="hover:shadow-md transition-shadow">
               <CardContent className="p-4">
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-full overflow-hidden bg-muted flex items-center justify-center border-2 border-[#5FB9C3] p-0.5">
+                  <div className="w-10 h-10 rounded-full overflow-hidden bg-muted flex items-center justify-center border-2 border-[#5FB9C3]">
                     {fornecedor.logo_url ? (
                       <img
                         src={fornecedor.logo_url}
                         alt={`Logo ${fornecedor.nome}`}
-                        className="w-full h-full object-contain transform scale-125"
+                        className="w-full h-full object-cover"
                       />
                     ) : (
                       <div className="text-sm font-bold text-[#5FB9C3]">

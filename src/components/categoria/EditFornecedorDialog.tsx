@@ -121,11 +121,11 @@ export default function EditFornecedorDialog({
               )}
             >
               {editingFornecedor.logo_url ? (
-                <div className="relative w-24 h-24">
+                <div className="relative w-24 h-24 rounded-full overflow-hidden">
                   <img 
                     src={editingFornecedor.logo_url} 
                     alt="Logo" 
-                    className="w-full h-full object-cover rounded-full" 
+                    className="w-full h-full object-cover" 
                   />
                 </div>
               ) : (

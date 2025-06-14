@@ -75,12 +75,12 @@ const DestaquesSemana = () => {
                     />
                   ) : (
                     <div className="text-center">
-                      <div className="w-16 h-16 mx-auto mb-2 rounded-full bg-[#5FB9C3] flex items-center justify-center">
+                      <div className="w-16 h-16 mx-auto mb-2 rounded-full bg-[#5FB9C3] flex items-center justify-center overflow-hidden">
                         {fornecedor.logo_url ? (
                           <img
                             src={fornecedor.logo_url}
                             alt={`Logo ${fornecedor.nome}`}
-                            className="w-full h-full object-contain rounded-full"
+                            className="w-full h-full object-cover"
                           />
                         ) : (
                           <span className="text-2xl font-bold text-white">

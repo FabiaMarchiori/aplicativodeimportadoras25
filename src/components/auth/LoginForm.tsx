@@ -7,8 +7,7 @@ import { Label } from "@/components/ui/label";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { AlertCircle, Mail, Lock, Eye, EyeOff } from "lucide-react";
 import { toast } from "@/components/ui/use-toast";
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { useNavigate } from "react-router-dom";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { GoogleAuthButton } from "./GoogleAuthButton";
 
 type LoginFormProps = {
@@ -19,7 +18,6 @@ export function LoginForm({ onForgotPassword }: LoginFormProps) {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-  const navigate = useNavigate();
   const { signIn } = useAuth();
   
   const [loginData, setLoginData] = useState({
@@ -32,6 +30,8 @@ export function LoginForm({ onForgotPassword }: LoginFormProps) {
     setIsLoading(true);
     setError("");
 
+    console.log('Tentando fazer login...');
+
     const { error } = await signIn(loginData.email, loginData.password);
     
     if (error) {
@@ -41,6 +41,7 @@ export function LoginForm({ onForgotPassword }: LoginFormProps) {
       return;
     }
 
+    console.log('Login bem-sucedido');
     toast({
       title: "Login bem-sucedido",
       description: "Você foi autenticado com sucesso.",
@@ -48,13 +49,13 @@ export function LoginForm({ onForgotPassword }: LoginFormProps) {
     });
 
     setIsLoading(false);
-    navigate("/");
+    // Não precisa navegar manualmente - o AuthContext vai lidar com isso
   };
 
   return (
     <Card className="login-card border-white/20 backdrop-blur-sm bg-white/10 shadow-2xl animate-fade-in">
       <CardHeader className="text-white text-center">
-        <div className="mx-auto mb-4 w-16 h-16 bg-white/20 rounded-full flex items-center justify-center backdrop-blur-sm">
+        <div className="mx-auto mb-4 w-16 h-16 bg-white/20 rounded-full flex items-center justify-center backdrop-blur-sm shadow-lg">
           <Lock className="w-8 h-8 text-white" />
         </div>
         <CardTitle className="text-white text-2xl font-bold">Bem-vindo</CardTitle>

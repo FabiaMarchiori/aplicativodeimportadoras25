@@ -25,9 +25,18 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [profile, setProfile] = useState<Profile | null>(null);
   const [loading, setLoading] = useState(true);
   const [isAdmin, setIsAdmin] = useState(false);
+  const [profileFetched, setProfileFetched] = useState(false);
+
+  console.log('AuthContext - Estado atual:', { user: !!user, loading, profileFetched });
 
   async function fetchProfile(userId: string) {
+    if (profileFetched) {
+      console.log('Profile já foi buscado, pulando...');
+      return;
+    }
+
     try {
+      console.log('Buscando profile para usuário:', userId);
       const { data, error } = await supabase
         .from('profiles')
         .select('*')
@@ -35,47 +44,78 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         .maybeSingle();
 
       if (error) {
-        throw error;
+        console.error('Erro ao buscar profile:', error);
+        setProfile(null);
+        setIsAdmin(false);
+      } else {
+        console.log('Profile encontrado:', data);
+        setProfile(data);
+        setIsAdmin(data?.is_admin === true);
       }
-      
-      setProfile(data);
-      setIsAdmin(data?.is_admin === true);
+      setProfileFetched(true);
     } catch (error) {
-      console.error('Error fetching profile:', error);
+      console.error('Erro inesperado ao buscar profile:', error);
       setProfile(null);
       setIsAdmin(false);
+      setProfileFetched(true);
     }
   }
 
   useEffect(() => {
-    // Setup auth state change listener BEFORE fetching the session
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+    let mounted = true;
+
+    // Setup auth state change listener ANTES de buscar a sessão
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
+      console.log('Auth state changed:', event, !!session);
+      
+      if (!mounted) return;
+
       setSession(session);
       setUser(session?.user ?? null);
-      setLoading(false);
 
-      if (session?.user) {
-        setTimeout(() => fetchProfile(session.user.id), 0);
-      } else {
+      if (session?.user && !profileFetched) {
+        // Usar setTimeout para evitar problemas de concorrência
+        setTimeout(() => {
+          if (mounted) {
+            fetchProfile(session.user.id);
+          }
+        }, 0);
+      } else if (!session?.user) {
         setProfile(null);
         setIsAdmin(false);
+        setProfileFetched(false);
       }
+
+      setLoading(false);
     });
 
-    // Fetch initial session
-    supabase.auth.getSession().then(({ data: { session } }) => {
+    // Buscar sessão inicial
+    supabase.auth.getSession().then(({ data: { session }, error }) => {
+      if (error) {
+        console.error('Erro ao buscar sessão inicial:', error);
+      }
+      
+      if (!mounted) return;
+
+      console.log('Sessão inicial:', !!session);
       setSession(session);
       setUser(session?.user ?? null);
-      if (session?.user) {
-        fetchProfile(session.user.id);
-      } else {
-        setProfile(null);
-        setIsAdmin(false);
+      
+      if (session?.user && !profileFetched) {
+        setTimeout(() => {
+          if (mounted) {
+            fetchProfile(session.user.id);
+          }
+        }, 0);
       }
+      
       setLoading(false);
     });
 
-    return () => subscription.unsubscribe();
+    return () => {
+      mounted = false;
+      subscription.unsubscribe();
+    };
   }, []);
 
   const signIn = async (email: string, password: string) => {
@@ -84,7 +124,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         email,
         password,
         options: {
-          captchaToken: 'disabled' // Isso irá desabilitar a verificação de captcha
+          captchaToken: 'disabled'
         }
       });
       return { error };
@@ -100,7 +140,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         email,
         password,
         options: {
-          captchaToken: 'disabled', // Isso irá desabilitar a verificação de captcha
+          captchaToken: 'disabled',
           emailRedirectTo: window.location.origin + '/login'
         }
       });
@@ -112,6 +152,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   };
 
   const signOut = async () => {
+    setProfileFetched(false);
     await supabase.auth.signOut();
   };
 

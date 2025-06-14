@@ -28,7 +28,7 @@ export function AuthLayout({
         <div className="text-center mb-8 animate-slide-up">
           
           <h1 className="text-3xl font-bold text-white mb-2">Importadoras da 25 de Março</h1>
-          <p className="text-white/90 text-lg">Seu diretório de fornecedores</p>
+          <p className="text-white/90 text-lg">Seu Applicativo de fornecedores</p>
           <div className="mt-4 w-16 h-1 bg-white/30 mx-auto rounded-full" />
         </div>
         {children}

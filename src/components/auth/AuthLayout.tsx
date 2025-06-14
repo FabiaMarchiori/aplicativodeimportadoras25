@@ -1,14 +1,13 @@
-
 import { ReactNode } from "react";
-
 type AuthLayoutProps = {
   children: ReactNode;
   containerClass?: string;
 };
-
-export function AuthLayout({ children, containerClass = "" }: AuthLayoutProps) {
-  return (
-    <div className={`relative flex flex-col items-center justify-center min-h-screen p-4 fade-in overflow-hidden ${containerClass}`}>
+export function AuthLayout({
+  children,
+  containerClass = ""
+}: AuthLayoutProps) {
+  return <div className={`relative flex flex-col items-center justify-center min-h-screen p-4 fade-in overflow-hidden ${containerClass}`}>
       {/* Background decorative elements */}
       <div className="absolute inset-0 overflow-hidden">
         {/* Floating geometric shapes */}
@@ -27,15 +26,12 @@ export function AuthLayout({ children, containerClass = "" }: AuthLayoutProps) {
       {/* Content */}
       <div className="relative z-10 w-full max-w-md">
         <div className="text-center mb-8 animate-slide-up">
-          <div className="mx-auto mb-6 w-20 h-20 bg-white/20 rounded-full flex items-center justify-center backdrop-blur-sm shadow-lg">
-            <div className="text-3xl font-bold text-white">25</div>
-          </div>
+          
           <h1 className="text-3xl font-bold text-white mb-2">Importadoras da 25 de Março</h1>
           <p className="text-white/90 text-lg">Seu diretório de fornecedores</p>
           <div className="mt-4 w-16 h-1 bg-white/30 mx-auto rounded-full" />
         </div>
         {children}
       </div>
-    </div>
-  );
+    </div>;
 }

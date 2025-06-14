@@ -80,7 +80,7 @@ const DestaquesSemana = () => {
                           <img
                             src={fornecedor.logo_url}
                             alt={`Logo ${fornecedor.nome}`}
-                            className="w-full h-full object-cover"
+                            className="logo-circular"
                           />
                         ) : (
                           <span className="text-2xl font-bold text-white">

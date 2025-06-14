@@ -28,7 +28,7 @@ export default function FornecedorSearchCard({ fornecedor }: FornecedorSearchCar
             <img
               src={fornecedor.logo_url}
               alt={`Logo ${fornecedor.nome}`}
-              className="w-full h-full object-cover"
+              className="logo-circular"
             />
           ) : (
             <div className="text-2xl md:text-3xl font-bold text-[#3CBBC7]">

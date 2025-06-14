@@ -24,7 +24,7 @@ export function FornecedorHeader({ fornecedor, isAdmin, onEditClick }: Fornecedo
               <img 
                 src={fornecedor.logo_url} 
                 alt={fornecedor.nome} 
-                className="w-full h-full object-cover" 
+                className="logo-circular" 
               />
             ) : (
               <div className="w-full h-full bg-[#3CBBC7]/10 text-[#3CBBC7] text-4xl rounded-full flex items-center justify-center">

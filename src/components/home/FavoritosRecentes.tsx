@@ -73,7 +73,7 @@ const FavoritosRecentes = () => {
                       <img
                         src={fornecedor.logo_url}
                         alt={`Logo ${fornecedor.nome}`}
-                        className="w-full h-full object-cover"
+                        className="logo-circular"
                       />
                     ) : (
                       <div className="text-sm font-bold text-[#5FB9C3]">

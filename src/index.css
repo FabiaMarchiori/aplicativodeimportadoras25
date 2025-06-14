@@ -114,6 +114,15 @@
     @apply h-6 w-6 text-white group-hover:text-foreground;
   }
 
+  /* Classe específica para logos circulares */
+  .logo-circular {
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: cover !important;
+    object-position: center !important;
+    display: block !important;
+  }
+
   /* Estilos específicos para as páginas de autenticação */
   .login-container {
     @apply bg-gradient-to-br from-[#5FB9C3] via-[#4A9DB8] to-[#1981A7] text-white min-h-screen;

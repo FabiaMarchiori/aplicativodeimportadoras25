@@ -30,7 +30,7 @@ export default function FornecedorCard({ fornecedor }: FornecedorCardProps) {
           <img
             src={fornecedor.logo_url || "/placeholder.svg"}
             alt={`Logo ${fornecedor.nome_loja || fornecedor.nome || ""}`}
-            className="w-full h-full object-cover"
+            className="logo-circular"
           />
         </div>
         <h3 className="text-xs xs:text-sm sm:text-base font-semibold text-center text-[#322523] mt-1 sm:mt-2 leading-tight px-1 line-clamp-2">

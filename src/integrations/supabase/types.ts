@@ -154,6 +154,20 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      get_distinct_fornecedores: {
+        Args: Record<PropertyKey, never>
+        Returns: {
+          id: number
+          nome_loja: string
+          categoria: string
+          Whatsapp: string
+          Instagram_url: string
+          Endereco: string
+          logo_url: string
+          mockup_url: string
+          created_at: string
+        }[]
+      }
       has_role: {
         Args: { requested_role: Database["public"]["Enums"]["user_role"] }
         Returns: boolean

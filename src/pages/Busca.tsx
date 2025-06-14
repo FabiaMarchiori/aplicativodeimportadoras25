@@ -32,9 +32,8 @@ export default function Busca() {
     try {
       setLoading(true);
       
-      // Usando consulta com DISTINCT ON para evitar duplicação por nome_loja
-      const { data, error } = await supabase
-        .rpc('get_distinct_fornecedores');
+      // Usando consulta com RPC para evitar duplicação por nome_loja
+      const { data, error } = await supabase.rpc('get_distinct_fornecedores');
 
       if (error) {
         // Fallback para consulta direta caso a função RPC não exista

@@ -23,12 +23,12 @@ export default function FornecedorSearchCard({ fornecedor }: FornecedorSearchCar
       />
       
       <CardContent className="p-6 flex-1 flex flex-col items-center text-center">
-        <div className="w-20 h-20 md:w-24 md:h-24 rounded-full overflow-hidden bg-muted flex items-center justify-center border-2 border-[#3CBBC7] p-1 mb-4">
+        <div className="w-20 h-20 md:w-24 md:h-24 rounded-full overflow-hidden bg-muted flex items-center justify-center border-2 border-[#3CBBC7] mb-4">
           {fornecedor.logo_url ? (
             <img
               src={fornecedor.logo_url}
               alt={`Logo ${fornecedor.nome}`}
-              className="w-full h-full object-contain transform scale-110"
+              className="w-full h-full object-cover"
             />
           ) : (
             <div className="text-2xl md:text-3xl font-bold text-[#3CBBC7]">

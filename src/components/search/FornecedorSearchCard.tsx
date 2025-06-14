@@ -14,36 +14,37 @@ export default function FornecedorSearchCard({ fornecedor }: FornecedorSearchCar
   const { toggleFavorito, isFavorito } = useFavoritos();
 
   return (
-    <Card className="overflow-hidden card-hover border-[#3CBBC7]/20 relative">
+    <Card className="overflow-hidden card-hover border-[#3CBBC7]/20 relative h-full flex flex-col">
       <FavoritoButton
         isFavorito={isFavorito(fornecedor.id)}
         onToggle={() => toggleFavorito(fornecedor.id)}
         size="sm"
-        className="absolute top-2 right-2 z-10"
+        className="absolute top-3 right-3 z-10"
       />
       
-      <CardContent className="p-4">
-        <div className="flex items-center gap-3 mb-3">
-          <div className="w-12 h-12 rounded-full overflow-hidden bg-muted flex items-center justify-center border-2 border-[#3CBBC7] p-0.5">
-            {fornecedor.logo_url ? (
-              <img
-                src={fornecedor.logo_url}
-                alt={`Logo ${fornecedor.nome}`}
-                className="w-full h-full object-contain transform scale-125"
-              />
-            ) : (
-              <div className="text-lg font-bold text-[#3CBBC7]">
-                {fornecedor.nome.charAt(0)}
-              </div>
-            )}
-          </div>
-          <h3 className="font-semibold truncate flex-1 text-[#322523]">{fornecedor.nome}</h3>
+      <CardContent className="p-6 flex-1 flex flex-col items-center text-center">
+        <div className="w-20 h-20 md:w-24 md:h-24 rounded-full overflow-hidden bg-muted flex items-center justify-center border-2 border-[#3CBBC7] p-1 mb-4">
+          {fornecedor.logo_url ? (
+            <img
+              src={fornecedor.logo_url}
+              alt={`Logo ${fornecedor.nome}`}
+              className="w-full h-full object-contain transform scale-110"
+            />
+          ) : (
+            <div className="text-2xl md:text-3xl font-bold text-[#3CBBC7]">
+              {fornecedor.nome.charAt(0)}
+            </div>
+          )}
         </div>
+        <h3 className="font-semibold text-[#322523] text-base md:text-lg leading-tight">
+          {fornecedor.nome}
+        </h3>
       </CardContent>
+      
       <CardFooter className="p-4 pt-0">
         <Button 
           asChild 
-          className="w-full hover:bg-[#FBE02F] hover:text-[#322523]"
+          className="w-full hover:bg-[#FBE02F] hover:text-[#322523] text-sm"
         >
           <Link to={`/fornecedor/${fornecedor.id}`}>
             Ver detalhes

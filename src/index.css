@@ -114,13 +114,33 @@
     @apply h-6 w-6 text-white group-hover:text-foreground;
   }
 
-  /* Classe específica para logos circulares */
-  .logo-circular {
+  /* Regras CSS específicas para logos circulares com alta especificidade */
+  .logo-circular img,
+  [class*="rounded-full"] img,
+  [class*="border-radius"] img {
     width: 100% !important;
     height: 100% !important;
     object-fit: cover !important;
     object-position: center !important;
     display: block !important;
+    min-width: 100% !important;
+    min-height: 100% !important;
+    max-width: none !important;
+    max-height: none !important;
+  }
+
+  /* Contêineres circulares */
+  .logo-circular,
+  [class*="rounded-full"] {
+    overflow: hidden !important;
+    position: relative !important;
+  }
+
+  /* Classe específica para logos circulares com fallback de background */
+  .logo-circular {
+    background-size: cover !important;
+    background-position: center !important;
+    background-repeat: no-repeat !important;
   }
 
   /* Estilos específicos para as páginas de autenticação */

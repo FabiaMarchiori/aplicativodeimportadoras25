@@ -16,10 +16,15 @@ const PromoBanner = () => {
               </p>
             </div>
           </div>
-          <button className="bg-[#F9C820] text-[#111827] px-4 py-2 rounded-lg font-semibold hover:bg-[#F9C820]/90 transition-colors flex items-center gap-2">
+          <a
+            href="https://pay.kiwify.com.br/qGIyN9H"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="bg-[#F9C820] text-[#111827] px-4 py-2 rounded-lg font-semibold hover:bg-[#F9C820]/90 transition-colors flex items-center gap-2"
+          >
             Assinar
             <ArrowRight className="h-4 w-4" />
-          </button>
+          </a>
         </div>
       </CardContent>
     </Card>

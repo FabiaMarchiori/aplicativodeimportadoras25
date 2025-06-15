@@ -161,7 +161,7 @@ export default function Perfil() {
           {/* Botão de Logout */}
           <Button
             variant="destructive"
-            className="w-full bg-red-500/20 hover:bg-red-500/30 border border-red-400/30 text-white transition-all duration-200 animate-fade-in"
+            className="w-full bg-red-600 hover:bg-red-700 border border-red-500 text-white transition-all duration-200 animate-fade-in"
             onClick={handleSignOut}
           >
             <LogOut className="mr-2 h-4 w-4" />

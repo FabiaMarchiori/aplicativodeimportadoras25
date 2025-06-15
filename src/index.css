@@ -1,4 +1,3 @@
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -141,6 +140,37 @@
     background-size: cover !important;
     background-position: center !important;
     background-repeat: no-repeat !important;
+  }
+
+  /* Ajuste específico para logos circulares em cards de fornecedores */
+  .logo-circular-fix {
+    overflow: hidden !important;
+    border-radius: 50% !important;
+    position: relative !important;
+    background: none !important;
+  }
+
+  .logo-img-fix {
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: cover !important;
+    border-radius: 50% !important;
+    display: block !important;
+    min-width: 100% !important;
+    min-height: 100% !important;
+    max-width: none !important;
+    max-height: none !important;
+    transform: scale(1.1); /* Escala para preencher o círculo sem cortes extremos */
+  }
+
+  /* Mantém fallback para text-avatar */
+  .logo-circular-fix > div {
+    width: 100% !important;
+    height: 100% !important;
+    border-radius: 50% !important;
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
 
   /* Estilos específicos para as páginas de autenticação */

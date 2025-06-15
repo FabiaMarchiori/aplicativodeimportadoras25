@@ -21,14 +21,14 @@ export default function FornecedorSearchCard({ fornecedor }: FornecedorSearchCar
         size="sm"
         className="absolute top-3 right-3 z-10"
       />
-      
+
       <CardContent className="p-6 flex-1 flex flex-col items-center text-center">
-        <div className="w-20 h-20 md:w-24 md:h-24 rounded-full overflow-hidden bg-muted border-2 border-[#3CBBC7] mb-4">
+        <div className="w-20 h-20 md:w-24 md:h-24 overflow-hidden rounded-full bg-muted border-2 border-[#3CBBC7] mb-4 logo-circular-fix">
           {fornecedor.logo_url ? (
             <img
               src={fornecedor.logo_url}
               alt={`Logo ${fornecedor.nome}`}
-              className="logo-circular"
+              className="logo-img-fix"
             />
           ) : (
             <div className="text-2xl md:text-3xl font-bold text-[#3CBBC7] w-full h-full flex items-center justify-center">
@@ -40,7 +40,7 @@ export default function FornecedorSearchCard({ fornecedor }: FornecedorSearchCar
           {fornecedor.nome}
         </h3>
       </CardContent>
-      
+
       <CardFooter className="p-4 pt-0">
         <Button 
           asChild 

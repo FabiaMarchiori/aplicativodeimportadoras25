@@ -38,7 +38,7 @@ serve(async (req) => {
   try {
     const supabaseClient = createClient(
       Deno.env.get('SUPABASE_URL') ?? '',
-      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
+      Deno.env.get('KIIWIFY_SERVICE_ROLE_KEY') ?? ''
     )
 
     const payload: KiwifyWebhookPayload = await req.json()
@@ -116,7 +116,7 @@ serve(async (req) => {
     // Log de erro
     const supabaseClient = createClient(
       Deno.env.get('SUPABASE_URL') ?? '',
-      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
+      Deno.env.get('KIIWIFY_SERVICE_ROLE_KEY') ?? ''
     )
 
     await supabaseClient

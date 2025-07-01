@@ -36,6 +36,32 @@ serve(async (req) => {
   }
 
   try {
+    // Validar token do webhook
+    const kiwifySignature = req.headers.get('X-Kiwify-Signature')
+    const webhookToken = Deno.env.get('KIIWIFY_WEBHOOK_TOKEN')
+
+    if (!kiwifySignature || !webhookToken) {
+      console.error('Token do webhook não fornecido ou não configurado')
+      return new Response(
+        JSON.stringify({ error: 'Token de autenticação não fornecido' }),
+        {
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+          status: 401,
+        }
+      )
+    }
+
+    if (kiwifySignature !== webhookToken) {
+      console.error('Token do webhook inválido')
+      return new Response(
+        JSON.stringify({ error: 'Token de autenticação inválido' }),
+        {
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+          status: 401,
+        }
+      )
+    }
+
     const supabaseClient = createClient(
       Deno.env.get('SUPABASE_URL') ?? '',
       Deno.env.get('KIIWIFY_SERVICE_ROLE_KEY') ?? ''

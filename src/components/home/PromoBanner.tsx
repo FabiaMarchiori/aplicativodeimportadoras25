@@ -1,8 +1,16 @@
 
 import { Card, CardContent } from "@/components/ui/card";
 import { Crown, ArrowRight } from "lucide-react";
+import { useAuth } from "@/contexts/AuthContext";
 
 const PromoBanner = () => {
+  const { hasActiveSubscription } = useAuth();
+
+  // Se já tem assinatura ativa, não mostrar o banner
+  if (hasActiveSubscription) {
+    return null;
+  }
+
   return (
     <Card className="bg-gradient-to-r from-[#5FB9C3] to-[#3CBBC7] text-white mb-6">
       <CardContent className="p-6">

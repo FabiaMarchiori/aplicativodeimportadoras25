@@ -9,6 +9,54 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      assinaturas: {
+        Row: {
+          created_at: string | null
+          data_expiracao: string | null
+          data_inicio: string
+          email: string
+          id: string
+          kiwify_customer_id: string | null
+          kiwify_subscription_id: string
+          nome_cliente: string | null
+          plano: string
+          status: Database["public"]["Enums"]["subscription_status"]
+          updated_at: string | null
+          user_id: string | null
+          valor: number | null
+        }
+        Insert: {
+          created_at?: string | null
+          data_expiracao?: string | null
+          data_inicio?: string
+          email: string
+          id?: string
+          kiwify_customer_id?: string | null
+          kiwify_subscription_id: string
+          nome_cliente?: string | null
+          plano: string
+          status?: Database["public"]["Enums"]["subscription_status"]
+          updated_at?: string | null
+          user_id?: string | null
+          valor?: number | null
+        }
+        Update: {
+          created_at?: string | null
+          data_expiracao?: string | null
+          data_inicio?: string
+          email?: string
+          id?: string
+          kiwify_customer_id?: string | null
+          kiwify_subscription_id?: string
+          nome_cliente?: string | null
+          plano?: string
+          status?: Database["public"]["Enums"]["subscription_status"]
+          updated_at?: string | null
+          user_id?: string | null
+          valor?: number | null
+        }
+        Relationships: []
+      }
       categorias: {
         Row: {
           categoria: string
@@ -149,6 +197,33 @@ export type Database = {
         }
         Relationships: []
       }
+      webhook_logs: {
+        Row: {
+          created_at: string | null
+          error_message: string | null
+          evento: string
+          id: string
+          payload: Json
+          status: string
+        }
+        Insert: {
+          created_at?: string | null
+          error_message?: string | null
+          evento: string
+          id?: string
+          payload: Json
+          status: string
+        }
+        Update: {
+          created_at?: string | null
+          error_message?: string | null
+          evento?: string
+          id?: string
+          payload?: Json
+          status?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
@@ -168,6 +243,14 @@ export type Database = {
           created_at: string
         }[]
       }
+      get_or_create_user_by_email: {
+        Args: { email_param: string }
+        Returns: string
+      }
+      has_active_subscription: {
+        Args: { user_uuid?: string }
+        Returns: boolean
+      }
       has_role: {
         Args: { requested_role: Database["public"]["Enums"]["user_role"] }
         Returns: boolean
@@ -178,6 +261,12 @@ export type Database = {
       }
     }
     Enums: {
+      subscription_status:
+        | "ativa"
+        | "inativa"
+        | "cancelada"
+        | "expirada"
+        | "reembolsada"
       user_role: "admin" | "user"
     }
     CompositeTypes: {
@@ -294,6 +383,13 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
+      subscription_status: [
+        "ativa",
+        "inativa",
+        "cancelada",
+        "expirada",
+        "reembolsada",
+      ],
       user_role: ["admin", "user"],
     },
   },

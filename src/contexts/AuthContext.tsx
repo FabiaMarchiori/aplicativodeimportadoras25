@@ -5,16 +5,20 @@ import type { Database } from '@/integrations/supabase/types';
 import type { Session, User } from '@supabase/supabase-js';
 
 type Profile = Database['public']['Tables']['profiles']['Row'];
+type Assinatura = Database['public']['Tables']['assinaturas']['Row'];
 
 interface AuthContextType {
   session: Session | null;
   user: User | null;
   profile: Profile | null;
+  subscription: Assinatura | null;
+  hasActiveSubscription: boolean;
   signIn: (email: string, password: string) => Promise<{ error: any }>;
   signUp: (email: string, password: string) => Promise<{ error: any, data: any }>;
   signOut: () => Promise<void>;
   loading: boolean;
   isAdmin: boolean;
+  refreshSubscription: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -23,11 +27,19 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [session, setSession] = useState<Session | null>(null);
   const [user, setUser] = useState<User | null>(null);
   const [profile, setProfile] = useState<Profile | null>(null);
+  const [subscription, setSubscription] = useState<Assinatura | null>(null);
+  const [hasActiveSubscription, setHasActiveSubscription] = useState(false);
   const [loading, setLoading] = useState(true);
   const [isAdmin, setIsAdmin] = useState(false);
   const [profileFetched, setProfileFetched] = useState(false);
 
-  console.log('AuthContext - Estado atual:', { user: !!user, loading, profileFetched, currentUrl: window.location.href });
+  console.log('AuthContext - Estado atual:', { 
+    user: !!user, 
+    loading, 
+    profileFetched, 
+    hasActiveSubscription,
+    currentUrl: window.location.href 
+  });
 
   async function fetchProfile(userId: string) {
     if (profileFetched) {
@@ -61,6 +73,68 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   }
 
+  async function fetchSubscription(userId: string) {
+    try {
+      console.log('Buscando assinatura para usuário:', userId);
+      
+      // Buscar assinatura ativa do usuário
+      const { data: subscriptions, error } = await supabase
+        .from('assinaturas')
+        .select('*')
+        .eq('user_id', userId)
+        .eq('status', 'ativa')
+        .order('created_at', { ascending: false })
+        .limit(1);
+
+      if (error) {
+        console.error('Erro ao buscar assinatura:', error);
+        setSubscription(null);
+        setHasActiveSubscription(false);
+        return;
+      }
+
+      const activeSubscription = subscriptions?.[0] || null;
+      console.log('Assinatura encontrada:', activeSubscription);
+      
+      if (activeSubscription) {
+        // Verificar se não expirou
+        const now = new Date();
+        const expirationDate = activeSubscription.data_expiracao 
+          ? new Date(activeSubscription.data_expiracao) 
+          : null;
+
+        const isActive = !expirationDate || expirationDate > now;
+        
+        setSubscription(activeSubscription);
+        setHasActiveSubscription(isActive);
+
+        // Se expirou, atualizar status no banco
+        if (!isActive && activeSubscription.status === 'ativa') {
+          await supabase
+            .from('assinaturas')
+            .update({ status: 'expirada' })
+            .eq('id', activeSubscription.id);
+          
+          setSubscription({ ...activeSubscription, status: 'expirada' });
+          setHasActiveSubscription(false);
+        }
+      } else {
+        setSubscription(null);
+        setHasActiveSubscription(false);
+      }
+    } catch (error) {
+      console.error('Erro inesperado ao buscar assinatura:', error);
+      setSubscription(null);
+      setHasActiveSubscription(false);
+    }
+  }
+
+  const refreshSubscription = async () => {
+    if (user) {
+      await fetchSubscription(user.id);
+    }
+  };
+
   useEffect(() => {
     let mounted = true;
     console.log('AuthContext - Inicializando...');
@@ -77,11 +151,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         setTimeout(() => {
           if (mounted) {
             fetchProfile(session.user.id);
+            fetchSubscription(session.user.id);
           }
         }, 0);
       } else if (!session?.user) {
         setProfile(null);
         setIsAdmin(false);
+        setSubscription(null);
+        setHasActiveSubscription(false);
         setProfileFetched(false);
       }
 
@@ -103,6 +180,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         setTimeout(() => {
           if (mounted) {
             fetchProfile(session.user.id);
+            fetchSubscription(session.user.id);
           }
         }, 0);
       }
@@ -119,16 +197,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const signIn = async (email: string, password: string) => {
     try {
       console.log('Tentando fazer login com Supabase...');
-      console.log('Domain atual:', window.location.hostname);
-      console.log('URL completa:', window.location.href);
-      
       const { error, data } = await supabase.auth.signInWithPassword({
         email,
         password,
       });
       
       console.log('Resposta do login:', { error, data: !!data });
-      
       return { error };
     } catch (error) {
       console.error('Error during sign in:', error);
@@ -157,6 +231,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const signOut = async () => {
     console.log('Fazendo logout...');
     setProfileFetched(false);
+    setSubscription(null);
+    setHasActiveSubscription(false);
     await supabase.auth.signOut();
   };
 
@@ -166,11 +242,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         session,
         user,
         profile,
+        subscription,
+        hasActiveSubscription,
         signIn,
         signUp,
         signOut,
         loading,
         isAdmin,
+        refreshSubscription,
       }}
     >
       {children}

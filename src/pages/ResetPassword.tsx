@@ -13,7 +13,7 @@ import { toast } from "@/components/ui/use-toast";
 export default function ResetPassword() {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState("");
   const navigate = useNavigate();
   const location = useLocation();
@@ -25,26 +25,52 @@ export default function ResetPassword() {
     console.log("Current URL:", window.location.href);
   }, [location]);
 
-  // Check if there's a session with access token from the recovery link
+  // Check for PASSWORD_RECOVERY event from Supabase
   useEffect(() => {
-    const checkSession = async () => {
-      console.log("Checking session for password reset...");
-      const { data, error } = await supabase.auth.getSession();
+    const { data: authListener } = supabase.auth.onAuthStateChange(async (event, session) => {
+      console.log("Auth state change event:", event, "Session:", !!session);
       
-      console.log("Session data:", data);
-      console.log("Session error:", error);
-      
-      // If no session or no access token, this is not a valid reset password request
-      if (error || !data.session) {
-        console.log("No valid session found for password reset");
+      if (event === 'PASSWORD_RECOVERY' || session) {
+        // Se o evento for de recuperação de senha ou se houver uma sessão ativa,
+        // significa que o usuário chegou aqui via o link de redefinição.
+        console.log("Valid password recovery session detected");
+        setIsLoading(false); // Parar o loading inicial
+        setError(''); // Limpar qualquer erro anterior
+      } else if (!session && event === 'SIGNED_OUT') {
+        // Se não houver sessão e o evento for de logout (por exemplo, link expirado),
+        // ou se o link for inválido, redirecionar para o login.
+        console.log("No valid session for password recovery");
         setError("Link de redefinição de senha inválido ou expirado.");
-      } else {
-        console.log("Valid session found for password reset");
+        setIsLoading(false);
+        setTimeout(() => {
+          navigate("/login");
+        }, 3000); // Redireciona após 3 segundos
       }
-    };
+    });
 
-    checkSession();
-  }, []);
+    // Tentar obter a sessão imediatamente para links diretos
+    const checkInitialSession = async () => {
+      console.log("Checking initial session...");
+      const { data: { session } } = await supabase.auth.getSession();
+      console.log("Initial session:", !!session);
+      
+      if (!session) {
+        // Se não houver sessão inicial, ainda pode ser um link de recuperação
+        // que o onAuthStateChange vai pegar.
+        // Se não for, o onAuthStateChange vai eventualmente levar ao erro/redirecionamento.
+        console.log("No initial session found, waiting for auth state change...");
+      } else {
+        console.log("Initial session found for password recovery");
+        setError(''); // Limpar qualquer erro anterior
+      }
+      setIsLoading(false); // Parar o loading inicial após a verificação
+    };
+    checkInitialSession();
+
+    return () => {
+      authListener.unsubscribe();
+    };
+  }, [navigate]);
 
   const handleResetPassword = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -92,6 +118,19 @@ export default function ResetPassword() {
       setIsLoading(false);
     }
   };
+
+  if (isLoading) {
+    return (
+      <div className="page-container flex flex-col items-center justify-center min-h-screen p-4 fade-in">
+        <div className="w-full max-w-md">
+          <div className="text-center mb-8">
+            <h1 className="text-2xl font-bold text-cyanBlue">Lista de Importadora da 25 de Março</h1>
+            <p className="text-muted-foreground">Carregando...</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="page-container flex flex-col items-center justify-center min-h-screen p-4 fade-in">

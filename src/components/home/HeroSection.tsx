@@ -1,22 +1,20 @@
-
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { MapPin, Users, Store, Star } from "lucide-react";
-
 const HeroSection = () => {
   const navigate = useNavigate();
-  const { user } = useAuth();
+  const {
+    user
+  } = useAuth();
   const [counts, setCounts] = useState({
     fornecedores: 0,
     categorias: 0,
     usuarios: 0,
     produtos: 0
   });
-
   console.log("HeroSection renderizado - user:", user);
-
   const firstName = user?.user_metadata?.first_name || "Visitante";
 
   // Animação dos contadores
@@ -28,42 +26,32 @@ const HeroSection = () => {
       usuarios: 2000,
       produtos: 1500
     };
-
     const duration = 2000; // 2 segundos
     const steps = 60;
     const stepDuration = duration / steps;
-
     let currentStep = 0;
     const timer = setInterval(() => {
       currentStep++;
       const progress = currentStep / steps;
-      
       setCounts({
         fornecedores: Math.floor(targetCounts.fornecedores * progress),
         categorias: Math.floor(targetCounts.categorias * progress),
         usuarios: Math.floor(targetCounts.usuarios * progress),
         produtos: Math.floor(targetCounts.produtos * progress)
       });
-
       if (currentStep >= steps) {
         clearInterval(timer);
         setCounts(targetCounts);
         console.log("Animação dos contadores concluída");
       }
     }, stepDuration);
-
     return () => clearInterval(timer);
   }, []);
-
-  return (
-    <div className="relative overflow-hidden rounded-xl mb-8">
+  return <div className="relative overflow-hidden rounded-xl mb-8">
       {/* Background com gradiente limpo (sem imagem) */}
-      <div 
-        className="relative bg-cover bg-center min-h-[400px] flex items-center"
-        style={{
-          background: `linear-gradient(135deg, rgba(95, 185, 195, 0.9) 0%, rgba(60, 187, 199, 0.8) 100%)`
-        }}
-      >
+      <div className="relative bg-cover bg-center min-h-[400px] flex items-center" style={{
+      background: `linear-gradient(135deg, rgba(95, 185, 195, 0.9) 0%, rgba(60, 187, 199, 0.8) 100%)`
+    }}>
         <div className="container mx-auto px-6 py-12">
           <div className="max-w-3xl">
             {/* Saudação personalizada */}
@@ -86,19 +74,10 @@ const HeroSection = () => {
             
             {/* CTAs principais */}
             <div className="flex flex-col sm:flex-row gap-4 mb-12">
-              <Button 
-                onClick={() => navigate('/buscar')}
-                size="lg"
-                className="bg-[#F9C820] text-[#111827] hover:bg-[#F9C820]/90 font-semibold text-lg px-8 py-4"
-              >
+              <Button onClick={() => navigate('/buscar')} size="lg" className="bg-[#F9C820] text-[#111827] hover:bg-[#F9C820]/90 font-semibold text-lg px-8 py-4">
                 Explorar Fornecedores
               </Button>
-              <Button 
-                onClick={() => navigate('/categorias')}
-                variant="outline"
-                size="lg"
-                className="border-white text-white hover:bg-white/10 font-semibold text-lg px-8 py-4"
-              >
+              <Button onClick={() => navigate('/categorias')} variant="outline" size="lg" className="border-white text-white font-semibold text-lg px-8 py-4 bg-red-600 hover:bg-red-500">
                 Ver Categorias
               </Button>
             </div>
@@ -148,8 +127,6 @@ const HeroSection = () => {
           </div>
         </div>
       </div>
-    </div>
-  );
+    </div>;
 };
-
 export default HeroSection;

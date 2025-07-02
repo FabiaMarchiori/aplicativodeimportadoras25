@@ -68,7 +68,7 @@ export default function ResetPassword() {
     checkInitialSession();
 
     return () => {
-      authListener.unsubscribe();
+      authListener.subscription.unsubscribe();
     };
   }, [navigate]);
 

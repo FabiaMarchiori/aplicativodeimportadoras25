@@ -1,6 +1,6 @@
 
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -16,15 +16,30 @@ export default function ResetPassword() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
   const navigate = useNavigate();
+  const location = useLocation();
+
+  // Debug: Log when component mounts
+  useEffect(() => {
+    console.log("ResetPassword component mounted");
+    console.log("Current location:", location.pathname);
+    console.log("Current URL:", window.location.href);
+  }, [location]);
 
   // Check if there's a session with access token from the recovery link
   useEffect(() => {
     const checkSession = async () => {
+      console.log("Checking session for password reset...");
       const { data, error } = await supabase.auth.getSession();
+      
+      console.log("Session data:", data);
+      console.log("Session error:", error);
       
       // If no session or no access token, this is not a valid reset password request
       if (error || !data.session) {
+        console.log("No valid session found for password reset");
         setError("Link de redefinição de senha inválido ou expirado.");
+      } else {
+        console.log("Valid session found for password reset");
       }
     };
 
@@ -34,6 +49,8 @@ export default function ResetPassword() {
   const handleResetPassword = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
+
+    console.log("Starting password reset process...");
 
     if (password !== confirmPassword) {
       setError("As senhas não coincidem");
@@ -48,15 +65,18 @@ export default function ResetPassword() {
     setIsLoading(true);
 
     try {
+      console.log("Attempting to update password...");
       // Update the user's password
       const { error } = await supabase.auth.updateUser({
         password: password
       });
 
       if (error) {
+        console.error("Error updating password:", error);
         throw error;
       }
 
+      console.log("Password updated successfully");
       toast({
         title: "Senha alterada com sucesso",
         description: "Você pode fazer login com sua nova senha agora.",
@@ -79,6 +99,7 @@ export default function ResetPassword() {
         <div className="text-center mb-8">
           <h1 className="text-2xl font-bold text-cyanBlue">Lista de Importadora da 25 de Março</h1>
           <p className="text-muted-foreground">Redefinir sua senha</p>
+          <p className="text-xs text-gray-500 mt-2">Rota: {location.pathname}</p>
         </div>
 
         <Card>

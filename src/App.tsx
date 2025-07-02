@@ -36,6 +36,7 @@ function AppContent() {
           {/* Rotas públicas */}
           <Route path="/login" element={<Login />} />
           <Route path="/reset-password" element={<ResetPassword />} />
+          <Route path="/redefinir-senha" element={<ResetPassword />} />
           
           {/* Rota de redirecionamento */}
           <Route path="/" element={<Index />} />

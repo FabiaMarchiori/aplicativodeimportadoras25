@@ -25,47 +25,40 @@ export default function ResetPassword() {
     console.log("Current URL:", window.location.href);
   }, [location]);
 
-  // Check for PASSWORD_RECOVERY event from Supabase
   useEffect(() => {
-    const { data: authListener } = supabase.auth.onAuthStateChange(async (event, session) => {
-      console.log("Auth state change event:", event, "Session:", !!session);
-      
-      if (event === 'PASSWORD_RECOVERY' || session) {
-        // Se o evento for de recuperação de senha ou se houver uma sessão ativa,
-        // significa que o usuário chegou aqui via o link de redefinição.
-        console.log("Valid password recovery session detected");
-        setIsLoading(false); // Parar o loading inicial
-        setError(''); // Limpar qualquer erro anterior
-      } else if (!session && event === 'SIGNED_OUT') {
-        // Se não houver sessão e o evento for de logout (por exemplo, link expirado),
-        // ou se o link for inválido, redirecionar para o login.
-        console.log("No valid session for password recovery");
+    const handlePasswordReset = async () => {
+      setIsLoading(true);
+      setError("");
+
+      // Tenta obter a sessão do Supabase. Se o link de redefinição for válido,
+      // o Supabase SDK já deve ter processado os tokens da URL.
+      const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+
+      if (sessionError || !session) {
+        // Se não houver sessão ou houver erro, o link é inválido/expirado.
         setError("Link de redefinição de senha inválido ou expirado.");
         setIsLoading(false);
         setTimeout(() => {
           navigate("/login");
-        }, 3000); // Redireciona após 3 segundos
+        }, 3000);
+        return;
       }
-    });
 
-    // Tentar obter a sessão imediatamente para links diretos
-    const checkInitialSession = async () => {
-      console.log("Checking initial session...");
-      const { data: { session } } = await supabase.auth.getSession();
-      console.log("Initial session:", !!session);
-      
-      if (!session) {
-        // Se não houver sessão inicial, ainda pode ser um link de recuperação
-        // que o onAuthStateChange vai pegar.
-        // Se não for, o onAuthStateChange vai eventualmente levar ao erro/redirecionamento.
-        console.log("No initial session found, waiting for auth state change...");
-      } else {
-        console.log("Initial session found for password recovery");
-        setError(''); // Limpar qualquer erro anterior
-      }
-      setIsLoading(false); // Parar o loading inicial após a verificação
+      // Se chegou aqui, significa que a sessão foi estabelecida com sucesso.
+      // O formulário de redefinição de senha pode ser exibido.
+      setIsLoading(false);
     };
-    checkInitialSession();
+
+    // Chama a função ao carregar o componente
+    handlePasswordReset();
+
+    // Opcional: Adicionar um listener para mudanças de estado de autenticação
+    // para casos onde a sessão pode ser processada um pouco depois.
+    const { data: authListener } = supabase.auth.onAuthStateChange((_event, _session) => {
+      // Esta parte é mais para garantir que o estado do UI reflita a sessão
+      // caso ela mude após o carregamento inicial, mas a lógica principal
+      // de validação do link é feita no handlePasswordReset inicial.
+    });
 
     return () => {
       authListener.subscription.unsubscribe();

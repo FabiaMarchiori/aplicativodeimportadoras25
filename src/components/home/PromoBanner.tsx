@@ -25,7 +25,7 @@ const PromoBanner = () => {
             </div>
           </div>
           <a
-            href="https://pay.kiwify.com.br/qGIyN9H"
+            href="https://pay.kiwify.com.br/0FciBP1"
             target="_blank"
             rel="noopener noreferrer"
             className="bg-[#F9C820] text-[#111827] px-4 py-2 rounded-lg font-semibold hover:bg-[#F9C820]/90 transition-colors flex items-center gap-2"

@@ -44,43 +44,52 @@ export const PWAInstallPrompt = () => {
   }
 
   return (
-    <div className="fixed bottom-4 left-4 right-4 z-50 animate-slide-up">
-      <Card className="border-primary/20 bg-background/95 backdrop-blur-sm">
-        <CardContent className="p-4">
-          <div className="flex items-start gap-3">
-            <div className="flex-shrink-0 w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center">
-              <Smartphone className="w-6 h-6 text-primary" />
-            </div>
-            
-            <div className="flex-1">
-              <h3 className="font-semibold text-sm mb-1">
-                Instale o App 25 de Março
-              </h3>
-              <p className="text-sm text-muted-foreground mb-3">
-                {isIOS
-                  ? "Adicione à sua tela inicial para acesso rápido"
-                  : "Instale nosso app para uma melhor experiência"}
-              </p>
+    <>
+      {/* Overlay escuro */}
+      <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-40 animate-fade-in" />
+      
+      {/* Modal centralizado */}
+      <div className="fixed inset-0 z-50 flex items-center justify-center p-4 animate-scale-in">
+        <Card className="w-full max-w-md border-primary/20 bg-background shadow-2xl">
+          <CardContent className="p-6">
+            <div className="text-center space-y-4">
+              <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto">
+                <Smartphone className="w-8 h-8 text-primary" />
+              </div>
+              
+              <div>
+                <h3 className="text-lg font-semibold mb-2">
+                  Instale o App 25 de Março
+                </h3>
+                <p className="text-muted-foreground">
+                  {isIOS
+                    ? "Adicione à sua tela inicial para acesso rápido e uma melhor experiência"
+                    : "Instale nosso app para uma melhor experiência, acesso mais rápido e funcionalidades offline"}
+                </p>
+              </div>
               
               {isIOS ? (
-                <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                  <Share className="w-4 h-4" />
-                  <span>Toque em "Compartilhar" e depois "Adicionar à Tela Inicial"</span>
+                <div className="bg-muted/50 p-4 rounded-lg">
+                  <div className="flex items-center gap-2 text-sm text-muted-foreground justify-center">
+                    <Share className="w-4 h-4" />
+                    <span>Toque em "Compartilhar" e depois "Adicionar à Tela Inicial"</span>
+                  </div>
                 </div>
               ) : (
-                <div className="flex gap-2">
+                <div className="flex flex-col gap-3">
                   <Button
-                    size="sm"
+                    size="lg"
                     onClick={handleInstall}
-                    className="flex items-center gap-2"
+                    className="w-full flex items-center gap-2"
                   >
-                    <Download className="w-4 h-4" />
-                    Instalar
+                    <Download className="w-5 h-5" />
+                    Instalar App
                   </Button>
                   <Button
-                    size="sm"
+                    size="lg"
                     variant="outline"
                     onClick={handleDismiss}
+                    className="w-full"
                   >
                     Agora não
                   </Button>
@@ -92,13 +101,13 @@ export const PWAInstallPrompt = () => {
               size="sm"
               variant="ghost"
               onClick={handleDismiss}
-              className="flex-shrink-0 h-8 w-8 p-0"
+              className="absolute top-4 right-4 h-8 w-8 p-0"
             >
               <X className="w-4 h-4" />
             </Button>
-          </div>
-        </CardContent>
-      </Card>
-    </div>
+          </CardContent>
+        </Card>
+      </div>
+    </>
   );
 };

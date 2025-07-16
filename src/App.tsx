@@ -6,6 +6,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider, useAuth } from "./contexts/AuthContext";
 import { AdminBadge } from "./components/AdminBadge";
+import { PWAInstallPrompt } from "./components/PWAInstallPrompt";
 import BottomNavigation from "./components/BottomNavigation";
 import PrivateRoute from "./components/PrivateRoute";
 import Index from "./pages/Index";
@@ -31,6 +32,7 @@ function AppContent() {
   return (
     <>
       {isAdmin && <AdminBadge />}
+      <PWAInstallPrompt />
       <div className="pb-16">
         <Routes>
           {/* Rotas públicas */}

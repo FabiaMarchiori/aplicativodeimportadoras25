@@ -8,6 +8,7 @@ import QuickActions from "@/components/home/QuickActions";
 import BenefitsSection from "@/components/home/BenefitsSection";
 import FavoritosRecentes from "@/components/home/FavoritosRecentes";
 import PromoBanner from "@/components/home/PromoBanner";
+import InstallPrompt from "@/components/InstallPrompt";
 
 export default function Home() {
   const [dialogOpen, setDialogOpen] = useState(false);
@@ -18,12 +19,14 @@ export default function Home() {
   console.log("É admin:", isAdmin);
 
   return (
-    <div className="page-container fade-in">
-      <HeroSection />
-      <QuickActions />
-      <BenefitsSection />
-      <FavoritosRecentes />
-      <PromoBanner />
+    <>
+      <InstallPrompt />
+      <div className="page-container fade-in">
+        <HeroSection />
+        <QuickActions />
+        <BenefitsSection />
+        <FavoritosRecentes />
+        <PromoBanner />
 
       {isAdmin && (
         <>
@@ -35,6 +38,7 @@ export default function Home() {
           />
         </>
       )}
-    </div>
+      </div>
+    </>
   );
 }

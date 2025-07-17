@@ -69,11 +69,23 @@ export const usePWA = () => {
     return /Android/.test(navigator.userAgent);
   };
 
+  const isDesktop = () => {
+    return !isIOS() && !isAndroid() && !(/Mobile/.test(navigator.userAgent));
+  };
+
+  const canInstall = () => {
+    // PWA pode ser instalado se o evento beforeinstallprompt foi disparado
+    // ou se estamos em iOS (para mostrar instruções manuais)
+    return isInstallable || isIOS();
+  };
+
   return {
     isInstallable,
     isInstalled,
     showInstallPrompt,
     isIOS: isIOS(),
     isAndroid: isAndroid(),
+    isDesktop: isDesktop(),
+    canInstall: canInstall(),
   };
 };

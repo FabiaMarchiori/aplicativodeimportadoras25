@@ -5,7 +5,7 @@ import { Download, X, Smartphone, Share } from 'lucide-react';
 import { usePWA } from '@/hooks/usePWA';
 
 export const PWAInstallPrompt = () => {
-  const { isInstallable, isInstalled, showInstallPrompt, isIOS, isAndroid } = usePWA();
+  const { isInstallable, isInstalled, showInstallPrompt, isIOS, isAndroid, isDesktop, canInstall } = usePWA();
   const [showPrompt, setShowPrompt] = useState(false);
   const [dismissed, setDismissed] = useState(false);
 
@@ -17,16 +17,16 @@ export const PWAInstallPrompt = () => {
 
     // Show prompt after 3 seconds if installable
     const timer = setTimeout(() => {
-      if (isInstallable || isIOS) {
+      if (canInstall) {
         setShowPrompt(true);
       }
     }, 3000);
 
     return () => clearTimeout(timer);
-  }, [isInstallable, isInstalled, dismissed, isIOS]);
+  }, [canInstall, isInstalled, dismissed]);
 
   const handleInstall = async () => {
-    if (isAndroid && isInstallable) {
+    if (isInstallable) {
       const success = await showInstallPrompt();
       if (success) {
         setShowPrompt(false);

@@ -4,7 +4,7 @@ import { Download, Smartphone } from 'lucide-react';
 import { usePWA } from '@/hooks/usePWA';
 
 export const InstallButton = () => {
-  const { isInstallable, isInstalled, showInstallPrompt, isIOS } = usePWA();
+  const { isInstallable, isInstalled, showInstallPrompt, isIOS, canInstall } = usePWA();
   const [isInstalling, setIsInstalling] = useState(false);
 
   const handleInstall = async () => {
@@ -36,7 +36,7 @@ export const InstallButton = () => {
     );
   }
 
-  if (!isInstallable) {
+  if (!canInstall) {
     return null;
   }
 

@@ -1,11 +1,10 @@
 {
-  "name": "Lista de Importadora da 25 de Março",
+  "name": "Lista de Importadoras da 25 de Março",
   "short_name": "25 de Março",
-  "description": "Aplicativo de Lista de Fornecedores",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#5FB9C3",
-  "theme_color": "#5FB9C3",
+  "background_color": "#00B3C7",
+  "theme_color": "#00B3C7",
   "orientation": "portrait-primary",
   "categories": ["business", "shopping"],
   "lang": "pt-BR",
@@ -20,6 +19,12 @@
     {
       "src": "/icon-512x512.png",
       "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable any"
+    },
+    {
+      "src": "/icon-1024x1024.png",
+      "sizes": "1024x1024",
       "type": "image/png",
       "purpose": "maskable any"
     }

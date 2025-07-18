@@ -43,12 +43,5 @@ const Index = () => {
 }
 
 return null;
-
-        
-        <h1 className="text-3xl font-bold mb-4">Importadoras da 25 de Março</h1>
-        <p className="text-white/90 mb-6">Carregando...</p>
-        <div className="w-8 h-8 border-4 border-white/30 border-t-white rounded-full animate-spin mx-auto"></div>
-      </div>
-    </div>;
 };
 export default Index;

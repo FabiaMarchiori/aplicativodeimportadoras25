@@ -32,7 +32,7 @@ export const InstallButton = () => {
         disabled
       >
         <img 
-          src="/logo_192x192.png" 
+          src="/lovable-uploads/61e1c4bb-a0ef-4a91-bcb4-00cf72154b34.png" 
           alt="Logo" 
           className="w-4 h-4 rounded-full object-cover"
         />

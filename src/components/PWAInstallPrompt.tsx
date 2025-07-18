@@ -56,7 +56,7 @@ export const PWAInstallPrompt = () => {
             <div className="text-center space-y-4">
               <div className="w-16 h-16 rounded-full flex items-center justify-center mx-auto">
                 <img 
-                  src="/logo_192x192.png" 
+                  src="/lovable-uploads/61e1c4bb-a0ef-4a91-bcb4-00cf72154b34.png" 
                   alt="Logo 25 de Março" 
                   className="w-16 h-16 rounded-full object-cover"
                 />

@@ -1,6 +1,7 @@
+
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { Download, Smartphone } from 'lucide-react';
+import { Download } from 'lucide-react';
 import { usePWA } from '@/hooks/usePWA';
 
 export const InstallButton = () => {
@@ -30,7 +31,11 @@ export const InstallButton = () => {
         className="gap-2"
         disabled
       >
-        <Smartphone className="w-4 h-4" />
+        <img 
+          src="/logo_192x192.png" 
+          alt="Logo" 
+          className="w-4 h-4 rounded-full object-cover"
+        />
         Adicionar à Tela Inicial
       </Button>
     );

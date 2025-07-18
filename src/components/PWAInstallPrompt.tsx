@@ -1,7 +1,8 @@
+
 import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
-import { Download, X, Smartphone, Share } from 'lucide-react';
+import { Download, X, Share } from 'lucide-react';
 import { usePWA } from '@/hooks/usePWA';
 
 export const PWAInstallPrompt = () => {
@@ -53,8 +54,12 @@ export const PWAInstallPrompt = () => {
         <Card className="w-full max-w-md border-primary/20 bg-background shadow-2xl">
           <CardContent className="p-6">
             <div className="text-center space-y-4">
-              <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto">
-                <Smartphone className="w-8 h-8 text-primary" />
+              <div className="w-16 h-16 rounded-full flex items-center justify-center mx-auto">
+                <img 
+                  src="/logo_192x192.png" 
+                  alt="Logo 25 de Março" 
+                  className="w-16 h-16 rounded-full object-cover"
+                />
               </div>
               
               <div>

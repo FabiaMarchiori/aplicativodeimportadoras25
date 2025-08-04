@@ -20,6 +20,8 @@ import Busca from "./pages/Busca";
 import Favoritos from "./pages/Favoritos";
 import Perfil from "./pages/Perfil";
 import NotFound from "./pages/NotFound";
+import AcessoNegado from "./pages/AcessoNegado";
+import StatusAssinatura from "./pages/StatusAssinatura";
 
 // Atualizando o título do documento
 document.title = "Lista de Importadora da 25 de Março";
@@ -39,6 +41,7 @@ function AppContent() {
           <Route path="/login" element={<Login />} />
           <Route path="/reset-password" element={<ResetPassword />} />
           <Route path="/redefinir-senha" element={<ResetPassword />} />
+          <Route path="/acesso-negado" element={<AcessoNegado />} />
           
           {/* Rota de redirecionamento */}
           <Route path="/" element={<Index />} />
@@ -77,6 +80,11 @@ function AppContent() {
           <Route path="/perfil" element={
             <PrivateRoute>
               <Perfil />
+            </PrivateRoute>
+          } />
+          <Route path="/assinatura" element={
+            <PrivateRoute>
+              <StatusAssinatura />
             </PrivateRoute>
           } />
           <Route path="*" element={

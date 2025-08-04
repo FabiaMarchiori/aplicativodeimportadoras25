@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
-import { Loader2, Mail, LogOut, Lock, Settings, User } from "lucide-react";
+import { Loader2, Mail, LogOut, Lock, Settings, User, Crown } from "lucide-react";
 import { supabase } from "@/lib/supabase";
 import { useToast } from "@/components/ui/use-toast";
 import ProfileAvatar from "@/components/profile/ProfileAvatar";
@@ -134,6 +134,14 @@ export default function Perfil() {
           {/* Seção de Configurações */}
           <ProfileInfoCard title="Configurações" icon={Settings}>
             <div className="space-y-3">
+              <Button 
+                variant="outline" 
+                onClick={() => navigate('/assinatura')} 
+                className="w-full border-white/30 text-white hover:border-white/50 transition-all duration-200 bg-[#F9C820] hover:bg-[#F9C820]/90 text-[#1981A7] font-medium"
+              >
+                <Crown className="mr-2 h-4 w-4" />
+                Status da Assinatura
+              </Button>
               <Button variant="outline" onClick={() => setModalOpen(true)} className="w-full border-white/30 text-white hover:border-white/50 transition-all duration-200 bg-amber-500 hover:bg-amber-400">
                 <Lock className="mr-2 h-4 w-4" />
                 Alterar senha

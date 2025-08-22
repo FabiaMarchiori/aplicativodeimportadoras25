@@ -62,15 +62,17 @@ export const usePWA = () => {
   };
 
   const isIOS = () => {
-    return /iPad|iPhone|iPod/.test(navigator.userAgent);
+    const userAgent = navigator.userAgent.toLowerCase();
+    return /ipad|iphone|ipod/.test(userAgent) || 
+           (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
   };
 
   const isAndroid = () => {
-    return /Android/.test(navigator.userAgent);
+    return /android/i.test(navigator.userAgent);
   };
 
   const isDesktop = () => {
-    return !isIOS() && !isAndroid() && !(/Mobile/.test(navigator.userAgent));
+    return !isIOS() && !isAndroid() && !(/mobile/i.test(navigator.userAgent));
   };
 
   const canInstall = () => {

@@ -16,12 +16,14 @@ const PrivateRoute = ({ children }: PrivateRouteProps) => {
 
   const loading = authLoading || subscriptionLoading;
 
-  console.log('PrivateRoute - Estado:', { 
+  console.log('PrivateRoute - Estado completo:', { 
     user: !!user, 
+    userEmail: user?.email,
     authLoading, 
     subscriptionLoading, 
     hasAccess,
-    path: location.pathname 
+    path: location.pathname,
+    timestamp: new Date().toISOString()
   });
 
   // Se ainda está carregando, mostrar indicador de carregamento

@@ -25,7 +25,30 @@ export const useSubscriptionAccess = (): SubscriptionAccess => {
     try {
       setLoading(true);
 
-      // Verificar na tabela assinaturas (sistema atual)
+      // PRIMEIRO: Verificar se é administrador
+      const { data: profile, error: profileError } = await supabase
+        .from('profiles')
+        .select('is_admin')
+        .eq('id', user.id)
+        .single();
+
+      console.log('useSubscriptionAccess - Verificação de admin:', { 
+        userId: user.id, 
+        email: user.email, 
+        isAdmin: profile?.is_admin,
+        profileError 
+      });
+
+      // Se é admin, dar acesso imediato
+      if (profile?.is_admin) {
+        console.log('useSubscriptionAccess - Admin detectado, liberando acesso');
+        setHasAccess(true);
+        setSubscription(null); // Admin não precisa de assinatura
+        setLoading(false);
+        return;
+      }
+
+      // SEGUNDO: Verificar assinatura apenas para usuários não-admin
       const { data: assinatura, error: assinaturaError } = await supabase
         .from('assinaturas')
         .select('*')
@@ -34,6 +57,11 @@ export const useSubscriptionAccess = (): SubscriptionAccess => {
         .order('created_at', { ascending: false })
         .limit(1)
         .single();
+
+      console.log('useSubscriptionAccess - Verificação de assinatura:', { 
+        assinatura, 
+        assinaturaError 
+      });
 
       if (assinatura && !assinaturaError) {
         // Verificar se não expirou

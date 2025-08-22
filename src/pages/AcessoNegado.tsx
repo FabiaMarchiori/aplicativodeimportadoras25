@@ -7,12 +7,16 @@ import { AlertTriangle, Crown, ExternalLink, Home, MessageSquare } from 'lucide-
 
 const AcessoNegado = () => {
   const navigate = useNavigate();
-  const { signOut } = useAuth();
+  const { user, signOut } = useAuth();
 
+  // Log para debug - não fazer logout automático
   useEffect(() => {
-    // Garantir que o usuário seja deslogado
-    signOut();
-  }, [signOut]);
+    console.log('AcessoNegado - Usuario atual:', { 
+      userId: user?.id, 
+      email: user?.email,
+      timestamp: new Date().toISOString()
+    });
+  }, [user]);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#1981A7] via-[#4A9DB8] to-[#5FB9C3] p-4">

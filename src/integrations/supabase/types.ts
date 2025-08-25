@@ -7,10 +7,10 @@ export type Json =
   | Json[]
 
 export type Database = {
-  // Allows to automatically instanciate createClient with right options
+  // Allows to automatically instantiate createClient with right options
   // instead of createClient<Database, { PostgrestVersion: 'XX' }>(URL, KEY)
   __InternalSupabase: {
-    PostgrestVersion: "12.2.3 (519615d)"
+    PostgrestVersion: "13.0.4"
   }
   public: {
     Tables: {
@@ -80,6 +80,36 @@ export type Database = {
           created_at?: string | null
           id?: number
           imagem_url?: string | null
+        }
+        Relationships: []
+      }
+      clientes_autorizados: {
+        Row: {
+          created_at: string
+          customer_id: string | null
+          data_compra: string | null
+          email: string
+          id: string
+          produto_id: string | null
+          status_assinatura: string
+        }
+        Insert: {
+          created_at?: string
+          customer_id?: string | null
+          data_compra?: string | null
+          email: string
+          id?: string
+          produto_id?: string | null
+          status_assinatura?: string
+        }
+        Update: {
+          created_at?: string
+          customer_id?: string | null
+          data_compra?: string | null
+          email?: string
+          id?: string
+          produto_id?: string | null
+          status_assinatura?: string
         }
         Relationships: []
       }
@@ -237,15 +267,15 @@ export type Database = {
       get_distinct_fornecedores: {
         Args: Record<PropertyKey, never>
         Returns: {
-          id: number
-          nome_loja: string
           categoria: string
-          Whatsapp: string
-          Instagram_url: string
+          created_at: string
           Endereco: string
+          id: number
+          Instagram_url: string
           logo_url: string
           mockup_url: string
-          created_at: string
+          nome_loja: string
+          Whatsapp: string
         }[]
       }
       get_or_create_user_by_email: {

@@ -12,25 +12,25 @@
   "scope": "/",
   "icons": [
     {
-      "src": "/icon-192x192.png",
+      "src": "/lovable-uploads/18b0e626-711a-4180-a57e-9324cfdc8c24.png",
       "sizes": "192x192",
       "type": "image/png",
       "purpose": "any maskable"
     },
     {
-      "src": "/icon-512x512.png",
+      "src": "/lovable-uploads/18b0e626-711a-4180-a57e-9324cfdc8c24.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any maskable"
     },
     {
-      "src": "/apple-touch-icon.png",
+      "src": "/lovable-uploads/18b0e626-711a-4180-a57e-9324cfdc8c24.png",
       "sizes": "180x180",
       "type": "image/png",
       "purpose": "any"
     },
     {
-      "src": "/favicon.png",
+      "src": "/lovable-uploads/18b0e626-711a-4180-a57e-9324cfdc8c24.png",
       "sizes": "32x32",
       "type": "image/png",
       "purpose": "any"

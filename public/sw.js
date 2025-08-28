@@ -5,8 +5,7 @@ const STATIC_CACHE = 'static-v2';
 const STATIC_RESOURCES = [
   '/',
   '/manifest.json',
-  '/icon-192x192.png',
-  '/icon-512x512.png',
+  '/lovable-uploads/18b0e626-711a-4180-a57e-9324cfdc8c24.png',
   '/apple-touch-icon.png',
   '/favicon.png'
 ];

@@ -77,6 +77,16 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     try {
       console.log('Buscando assinatura para usuário:', userId);
       
+      // Primeiro, tenta vincular assinaturas pelo e-mail
+      try {
+        const { data: claimedCount } = await supabase.rpc('claim_subscriptions_for_current_user');
+        if (claimedCount && claimedCount > 0) {
+          console.log(`${claimedCount} assinatura(s) vinculada(s) ao usuário pelo e-mail`);
+        }
+      } catch (claimError) {
+        console.warn('Erro ao tentar vincular assinaturas:', claimError);
+      }
+      
       // Buscar assinatura ativa do usuário
       const { data: subscriptions, error } = await supabase
         .from('assinaturas')

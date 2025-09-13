@@ -86,21 +86,11 @@ serve(async (req) => {
       throw new Error('Email do cliente não fornecido')
     }
 
-    // Buscar ou criar usuário
-    const { data: userId, error: userError } = await supabaseClient
-      .rpc('get_or_create_user_by_email', { email_param: customer.email })
-
-    if (userError) {
-      throw new Error(`Erro ao buscar/criar usuário: ${userError.message}`)
-    }
-
-    console.log('User ID:', userId)
-
     // Processar eventos diferentes
     switch (event) {
       case 'subscription.created':
       case 'payment.approved':
-        await processSubscriptionCreated(supabaseClient, userId, data)
+        await processSubscriptionCreated(supabaseClient, data)
         break
 
       case 'subscription.renewed':
@@ -164,9 +154,9 @@ serve(async (req) => {
   }
 })
 
-async function processSubscriptionCreated(supabaseClient: any, userId: string, data: any) {
+async function processSubscriptionCreated(supabaseClient: any, data: any) {
   const subscriptionData = {
-    user_id: userId,
+    user_id: null, // Será vinculado quando o usuário fizer login
     kiwify_subscription_id: data.subscription_id || `manual_${Date.now()}`,
     kiwify_customer_id: data.customer.id,
     email: data.customer.email,

@@ -264,6 +264,10 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      claim_subscriptions_for_current_user: {
+        Args: Record<PropertyKey, never>
+        Returns: number
+      }
       get_distinct_fornecedores: {
         Args: Record<PropertyKey, never>
         Returns: {

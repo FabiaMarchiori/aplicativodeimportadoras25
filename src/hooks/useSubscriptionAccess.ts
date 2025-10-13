@@ -17,6 +17,7 @@ export const useSubscriptionAccess = (): SubscriptionAccess => {
 
   const checkAccess = async () => {
     if (!user?.email) {
+      console.log('🔒 [DEBUG] Sem usuário ou email');
       setHasAccess(false);
       setLoading(false);
       return;
@@ -25,6 +26,12 @@ export const useSubscriptionAccess = (): SubscriptionAccess => {
     try {
       setLoading(true);
 
+      console.log('🔍 [DEBUG] Iniciando verificação de acesso:', { 
+        userId: user.id, 
+        email: user.email,
+        authUid: (await supabase.auth.getUser()).data.user?.id
+      });
+
       // PRIMEIRO: Verificar se é administrador
       const { data: profile, error: profileError } = await supabase
         .from('profiles')
@@ -32,39 +39,60 @@ export const useSubscriptionAccess = (): SubscriptionAccess => {
         .eq('id', user.id)
         .single();
 
-      console.log('useSubscriptionAccess - Verificação de admin:', { 
+      console.log('👤 [DEBUG] Verificação de admin:', { 
         userId: user.id, 
         email: user.email, 
         isAdmin: profile?.is_admin,
-        profileError 
+        profileError: profileError?.message
       });
 
       // Se é admin, dar acesso imediato
       if (profile?.is_admin) {
-        console.log('useSubscriptionAccess - Admin detectado, liberando acesso');
+        console.log('✅ [DEBUG] Admin detectado, liberando acesso');
         setHasAccess(true);
-        setSubscription(null); // Admin não precisa de assinatura
+        setSubscription(null);
         setLoading(false);
         return;
       }
 
-      // SEGUNDO: Verificar assinatura apenas para usuários não-admin
-      const { data: assinatura, error: assinaturaError } = await supabase
+      // SEGUNDO: Verificar assinatura por user_id
+      const { data: assinaturaPorId, error: errorById } = await supabase
         .from('assinaturas')
         .select('*')
         .eq('user_id', user.id)
         .eq('status', 'ativa')
         .order('created_at', { ascending: false })
         .limit(1)
-        .single();
+        .maybeSingle();
 
-      console.log('useSubscriptionAccess - Verificação de assinatura:', { 
-        assinatura, 
-        assinaturaError 
+      console.log('📋 [DEBUG] Busca por user_id:', { 
+        userId: user.id,
+        assinatura: assinaturaPorId, 
+        error: errorById?.message,
+        code: errorById?.code
       });
 
+      // TERCEIRO: Fallback - Verificar assinatura por email
+      const { data: assinaturaPorEmail, error: errorByEmail } = await supabase
+        .from('assinaturas')
+        .select('*')
+        .eq('email', user.email)
+        .eq('status', 'ativa')
+        .order('created_at', { ascending: false })
+        .limit(1)
+        .maybeSingle();
+
+      console.log('📧 [DEBUG] Busca por email:', { 
+        email: user.email,
+        assinatura: assinaturaPorEmail, 
+        error: errorByEmail?.message,
+        code: errorByEmail?.code
+      });
+
+      const assinatura = assinaturaPorId || assinaturaPorEmail;
+      const assinaturaError = errorById || errorByEmail;
+
       if (assinatura && !assinaturaError) {
-        // Verificar se não expirou
         const now = new Date();
         const expirationDate = assinatura.data_expiracao 
           ? new Date(assinatura.data_expiracao) 
@@ -72,18 +100,30 @@ export const useSubscriptionAccess = (): SubscriptionAccess => {
 
         const isActive = !expirationDate || expirationDate > now;
         
+        console.log('⏰ [DEBUG] Verificação de expiração:', {
+          dataExpiracao: assinatura.data_expiracao,
+          agora: now.toISOString(),
+          isActive,
+          diasRestantes: expirationDate ? Math.ceil((expirationDate.getTime() - now.getTime()) / (1000 * 60 * 60 * 24)) : null
+        });
+        
         if (isActive) {
+          console.log('✅ [DEBUG] Acesso liberado - Assinatura ativa encontrada');
           setHasAccess(true);
           setSubscription(assinatura);
           setLoading(false);
           return;
+        } else {
+          console.log('❌ [DEBUG] Assinatura expirada');
         }
+      } else {
+        console.log('❌ [DEBUG] Nenhuma assinatura ativa encontrada');
       }
 
       setHasAccess(false);
       setSubscription(null);
     } catch (error) {
-      console.error('Erro ao verificar acesso:', error);
+      console.error('💥 [DEBUG] Erro ao verificar acesso:', error);
       setHasAccess(false);
       setSubscription(null);
     } finally {

@@ -282,10 +282,6 @@ export type Database = {
           Whatsapp: string
         }[]
       }
-      get_or_create_user_by_email: {
-        Args: { email_param: string }
-        Returns: string
-      }
       has_active_subscription: {
         Args: { user_uuid?: string }
         Returns: boolean

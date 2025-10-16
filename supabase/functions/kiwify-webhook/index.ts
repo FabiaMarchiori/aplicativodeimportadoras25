@@ -135,17 +135,19 @@ serve(async (req) => {
       Deno.env.get('KIIWIFY_SERVICE_ROLE_KEY') ?? ''
     )
 
+    const errorMessage = error instanceof Error ? error.message : String(error);
+    
     await supabaseClient
       .from('webhook_logs')
       .insert({
         evento: 'error',
-        payload: { error: error.message },
+        payload: { error: errorMessage },
         status: 'error',
-        error_message: error.message
+        error_message: errorMessage
       })
 
     return new Response(
-      JSON.stringify({ error: error.message }),
+      JSON.stringify({ error: errorMessage }),
       {
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
         status: 500,

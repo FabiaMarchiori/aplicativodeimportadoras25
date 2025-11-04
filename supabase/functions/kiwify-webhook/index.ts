@@ -47,10 +47,9 @@ function calcularDataExpiracao(plano: string, dataInicio: string, expiresAt?: st
   return null;
 }
 
-// Função para normalizar o valor baseado no plano
+// Normaliza o valor da assinatura - sempre usa o valor real enviado pela Kiwify
+// Isso permite valores promocionais (Black Friday, etc)
 function normalizarValor(amount: number | undefined, plano: string): number {
-  if (plano === 'Anual') return 147.00;
-  if (plano === 'Mensal') return 27.00;
   return amount || 0;
 }
 
@@ -218,8 +217,9 @@ serve(async (req) => {
 
 async function processSubscriptionCreated(supabaseClient: any, data: any) {
   console.log('📧 Email do cliente:', data.customer.email);
+  console.log('🆔 Subscription ID:', data.subscription_id);
   console.log('📦 Produto original:', data.product.name);
-  console.log('💰 Valor original:', data.amount);
+  console.log('💰 Valor recebido:', data.amount);
   
   // Normalizar plano e calcular valores
   const planoNormalizado = normalizarPlano(data.product.name, data.amount);
@@ -227,9 +227,19 @@ async function processSubscriptionCreated(supabaseClient: any, data: any) {
   const dataInicio = data.created_at ? new Date(data.created_at).toISOString() : new Date().toISOString();
   const dataExpiracao = calcularDataExpiracao(planoNormalizado, dataInicio, data.expires_at);
   
-  console.log('✅ Plano normalizado:', planoNormalizado);
-  console.log('✅ Valor normalizado:', valorNormalizado);
-  console.log('✅ Data de expiração:', dataExpiracao);
+  console.log('📦 Plano normalizado:', planoNormalizado);
+  console.log('💰 Valor a ser gravado:', valorNormalizado);
+  
+  // Detectar promoções
+  if (planoNormalizado === 'Anual' && valorNormalizado !== 147) {
+    console.log('🎉 PROMOÇÃO DETECTADA - Valor promocional:', valorNormalizado);
+  }
+  if (planoNormalizado === 'Mensal' && valorNormalizado !== 27) {
+    console.log('🎉 PROMOÇÃO DETECTADA - Valor promocional:', valorNormalizado);
+  }
+  
+  console.log('📅 Data início:', dataInicio);
+  console.log('📅 Data expiração calculada:', dataExpiracao);
   
   const subscriptionData = {
     user_id: null, // Será vinculado quando o usuário fizer login

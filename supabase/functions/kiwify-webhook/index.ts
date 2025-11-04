@@ -7,6 +7,53 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 }
 
+// Função para normalizar o nome do plano
+function normalizarPlano(productName: string, amount?: number): string {
+  const lowerName = productName.toLowerCase();
+  
+  // Se o nome do produto contém "anual" ou o valor é >= 147
+  if (lowerName.includes('anual') || (amount && amount >= 147)) {
+    return 'Anual';
+  }
+  
+  // Se o nome do produto contém "mensal" ou o valor é >= 27
+  if (lowerName.includes('mensal') || (amount && amount >= 27)) {
+    return 'Mensal';
+  }
+  
+  // Fallback: usar o nome original
+  return productName;
+}
+
+// Função para calcular a data de expiração baseado no plano
+function calcularDataExpiracao(plano: string, dataInicio: string, expiresAt?: string): string | null {
+  // Se a Kiwify forneceu expires_at, usar esse valor
+  if (expiresAt) {
+    return new Date(expiresAt).toISOString();
+  }
+  
+  const inicio = new Date(dataInicio);
+  
+  if (plano === 'Anual') {
+    inicio.setFullYear(inicio.getFullYear() + 1);
+    return inicio.toISOString();
+  }
+  
+  if (plano === 'Mensal') {
+    inicio.setMonth(inicio.getMonth() + 1);
+    return inicio.toISOString();
+  }
+  
+  return null;
+}
+
+// Função para normalizar o valor baseado no plano
+function normalizarValor(amount: number | undefined, plano: string): number {
+  if (plano === 'Anual') return 147.00;
+  if (plano === 'Mensal') return 27.00;
+  return amount || 0;
+}
+
 interface KiwifyWebhookPayload {
   event: string;
   data: {
@@ -127,24 +174,37 @@ serve(async (req) => {
     )
 
   } catch (error) {
-    console.error('Erro no webhook:', error)
+    const errorMessage = error instanceof Error ? error.message : String(error);
+    const errorStack = error instanceof Error ? error.stack : undefined;
+    
+    console.error('❌ Erro no webhook:', {
+      error: errorMessage,
+      stack: errorStack,
+      timestamp: new Date().toISOString()
+    });
 
-    // Log de erro
+    // Log de erro estruturado
     const supabaseClient = createClient(
       Deno.env.get('SUPABASE_URL') ?? '',
       Deno.env.get('KIIWIFY_SERVICE_ROLE_KEY') ?? ''
     )
 
-    const errorMessage = error instanceof Error ? error.message : String(error);
-    
-    await supabaseClient
-      .from('webhook_logs')
-      .insert({
-        evento: 'error',
-        payload: { error: errorMessage },
-        status: 'error',
-        error_message: errorMessage
-      })
+    try {
+      await supabaseClient
+        .from('webhook_logs')
+        .insert({
+          evento: 'error',
+          payload: { 
+            error: errorMessage,
+            stack: errorStack,
+            timestamp: new Date().toISOString()
+          },
+          status: 'error',
+          error_message: errorMessage
+        })
+    } catch (logError) {
+      console.error('❌ Erro ao salvar log de erro:', logError);
+    }
 
     return new Response(
       JSON.stringify({ error: errorMessage }),
@@ -157,6 +217,20 @@ serve(async (req) => {
 })
 
 async function processSubscriptionCreated(supabaseClient: any, data: any) {
+  console.log('📧 Email do cliente:', data.customer.email);
+  console.log('📦 Produto original:', data.product.name);
+  console.log('💰 Valor original:', data.amount);
+  
+  // Normalizar plano e calcular valores
+  const planoNormalizado = normalizarPlano(data.product.name, data.amount);
+  const valorNormalizado = normalizarValor(data.amount, planoNormalizado);
+  const dataInicio = data.created_at ? new Date(data.created_at).toISOString() : new Date().toISOString();
+  const dataExpiracao = calcularDataExpiracao(planoNormalizado, dataInicio, data.expires_at);
+  
+  console.log('✅ Plano normalizado:', planoNormalizado);
+  console.log('✅ Valor normalizado:', valorNormalizado);
+  console.log('✅ Data de expiração:', dataExpiracao);
+  
   const subscriptionData = {
     user_id: null, // Será vinculado quando o usuário fizer login
     kiwify_subscription_id: data.subscription_id || `manual_${Date.now()}`,
@@ -164,10 +238,10 @@ async function processSubscriptionCreated(supabaseClient: any, data: any) {
     email: data.customer.email,
     nome_cliente: data.customer.name,
     status: 'ativa',
-    plano: data.product.name,
-    valor: data.amount,
-    data_inicio: data.created_at ? new Date(data.created_at).toISOString() : new Date().toISOString(),
-    data_expiracao: data.expires_at ? new Date(data.expires_at).toISOString() : null
+    plano: planoNormalizado,
+    valor: valorNormalizado,
+    data_inicio: dataInicio,
+    data_expiracao: dataExpiracao
   }
 
   const { error } = await supabaseClient
@@ -178,13 +252,17 @@ async function processSubscriptionCreated(supabaseClient: any, data: any) {
     })
 
   if (error) {
+    console.error('❌ Erro ao criar assinatura:', error.message);
     throw new Error(`Erro ao criar assinatura: ${error.message}`)
   }
 
-  console.log('Assinatura criada/atualizada:', subscriptionData)
+  console.log('✅ Assinatura criada/atualizada com sucesso:', subscriptionData)
 }
 
 async function processSubscriptionRenewed(supabaseClient: any, data: any) {
+  console.log('🔄 Renovando assinatura:', data.subscription_id);
+  console.log('📅 Nova data de expiração:', data.expires_at);
+  
   const { error } = await supabaseClient
     .from('assinaturas')
     .update({
@@ -195,13 +273,16 @@ async function processSubscriptionRenewed(supabaseClient: any, data: any) {
     .eq('kiwify_subscription_id', data.subscription_id)
 
   if (error) {
+    console.error('❌ Erro ao renovar assinatura:', error.message);
     throw new Error(`Erro ao renovar assinatura: ${error.message}`)
   }
 
-  console.log('Assinatura renovada:', data.subscription_id)
+  console.log('✅ Assinatura renovada com sucesso:', data.subscription_id)
 }
 
 async function processSubscriptionCancelled(supabaseClient: any, data: any) {
+  console.log('🚫 Cancelando assinatura:', data.subscription_id);
+  
   const { error } = await supabaseClient
     .from('assinaturas')
     .update({
@@ -211,13 +292,16 @@ async function processSubscriptionCancelled(supabaseClient: any, data: any) {
     .eq('kiwify_subscription_id', data.subscription_id)
 
   if (error) {
+    console.error('❌ Erro ao cancelar assinatura:', error.message);
     throw new Error(`Erro ao cancelar assinatura: ${error.message}`)
   }
 
-  console.log('Assinatura cancelada:', data.subscription_id)
+  console.log('✅ Assinatura cancelada com sucesso:', data.subscription_id)
 }
 
 async function processPaymentRefunded(supabaseClient: any, data: any) {
+  console.log('💸 Processando reembolso:', data.subscription_id);
+  
   const { error } = await supabaseClient
     .from('assinaturas')
     .update({
@@ -227,8 +311,9 @@ async function processPaymentRefunded(supabaseClient: any, data: any) {
     .eq('kiwify_subscription_id', data.subscription_id)
 
   if (error) {
+    console.error('❌ Erro ao processar reembolso:', error.message);
     throw new Error(`Erro ao processar reembolso: ${error.message}`)
   }
 
-  console.log('Assinatura reembolsada:', data.subscription_id)
+  console.log('✅ Reembolso processado com sucesso:', data.subscription_id)
 }

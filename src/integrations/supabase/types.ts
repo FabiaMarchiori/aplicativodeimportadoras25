@@ -264,12 +264,9 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      claim_subscriptions_for_current_user: {
-        Args: Record<PropertyKey, never>
-        Returns: number
-      }
+      claim_subscriptions_for_current_user: { Args: never; Returns: number }
       get_distinct_fornecedores: {
-        Args: Record<PropertyKey, never>
+        Args: never
         Returns: {
           categoria: string
           created_at: string
@@ -290,10 +287,7 @@ export type Database = {
         Args: { requested_role: Database["public"]["Enums"]["user_role"] }
         Returns: boolean
       }
-      is_admin: {
-        Args: Record<PropertyKey, never>
-        Returns: boolean
-      }
+      is_admin: { Args: never; Returns: boolean }
     }
     Enums: {
       subscription_status:

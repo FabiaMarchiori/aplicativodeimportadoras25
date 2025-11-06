@@ -4,7 +4,7 @@ import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type, x-kiwify-token',
 }
 
 // Função para normalizar o nome do plano
@@ -83,8 +83,8 @@ serve(async (req) => {
 
   try {
     // Validar token do webhook
-    const kiwifySignature = req.headers.get('X-Kiwify-Signature')
-    const webhookToken = Deno.env.get('KIIWIFY_WEBHOOK_TOKEN')
+    const kiwifySignature = req.headers.get('x-kiwify-token')
+    const webhookToken = Deno.env.get('KIWIFY_WEBHOOK_TOKEN')
 
     if (!kiwifySignature || !webhookToken) {
       console.error('Token do webhook não fornecido ou não configurado')
@@ -110,7 +110,7 @@ serve(async (req) => {
 
     const supabaseClient = createClient(
       Deno.env.get('SUPABASE_URL') ?? '',
-      Deno.env.get('KIIWIFY_SERVICE_ROLE_KEY') ?? ''
+      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
     )
 
     const payload: KiwifyWebhookPayload = await req.json()
@@ -185,7 +185,7 @@ serve(async (req) => {
     // Log de erro estruturado
     const supabaseClient = createClient(
       Deno.env.get('SUPABASE_URL') ?? '',
-      Deno.env.get('KIIWIFY_SERVICE_ROLE_KEY') ?? ''
+      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
     )
 
     try {

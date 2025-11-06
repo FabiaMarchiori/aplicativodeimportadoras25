@@ -82,9 +82,15 @@ serve(async (req) => {
   }
 
   try {
-    // Validar token do webhook
-    const kiwifySignature = req.headers.get('x-kiwify-token')
+    // Validar token do webhook - aceita tanto x-kiwify-token quanto authorization
+    const tokenFromHeader = req.headers.get('x-kiwify-token')
+    const authHeader = req.headers.get('authorization')
+    const tokenFromAuth = authHeader?.replace('Bearer ', '').trim()
+    const kiwifySignature = tokenFromHeader || tokenFromAuth
     const webhookToken = Deno.env.get('KIWIFY_WEBHOOK_TOKEN')
+
+    console.log('🔐 Token recebido:', kiwifySignature ? '***' : 'null')
+    console.log('🔐 Fonte do token:', tokenFromHeader ? 'x-kiwify-token' : tokenFromAuth ? 'authorization' : 'nenhum')
 
     if (!kiwifySignature || !webhookToken) {
       console.error('Token do webhook não fornecido ou não configurado')
@@ -116,14 +122,23 @@ serve(async (req) => {
     const payload: KiwifyWebhookPayload = await req.json()
     console.log('Webhook recebido:', JSON.stringify(payload, null, 2))
 
-    // Log do webhook recebido
-    await supabaseClient
+    // Log do webhook recebido - captura o ID para atualizações posteriores
+    const { data: logData, error: logError } = await supabaseClient
       .from('webhook_logs')
       .insert({
         evento: payload.event,
         payload: payload,
         status: 'received'
       })
+      .select('id')
+      .single()
+
+    if (logError) {
+      console.error('⚠️ Erro ao criar log inicial:', logError)
+    }
+
+    const logId = logData?.id
+    console.log('📝 Log ID criado:', logId)
 
     const { event, data } = payload
     const { customer, product } = data
@@ -155,14 +170,27 @@ serve(async (req) => {
         console.log(`Evento não processado: ${event}`)
     }
 
-    // Atualizar log como processado
-    await supabaseClient
-      .from('webhook_logs')
-      .insert({
-        evento: payload.event,
-        payload: payload,
-        status: 'processed'
-      })
+    // Atualizar log como processado (não cria duplicata)
+    if (logId) {
+      await supabaseClient
+        .from('webhook_logs')
+        .update({
+          status: 'processed',
+          payload: payload
+        })
+        .eq('id', logId)
+      console.log('✅ Log atualizado para processed:', logId)
+    } else {
+      // Fallback: se não temos o ID, criar novo registro
+      await supabaseClient
+        .from('webhook_logs')
+        .insert({
+          evento: payload.event,
+          payload: payload,
+          status: 'processed'
+        })
+      console.log('⚠️ Novo log processed criado (fallback)')
+    }
 
     return new Response(
       JSON.stringify({ message: 'Webhook processado com sucesso' }),
@@ -189,18 +217,40 @@ serve(async (req) => {
     )
 
     try {
-      await supabaseClient
-        .from('webhook_logs')
-        .insert({
-          evento: 'error',
-          payload: { 
-            error: errorMessage,
-            stack: errorStack,
-            timestamp: new Date().toISOString()
-          },
-          status: 'error',
-          error_message: errorMessage
-        })
+      // Tenta obter o logId do escopo anterior se disponível
+      const logIdFromScope = typeof logId !== 'undefined' ? logId : null;
+      
+      if (logIdFromScope) {
+        // Atualizar log existente com erro
+        await supabaseClient
+          .from('webhook_logs')
+          .update({
+            status: 'error',
+            error_message: errorMessage,
+            payload: { 
+              error: errorMessage,
+              stack: errorStack,
+              timestamp: new Date().toISOString()
+            }
+          })
+          .eq('id', logIdFromScope)
+        console.log('✅ Log atualizado para error:', logIdFromScope)
+      } else {
+        // Criar novo log de erro se não houver log inicial
+        await supabaseClient
+          .from('webhook_logs')
+          .insert({
+            evento: 'error',
+            payload: { 
+              error: errorMessage,
+              stack: errorStack,
+              timestamp: new Date().toISOString()
+            },
+            status: 'error',
+            error_message: errorMessage
+          })
+        console.log('⚠️ Novo log error criado (sem logId)')
+      }
     } catch (logError) {
       console.error('❌ Erro ao salvar log de erro:', logError);
     }

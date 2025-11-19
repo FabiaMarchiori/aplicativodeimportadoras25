@@ -82,56 +82,70 @@ serve(async (req) => {
   }
 
   try {
-    // === DEBUG: Logging completo para diagnóstico ===
-    console.log('=== 🔍 DEBUG: INÍCIO DO DIAGNÓSTICO ===')
+    // Extrair signature da URL (método usado pela Kiwify)
+    const url = new URL(req.url)
+    const signatureFromUrl = url.searchParams.get('signature')
     
-    console.log('=== 📋 Todos os Headers Recebidos ===')
-    req.headers.forEach((value, key) => {
-      // Mostra o valor completo para tokens, mas mascara se for muito longo
-      if (key.toLowerCase().includes('token') || key.toLowerCase() === 'authorization') {
-        console.log(`${key}: ${value}`)
-      } else {
-        console.log(`${key}: ${value}`)
-      }
-    })
-    
-    console.log('=== 🌐 URL Completa ===')
-    console.log(req.url)
-    
-    console.log('=== 📦 Método HTTP ===')
-    console.log(req.method)
-    
-    // Validar token do webhook - aceita tanto x-kiwify-token quanto authorization
+    // Também buscar em headers (fallback)
     const tokenFromHeader = req.headers.get('x-kiwify-token')
     const authHeader = req.headers.get('authorization')
     const tokenFromAuth = authHeader?.replace('Bearer ', '').trim()
-    const kiwifySignature = tokenFromHeader || tokenFromAuth
+    
     const webhookToken = Deno.env.get('KIWIFY_WEBHOOK_TOKEN')
 
-    console.log('🔐 Token recebido:', kiwifySignature || 'null')
-    console.log('🔐 Token esperado:', webhookToken || 'null')
-    console.log('🔐 Fonte do token:', tokenFromHeader ? 'x-kiwify-token' : tokenFromAuth ? 'authorization' : 'nenhum')
+    console.log('🔐 Signature da URL:', signatureFromUrl || 'null')
+    console.log('🔐 Token do header:', tokenFromHeader || tokenFromAuth || 'null')
+    console.log('🔐 Token configurado:', webhookToken ? 'configurado' : 'null')
 
-    if (!kiwifySignature || !webhookToken) {
-      console.error('Token do webhook não fornecido ou não configurado')
-      return new Response(
-        JSON.stringify({ error: 'Token de autenticação não fornecido' }),
-        {
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-          status: 401,
-        }
-      )
+    if (!webhookToken) {
+      console.error('KIWIFY_WEBHOOK_TOKEN não configurado')
+      return new Response(JSON.stringify({ error: 'Webhook não configurado' }), {
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        status: 500,
+      })
     }
 
-    if (kiwifySignature !== webhookToken) {
-      console.error('Token do webhook inválido')
-      return new Response(
-        JSON.stringify({ error: 'Token de autenticação inválido' }),
-        {
+    // Validar signature da URL (método principal da Kiwify)
+    if (signatureFromUrl) {
+      // Calcular SHA-1 do token configurado
+      const encoder = new TextEncoder()
+      const data = encoder.encode(webhookToken)
+      const hashBuffer = await crypto.subtle.digest('SHA-1', data)
+      const hashArray = Array.from(new Uint8Array(hashBuffer))
+      const expectedSignature = hashArray.map(b => b.toString(16).padStart(2, '0')).join('')
+      
+      console.log('🔐 Signature esperada:', expectedSignature)
+      console.log('🔐 Signature recebida:', signatureFromUrl)
+      
+      if (signatureFromUrl !== expectedSignature) {
+        console.error('❌ Signature inválida')
+        return new Response(JSON.stringify({ error: 'Signature inválida' }), {
           headers: { ...corsHeaders, 'Content-Type': 'application/json' },
           status: 401,
-        }
-      )
+        })
+      }
+      
+      console.log('✅ Token validado com sucesso via signature')
+    } 
+    // Fallback: validar por header (se não vier signature na URL)
+    else if (tokenFromHeader || tokenFromAuth) {
+      const headerToken = tokenFromHeader || tokenFromAuth
+      if (headerToken !== webhookToken) {
+        console.error('❌ Token do header inválido')
+        return new Response(JSON.stringify({ error: 'Token inválido' }), {
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+          status: 401,
+        })
+      }
+      console.log('✅ Token validado com sucesso via header')
+    } 
+    // Nenhum método de autenticação fornecido
+    else {
+      console.error('❌ Nenhum método de autenticação fornecido')
+      return new Response(JSON.stringify({ error: 'Token não fornecido' }), {
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        status: 401,
+      })
     }
 
     const supabaseClient = createClient(
@@ -140,11 +154,6 @@ serve(async (req) => {
     )
 
     const payload: KiwifyWebhookPayload = await req.json()
-    
-    console.log('=== 📨 Body Completo Recebido ===')
-    console.log(JSON.stringify(payload, null, 2))
-    console.log('=== 🔍 DEBUG: FIM DO DIAGNÓSTICO ===')
-    
     console.log('Webhook recebido:', JSON.stringify(payload, null, 2))
 
     // Log do webhook recebido - captura o ID para atualizações posteriores

@@ -86,15 +86,9 @@ serve(async (req) => {
     const url = new URL(req.url)
     const signatureFromUrl = url.searchParams.get('signature')
     
-    // Também buscar em headers (fallback)
-    const tokenFromHeader = req.headers.get('x-kiwify-token')
-    const authHeader = req.headers.get('authorization')
-    const tokenFromAuth = authHeader?.replace('Bearer ', '').trim()
-    
     const webhookToken = Deno.env.get('KIWIFY_WEBHOOK_TOKEN')
 
     console.log('🔐 Signature da URL:', signatureFromUrl || 'null')
-    console.log('🔐 Token do header:', tokenFromHeader || tokenFromAuth || 'null')
     console.log('🔐 Token configurado:', webhookToken ? 'configurado' : 'null')
 
     if (!webhookToken) {
@@ -105,56 +99,75 @@ serve(async (req) => {
       })
     }
 
-    // Validar signature da URL (método principal da Kiwify)
+    // Ler o body primeiro para validação HMAC
+    const bodyText = await req.text()
+    let payload: KiwifyWebhookPayload
+    
+    try {
+      payload = JSON.parse(bodyText)
+    } catch (e) {
+      console.error('Erro ao fazer parse do JSON:', e)
+      return new Response(JSON.stringify({ error: 'JSON inválido' }), {
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        status: 400,
+      })
+    }
+
+    // Validar signature usando HMAC-SHA1 (método padrão de webhooks)
     if (signatureFromUrl) {
-      // Calcular SHA-1 do token configurado
-      const encoder = new TextEncoder()
-      const data = encoder.encode(webhookToken)
-      const hashBuffer = await crypto.subtle.digest('SHA-1', data)
-      const hashArray = Array.from(new Uint8Array(hashBuffer))
-      const expectedSignature = hashArray.map(b => b.toString(16).padStart(2, '0')).join('')
-      
-      console.log('🔐 Signature esperada:', expectedSignature)
-      console.log('🔐 Signature recebida:', signatureFromUrl)
-      
-      if (signatureFromUrl !== expectedSignature) {
-        console.error('❌ Signature inválida')
-        return new Response(JSON.stringify({ error: 'Signature inválida' }), {
+      try {
+        // Criar HMAC-SHA1 do body usando o token como chave
+        const encoder = new TextEncoder()
+        const keyData = encoder.encode(webhookToken)
+        const messageData = encoder.encode(bodyText)
+        
+        // Importar a chave para HMAC
+        const key = await crypto.subtle.importKey(
+          'raw',
+          keyData,
+          { name: 'HMAC', hash: 'SHA-1' },
+          false,
+          ['sign']
+        )
+        
+        // Calcular HMAC
+        const signatureBuffer = await crypto.subtle.sign('HMAC', key, messageData)
+        const signatureArray = Array.from(new Uint8Array(signatureBuffer))
+        const expectedSignature = signatureArray.map(b => b.toString(16).padStart(2, '0')).join('')
+        
+        console.log('🔐 HMAC-SHA1 esperado:', expectedSignature)
+        console.log('🔐 Signature recebida:', signatureFromUrl)
+        
+        if (signatureFromUrl !== expectedSignature) {
+          console.error('❌ Signature HMAC inválida')
+          return new Response(JSON.stringify({ error: 'Signature inválida' }), {
+            headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+            status: 401,
+          })
+        }
+        
+        console.log('✅ Token validado com sucesso via HMAC-SHA1')
+      } catch (error) {
+        console.error('Erro ao validar HMAC:', error)
+        return new Response(JSON.stringify({ error: 'Erro na validação' }), {
           headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-          status: 401,
+          status: 500,
         })
       }
-      
-      console.log('✅ Token validado com sucesso via signature')
-    } 
-    // Fallback: validar por header (se não vier signature na URL)
-    else if (tokenFromHeader || tokenFromAuth) {
-      const headerToken = tokenFromHeader || tokenFromAuth
-      if (headerToken !== webhookToken) {
-        console.error('❌ Token do header inválido')
-        return new Response(JSON.stringify({ error: 'Token inválido' }), {
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-          status: 401,
-        })
-      }
-      console.log('✅ Token validado com sucesso via header')
-    } 
-    // Nenhum método de autenticação fornecido
-    else {
-      console.error('❌ Nenhum método de autenticação fornecido')
-      return new Response(JSON.stringify({ error: 'Token não fornecido' }), {
+    } else {
+      console.error('❌ Signature não fornecida na URL')
+      return new Response(JSON.stringify({ error: 'Signature não fornecida' }), {
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
         status: 401,
       })
     }
 
+    console.log('Webhook recebido:', JSON.stringify(payload, null, 2))
+
     const supabaseClient = createClient(
       Deno.env.get('SUPABASE_URL') ?? '',
       Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
     )
-
-    const payload: KiwifyWebhookPayload = await req.json()
-    console.log('Webhook recebido:', JSON.stringify(payload, null, 2))
 
     // Log do webhook recebido - captura o ID para atualizações posteriores
     const { data: logData, error: logError } = await supabaseClient

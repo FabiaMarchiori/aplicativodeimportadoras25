@@ -53,26 +53,42 @@ function normalizarValor(amount: number | undefined, plano: string): number {
   return amount || 0;
 }
 
+// Interface atualizada para o payload real da Kiwify
 interface KiwifyWebhookPayload {
-  event: string;
-  data: {
-    subscription_id?: string;
-    customer: {
-      email: string;
-      name?: string;
-      id?: string;
-    };
-    product: {
-      name: string;
-      id?: string;
-    };
-    amount?: number;
-    status?: string;
-    created_at?: string;
-    expires_at?: string;
-    cancelled_at?: string;
-    refunded_at?: string;
+  webhook_event_type: string;
+  order_id: string;
+  order_status: string;
+  subscription_id?: string;
+  Customer: {
+    full_name: string;
+    first_name: string;
+    email: string;
+    mobile?: string;
+    CPF?: string;
   };
+  Product: {
+    product_id: string;
+    product_name: string;
+  };
+  Subscription?: {
+    id: string;
+    start_date: string;
+    next_payment: string;
+    status: string;
+    plan: {
+      id: string;
+      name: string;
+      frequency: string;
+      qty_charges: number;
+    };
+  };
+  Commissions: {
+    charge_amount: number;
+    product_base_price: number;
+    my_commission: number;
+  };
+  approved_date?: string;
+  refunded_at?: string;
 }
 
 serve(async (req) => {
@@ -173,7 +189,7 @@ serve(async (req) => {
     const { data: logData, error: logError } = await supabaseClient
       .from('webhook_logs')
       .insert({
-        evento: payload.event,
+        evento: payload.webhook_event_type,
         payload: payload,
         status: 'received'
       })
@@ -187,34 +203,36 @@ serve(async (req) => {
     const logId = logData?.id
     console.log('📝 Log ID criado:', logId)
 
-    const { event, data } = payload
-    const { customer, product } = data
+    // Mapeia eventos da Kiwify para processamento
+    const eventMap: Record<string, string> = {
+      'order_approved': 'subscription.created',
+      'subscription_cancelled': 'subscription.cancelled',
+      'subscription_charge_approved': 'subscription.renewed',
+      'subscription_charge_refunded': 'payment.refunded'
+    };
 
-    if (!customer?.email) {
-      throw new Error('Email do cliente não fornecido')
-    }
+    const mappedEvent = eventMap[payload.webhook_event_type] || payload.webhook_event_type;
 
     // Processar eventos diferentes
-    switch (event) {
+    switch (mappedEvent) {
       case 'subscription.created':
-      case 'payment.approved':
-        await processSubscriptionCreated(supabaseClient, data)
+        await processSubscriptionCreated(supabaseClient, payload)
         break
 
       case 'subscription.renewed':
-        await processSubscriptionRenewed(supabaseClient, data)
+        await processSubscriptionRenewed(supabaseClient, payload)
         break
 
       case 'subscription.cancelled':
-        await processSubscriptionCancelled(supabaseClient, data)
+        await processSubscriptionCancelled(supabaseClient, payload)
         break
 
       case 'payment.refunded':
-        await processPaymentRefunded(supabaseClient, data)
+        await processPaymentRefunded(supabaseClient, payload)
         break
 
       default:
-        console.log(`Evento não processado: ${event}`)
+        console.log(`⚠️ Evento não tratado: ${payload.webhook_event_type}`)
     }
 
     // Atualizar log como processado (não cria duplicata)
@@ -232,7 +250,7 @@ serve(async (req) => {
       await supabaseClient
         .from('webhook_logs')
         .insert({
-          evento: payload.event,
+          evento: payload.webhook_event_type,
           payload: payload,
           status: 'processed'
         })
@@ -366,29 +384,48 @@ async function processSubscriptionCreated(supabaseClient: any, data: any) {
   console.log('✅ Assinatura criada/atualizada com sucesso:', subscriptionData)
 }
 
-async function processSubscriptionRenewed(supabaseClient: any, data: any) {
-  console.log('🔄 Renovando assinatura:', data.subscription_id);
-  console.log('📅 Nova data de expiração:', data.expires_at);
+async function processSubscriptionRenewed(supabaseClient: any, payload: KiwifyWebhookPayload) {
+  const subscription = payload.Subscription;
+  const subscriptionId = subscription?.id || payload.subscription_id || payload.order_id;
+  
+  console.log('🔄 Renovando assinatura:', subscriptionId);
+  console.log('📅 Próximo pagamento:', subscription?.next_payment);
+
+  // Busca a assinatura existente para pegar o plano
+  const { data: assinaturaExistente } = await supabaseClient
+    .from('assinaturas')
+    .select('plano')
+    .eq('kiwify_subscription_id', subscriptionId)
+    .single();
+
+  const plano = assinaturaExistente?.plano || normalizarPlano(subscription?.plan?.name || '', payload.Commissions.charge_amount);
+  
+  // Calcula a nova data de expiração
+  const dataInicio = new Date().toISOString();
+  const dataExpiracao = calcularDataExpiracao(plano, dataInicio, subscription?.next_payment);
   
   const { error } = await supabaseClient
     .from('assinaturas')
     .update({
       status: 'ativa',
-      data_expiracao: data.expires_at ? new Date(data.expires_at).toISOString() : null,
+      data_expiracao: dataExpiracao,
       updated_at: new Date().toISOString()
     })
-    .eq('kiwify_subscription_id', data.subscription_id)
+    .eq('kiwify_subscription_id', subscriptionId)
 
   if (error) {
     console.error('❌ Erro ao renovar assinatura:', error.message);
     throw new Error(`Erro ao renovar assinatura: ${error.message}`)
   }
 
-  console.log('✅ Assinatura renovada com sucesso:', data.subscription_id)
+  console.log('✅ Assinatura renovada com sucesso:', subscriptionId)
 }
 
-async function processSubscriptionCancelled(supabaseClient: any, data: any) {
-  console.log('🚫 Cancelando assinatura:', data.subscription_id);
+async function processSubscriptionCancelled(supabaseClient: any, payload: KiwifyWebhookPayload) {
+  const subscription = payload.Subscription;
+  const subscriptionId = subscription?.id || payload.subscription_id || payload.order_id;
+  
+  console.log('🚫 Cancelando assinatura:', subscriptionId);
   
   const { error } = await supabaseClient
     .from('assinaturas')
@@ -396,18 +433,21 @@ async function processSubscriptionCancelled(supabaseClient: any, data: any) {
       status: 'cancelada',
       updated_at: new Date().toISOString()
     })
-    .eq('kiwify_subscription_id', data.subscription_id)
+    .eq('kiwify_subscription_id', subscriptionId)
 
   if (error) {
     console.error('❌ Erro ao cancelar assinatura:', error.message);
     throw new Error(`Erro ao cancelar assinatura: ${error.message}`)
   }
 
-  console.log('✅ Assinatura cancelada com sucesso:', data.subscription_id)
+  console.log('✅ Assinatura cancelada com sucesso:', subscriptionId)
 }
 
-async function processPaymentRefunded(supabaseClient: any, data: any) {
-  console.log('💸 Processando reembolso:', data.subscription_id);
+async function processPaymentRefunded(supabaseClient: any, payload: KiwifyWebhookPayload) {
+  const subscription = payload.Subscription;
+  const subscriptionId = subscription?.id || payload.subscription_id || payload.order_id;
+  
+  console.log('💸 Processando reembolso:', subscriptionId);
   
   const { error } = await supabaseClient
     .from('assinaturas')
@@ -415,12 +455,12 @@ async function processPaymentRefunded(supabaseClient: any, data: any) {
       status: 'reembolsada',
       updated_at: new Date().toISOString()
     })
-    .eq('kiwify_subscription_id', data.subscription_id)
+    .eq('kiwify_subscription_id', subscriptionId)
 
   if (error) {
     console.error('❌ Erro ao processar reembolso:', error.message);
     throw new Error(`Erro ao processar reembolso: ${error.message}`)
   }
 
-  console.log('✅ Reembolso processado com sucesso:', data.subscription_id)
+  console.log('✅ Reembolso processado com sucesso:', subscriptionId)
 }

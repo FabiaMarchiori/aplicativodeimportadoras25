@@ -330,17 +330,22 @@ serve(async (req) => {
   }
 })
 
-async function processSubscriptionCreated(supabaseClient: any, data: any) {
-  console.log('📧 Email do cliente:', data.customer.email);
-  console.log('🆔 Subscription ID:', data.subscription_id);
-  console.log('📦 Produto original:', data.product.name);
-  console.log('💰 Valor recebido:', data.amount);
+async function processSubscriptionCreated(supabaseClient: any, payload: KiwifyWebhookPayload) {
+  const customer = payload.Customer;
+  const product = payload.Product;
+  const subscription = payload.Subscription;
+  const commissions = payload.Commissions;
+  
+  console.log('📧 Email do cliente:', customer?.email);
+  console.log('🆔 Subscription ID:', subscription?.id);
+  console.log('📦 Produto original:', product?.product_name);
+  console.log('💰 Valor recebido:', commissions?.charge_amount);
   
   // Normalizar plano e calcular valores
-  const planoNormalizado = normalizarPlano(data.product.name, data.amount);
-  const valorNormalizado = normalizarValor(data.amount, planoNormalizado);
-  const dataInicio = data.created_at ? new Date(data.created_at).toISOString() : new Date().toISOString();
-  const dataExpiracao = calcularDataExpiracao(planoNormalizado, dataInicio, data.expires_at);
+  const planoNormalizado = normalizarPlano(product?.product_name || '', commissions?.charge_amount);
+  const valorNormalizado = normalizarValor(commissions?.charge_amount, planoNormalizado);
+  const dataInicio = payload.created_at ? new Date(payload.created_at).toISOString() : new Date().toISOString();
+  const dataExpiracao = calcularDataExpiracao(planoNormalizado, dataInicio, subscription?.next_payment);
   
   console.log('📦 Plano normalizado:', planoNormalizado);
   console.log('💰 Valor a ser gravado:', valorNormalizado);
@@ -358,10 +363,10 @@ async function processSubscriptionCreated(supabaseClient: any, data: any) {
   
   const subscriptionData = {
     user_id: null, // Será vinculado quando o usuário fizer login
-    kiwify_subscription_id: data.subscription_id || `manual_${Date.now()}`,
-    kiwify_customer_id: data.customer.id,
-    email: data.customer.email,
-    nome_cliente: data.customer.name,
+    kiwify_subscription_id: subscription?.id || `manual_${Date.now()}`,
+    kiwify_customer_id: customer?.CPF || customer?.email,
+    email: customer?.email,
+    nome_cliente: customer?.full_name,
     status: 'ativa',
     plano: planoNormalizado,
     valor: valorNormalizado,

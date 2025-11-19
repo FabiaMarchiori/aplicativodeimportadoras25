@@ -82,6 +82,25 @@ serve(async (req) => {
   }
 
   try {
+    // === DEBUG: Logging completo para diagnóstico ===
+    console.log('=== 🔍 DEBUG: INÍCIO DO DIAGNÓSTICO ===')
+    
+    console.log('=== 📋 Todos os Headers Recebidos ===')
+    req.headers.forEach((value, key) => {
+      // Mostra o valor completo para tokens, mas mascara se for muito longo
+      if (key.toLowerCase().includes('token') || key.toLowerCase() === 'authorization') {
+        console.log(`${key}: ${value}`)
+      } else {
+        console.log(`${key}: ${value}`)
+      }
+    })
+    
+    console.log('=== 🌐 URL Completa ===')
+    console.log(req.url)
+    
+    console.log('=== 📦 Método HTTP ===')
+    console.log(req.method)
+    
     // Validar token do webhook - aceita tanto x-kiwify-token quanto authorization
     const tokenFromHeader = req.headers.get('x-kiwify-token')
     const authHeader = req.headers.get('authorization')
@@ -89,7 +108,8 @@ serve(async (req) => {
     const kiwifySignature = tokenFromHeader || tokenFromAuth
     const webhookToken = Deno.env.get('KIWIFY_WEBHOOK_TOKEN')
 
-    console.log('🔐 Token recebido:', kiwifySignature ? '***' : 'null')
+    console.log('🔐 Token recebido:', kiwifySignature || 'null')
+    console.log('🔐 Token esperado:', webhookToken || 'null')
     console.log('🔐 Fonte do token:', tokenFromHeader ? 'x-kiwify-token' : tokenFromAuth ? 'authorization' : 'nenhum')
 
     if (!kiwifySignature || !webhookToken) {
@@ -120,6 +140,11 @@ serve(async (req) => {
     )
 
     const payload: KiwifyWebhookPayload = await req.json()
+    
+    console.log('=== 📨 Body Completo Recebido ===')
+    console.log(JSON.stringify(payload, null, 2))
+    console.log('=== 🔍 DEBUG: FIM DO DIAGNÓSTICO ===')
+    
     console.log('Webhook recebido:', JSON.stringify(payload, null, 2))
 
     // Log do webhook recebido - captura o ID para atualizações posteriores

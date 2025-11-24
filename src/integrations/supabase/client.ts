@@ -28,20 +28,12 @@ const fallbackStorage = {
   removeItem: (key: string) => {},
 };
 
-// Check if we can use Web Locks API (not available in iframes)
-const canUseLocks = () => {
+// Check if we're in an iframe (Web Locks API not available in iframes)
+const isInIframe = () => {
   try {
-    // Check if we're in an iframe
-    if (typeof window !== 'undefined' && window.self !== window.top) {
-      return false;
-    }
-    // Check if LockManager is available
-    if (typeof navigator !== 'undefined' && !navigator.locks) {
-      return false;
-    }
-    return true;
+    return typeof window !== 'undefined' && window.self !== window.top;
   } catch (e) {
-    return false;
+    return true; // If we can't check, assume we're in an iframe to be safe
   }
 };
 
@@ -51,11 +43,9 @@ const canUseLocks = () => {
 export const supabase = createClient<Database>(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY, {
   auth: {
     storage: isLocalStorageAvailable() ? localStorage : fallbackStorage,
-    persistSession: isLocalStorageAvailable(),
+    // Disable session persistence in iframes to avoid Web Locks API error
+    persistSession: !isInIframe() && isLocalStorageAvailable(),
     autoRefreshToken: true,
-  },
-  db: {
-    // Disable Web Locks API in iframes to prevent errors in preview
-    shouldUseNavigatorLock: canUseLocks()
+    detectSessionInUrl: true,
   }
 });

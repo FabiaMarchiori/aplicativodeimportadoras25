@@ -28,6 +28,23 @@ const fallbackStorage = {
   removeItem: (key: string) => {},
 };
 
+// Check if we can use Web Locks API (not available in iframes)
+const canUseLocks = () => {
+  try {
+    // Check if we're in an iframe
+    if (typeof window !== 'undefined' && window.self !== window.top) {
+      return false;
+    }
+    // Check if LockManager is available
+    if (typeof navigator !== 'undefined' && !navigator.locks) {
+      return false;
+    }
+    return true;
+  } catch (e) {
+    return false;
+  }
+};
+
 // Import the supabase client like this:
 // import { supabase } from "@/integrations/supabase/client";
 
@@ -36,5 +53,9 @@ export const supabase = createClient<Database>(SUPABASE_URL, SUPABASE_PUBLISHABL
     storage: isLocalStorageAvailable() ? localStorage : fallbackStorage,
     persistSession: isLocalStorageAvailable(),
     autoRefreshToken: true,
+  },
+  db: {
+    // Disable Web Locks API in iframes to prevent errors in preview
+    shouldUseNavigatorLock: canUseLocks()
   }
 });

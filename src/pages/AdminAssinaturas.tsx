@@ -17,8 +17,12 @@ import {
   CheckCircle,
   XCircle,
   RefreshCw,
-  Loader2
+  Loader2,
+  TrendingUp,
+  TrendingDown,
+  BarChart3
 } from 'lucide-react';
+import { LineChart, Line, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import type { Database } from '@/integrations/supabase/types';
 
 type Assinatura = Database['public']['Tables']['assinaturas']['Row'];
@@ -31,7 +35,7 @@ export default function AdminAssinaturas() {
   const [webhookLogs, setWebhookLogs] = useState<WebhookLog[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
-  const [activeTab, setActiveTab] = useState<'assinaturas' | 'webhooks'>('assinaturas');
+  const [activeTab, setActiveTab] = useState<'dashboard' | 'assinaturas' | 'webhooks'>('dashboard');
 
   useEffect(() => {
     if (!user) {
@@ -114,6 +118,78 @@ export default function AdminAssinaturas() {
     expiradas: assinaturas.filter(a => a.status === 'expirada').length,
   };
 
+  // Calcular dados para os gráficos
+  const getMonthlyRevenue = () => {
+    const monthlyData: { [key: string]: number } = {};
+    
+    assinaturas.forEach(assinatura => {
+      if (assinatura.valor && assinatura.data_inicio) {
+        const date = new Date(assinatura.data_inicio);
+        const monthKey = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
+        monthlyData[monthKey] = (monthlyData[monthKey] || 0) + Number(assinatura.valor);
+      }
+    });
+
+    return Object.entries(monthlyData)
+      .sort(([a], [b]) => a.localeCompare(b))
+      .map(([month, revenue]) => ({
+        month: new Date(month + '-01').toLocaleDateString('pt-BR', { month: 'short', year: '2-digit' }),
+        receita: revenue
+      }))
+      .slice(-6); // Últimos 6 meses
+  };
+
+  const getChurnData = () => {
+    const monthlyData: { [key: string]: { novos: number; cancelados: number } } = {};
+    
+    assinaturas.forEach(assinatura => {
+      if (assinatura.data_inicio) {
+        const date = new Date(assinatura.data_inicio);
+        const monthKey = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
+        if (!monthlyData[monthKey]) {
+          monthlyData[monthKey] = { novos: 0, cancelados: 0 };
+        }
+        monthlyData[monthKey].novos++;
+      }
+      
+      if (assinatura.status === 'cancelada' && assinatura.updated_at) {
+        const date = new Date(assinatura.updated_at);
+        const monthKey = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
+        if (!monthlyData[monthKey]) {
+          monthlyData[monthKey] = { novos: 0, cancelados: 0 };
+        }
+        monthlyData[monthKey].cancelados++;
+      }
+    });
+
+    return Object.entries(monthlyData)
+      .sort(([a], [b]) => a.localeCompare(b))
+      .map(([month, data]) => ({
+        month: new Date(month + '-01').toLocaleDateString('pt-BR', { month: 'short', year: '2-digit' }),
+        novos: data.novos,
+        cancelados: data.cancelados,
+        taxa: data.novos > 0 ? ((data.cancelados / data.novos) * 100).toFixed(1) : '0'
+      }))
+      .slice(-6); // Últimos 6 meses
+  };
+
+  const getStatusDistribution = () => {
+    return [
+      { name: 'Ativas', value: stats.ativas, color: '#10b981' },
+      { name: 'Canceladas', value: stats.canceladas, color: '#ef4444' },
+      { name: 'Expiradas', value: stats.expiradas, color: '#f59e0b' },
+      { name: 'Inativas', value: assinaturas.filter(a => a.status === 'inativa').length, color: '#6b7280' }
+    ].filter(item => item.value > 0);
+  };
+
+  const monthlyRevenue = getMonthlyRevenue();
+  const churnData = getChurnData();
+  const statusDistribution = getStatusDistribution();
+  const totalRevenue = monthlyRevenue.reduce((sum, item) => sum + item.receita, 0);
+  const avgChurnRate = churnData.length > 0 
+    ? (churnData.reduce((sum, item) => sum + parseFloat(item.taxa), 0) / churnData.length).toFixed(1)
+    : '0';
+
   if (!user || !isAdmin) {
     return null;
   }
@@ -185,6 +261,17 @@ export default function AdminAssinaturas() {
         <div className="mb-6">
           <div className="flex space-x-4">
             <Button
+              variant={activeTab === 'dashboard' ? 'default' : 'outline'}
+              onClick={() => setActiveTab('dashboard')}
+              className={activeTab === 'dashboard' 
+                ? 'bg-white text-[#1981A7]' 
+                : 'border-white text-white hover:bg-white/10'
+              }
+            >
+              <BarChart3 className="h-4 w-4 mr-2" />
+              Dashboard
+            </Button>
+            <Button
               variant={activeTab === 'assinaturas' ? 'default' : 'outline'}
               onClick={() => setActiveTab('assinaturas')}
               className={activeTab === 'assinaturas' 
@@ -214,6 +301,188 @@ export default function AdminAssinaturas() {
           </div>
         ) : (
           <>
+            {activeTab === 'dashboard' && (
+              <div className="space-y-6">
+                {/* Métricas de Receita */}
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <Card className="bg-white/95 backdrop-blur-sm">
+                    <CardContent className="p-4">
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <p className="text-sm text-gray-600">Receita Total (6 meses)</p>
+                          <p className="text-2xl font-bold text-green-600">
+                            R$ {totalRevenue.toFixed(2)}
+                          </p>
+                        </div>
+                        <DollarSign className="h-8 w-8 text-green-600" />
+                      </div>
+                    </CardContent>
+                  </Card>
+
+                  <Card className="bg-white/95 backdrop-blur-sm">
+                    <CardContent className="p-4">
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <p className="text-sm text-gray-600">Taxa de Churn Média</p>
+                          <p className="text-2xl font-bold text-orange-600">{avgChurnRate}%</p>
+                        </div>
+                        <TrendingDown className="h-8 w-8 text-orange-600" />
+                      </div>
+                    </CardContent>
+                  </Card>
+
+                  <Card className="bg-white/95 backdrop-blur-sm">
+                    <CardContent className="p-4">
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <p className="text-sm text-gray-600">Receita Mensal Média</p>
+                          <p className="text-2xl font-bold text-blue-600">
+                            R$ {monthlyRevenue.length > 0 
+                              ? (totalRevenue / monthlyRevenue.length).toFixed(2)
+                              : '0.00'
+                            }
+                          </p>
+                        </div>
+                        <TrendingUp className="h-8 w-8 text-blue-600" />
+                      </div>
+                    </CardContent>
+                  </Card>
+                </div>
+
+                {/* Gráficos */}
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                  {/* Gráfico de Receita Mensal */}
+                  <Card className="bg-white/95 backdrop-blur-sm">
+                    <CardHeader>
+                      <CardTitle className="text-[#1981A7]">Receita Mensal</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <ResponsiveContainer width="100%" height={300}>
+                        <LineChart data={monthlyRevenue}>
+                          <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
+                          <XAxis dataKey="month" stroke="#6b7280" />
+                          <YAxis stroke="#6b7280" />
+                          <Tooltip 
+                            contentStyle={{ backgroundColor: '#fff', border: '1px solid #e5e7eb' }}
+                            formatter={(value: number) => [`R$ ${value.toFixed(2)}`, 'Receita']}
+                          />
+                          <Legend />
+                          <Line 
+                            type="monotone" 
+                            dataKey="receita" 
+                            stroke="#10b981" 
+                            strokeWidth={2}
+                            dot={{ fill: '#10b981', r: 4 }}
+                            name="Receita"
+                          />
+                        </LineChart>
+                      </ResponsiveContainer>
+                    </CardContent>
+                  </Card>
+
+                  {/* Gráfico de Churn */}
+                  <Card className="bg-white/95 backdrop-blur-sm">
+                    <CardHeader>
+                      <CardTitle className="text-[#1981A7]">Análise de Churn</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <ResponsiveContainer width="100%" height={300}>
+                        <LineChart data={churnData}>
+                          <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
+                          <XAxis dataKey="month" stroke="#6b7280" />
+                          <YAxis stroke="#6b7280" />
+                          <Tooltip 
+                            contentStyle={{ backgroundColor: '#fff', border: '1px solid #e5e7eb' }}
+                          />
+                          <Legend />
+                          <Line 
+                            type="monotone" 
+                            dataKey="novos" 
+                            stroke="#10b981" 
+                            strokeWidth={2}
+                            dot={{ fill: '#10b981', r: 4 }}
+                            name="Novos"
+                          />
+                          <Line 
+                            type="monotone" 
+                            dataKey="cancelados" 
+                            stroke="#ef4444" 
+                            strokeWidth={2}
+                            dot={{ fill: '#ef4444', r: 4 }}
+                            name="Cancelados"
+                          />
+                        </LineChart>
+                      </ResponsiveContainer>
+                    </CardContent>
+                  </Card>
+
+                  {/* Gráfico de Distribuição de Status */}
+                  <Card className="bg-white/95 backdrop-blur-sm">
+                    <CardHeader>
+                      <CardTitle className="text-[#1981A7]">Distribuição por Status</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <ResponsiveContainer width="100%" height={300}>
+                        <PieChart>
+                          <Pie
+                            data={statusDistribution}
+                            cx="50%"
+                            cy="50%"
+                            labelLine={false}
+                            label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(0)}%`}
+                            outerRadius={80}
+                            fill="#8884d8"
+                            dataKey="value"
+                          >
+                            {statusDistribution.map((entry, index) => (
+                              <Cell key={`cell-${index}`} fill={entry.color} />
+                            ))}
+                          </Pie>
+                          <Tooltip />
+                        </PieChart>
+                      </ResponsiveContainer>
+                    </CardContent>
+                  </Card>
+
+                  {/* Tabela de Taxa de Churn Mensal */}
+                  <Card className="bg-white/95 backdrop-blur-sm">
+                    <CardHeader>
+                      <CardTitle className="text-[#1981A7]">Taxa de Churn Mensal</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="space-y-2">
+                        {churnData.map((data, index) => (
+                          <div key={index} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                            <div>
+                              <p className="font-medium text-gray-900">{data.month}</p>
+                              <p className="text-sm text-gray-600">
+                                {data.novos} novos, {data.cancelados} cancelados
+                              </p>
+                            </div>
+                            <div className="text-right">
+                              <p className={`text-lg font-bold ${
+                                parseFloat(data.taxa) > 20 ? 'text-red-600' : 
+                                parseFloat(data.taxa) > 10 ? 'text-orange-600' : 
+                                'text-green-600'
+                              }`}>
+                                {data.taxa}%
+                              </p>
+                              <p className="text-xs text-gray-500">churn</p>
+                            </div>
+                          </div>
+                        ))}
+                        {churnData.length === 0 && (
+                          <div className="text-center py-8">
+                            <p className="text-gray-500">Sem dados disponíveis</p>
+                          </div>
+                        )}
+                      </div>
+                    </CardContent>
+                  </Card>
+                </div>
+              </div>
+            )}
+
             {activeTab === 'assinaturas' && (
               <Card className="bg-white/95 backdrop-blur-sm">
                 <CardHeader>

@@ -7,6 +7,17 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
+import { useToast } from "@/hooks/use-toast";
 import { 
   Users, 
   Crown, 
@@ -31,11 +42,15 @@ type WebhookLog = Database['public']['Tables']['webhook_logs']['Row'];
 export default function AdminAssinaturas() {
   const { user, isAdmin } = useAuth();
   const navigate = useNavigate();
+  const { toast } = useToast();
   const [assinaturas, setAssinaturas] = useState<Assinatura[]>([]);
   const [webhookLogs, setWebhookLogs] = useState<WebhookLog[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [activeTab, setActiveTab] = useState<'dashboard' | 'assinaturas' | 'webhooks'>('dashboard');
+  const [selectedSubscription, setSelectedSubscription] = useState<Assinatura | null>(null);
+  const [actionType, setActionType] = useState<'cancelar' | 'reativar' | null>(null);
+  const [isProcessing, setIsProcessing] = useState(false);
 
   useEffect(() => {
     if (!user) {
@@ -82,6 +97,94 @@ export default function AdminAssinaturas() {
       console.error('Erro geral:', error);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleCancelSubscription = async (assinatura: Assinatura) => {
+    setIsProcessing(true);
+    try {
+      const { error } = await supabase
+        .from('assinaturas')
+        .update({ 
+          status: 'cancelada',
+          updated_at: new Date().toISOString()
+        })
+        .eq('id', assinatura.id);
+
+      if (error) throw error;
+
+      // Atualizar estado local
+      setAssinaturas(prev => 
+        prev.map(a => a.id === assinatura.id 
+          ? { ...a, status: 'cancelada' as const, updated_at: new Date().toISOString() }
+          : a
+        )
+      );
+
+      toast({
+        title: "Assinatura cancelada",
+        description: "A assinatura foi cancelada com sucesso.",
+      });
+    } catch (error) {
+      console.error('Erro ao cancelar assinatura:', error);
+      toast({
+        title: "Erro",
+        description: "Erro ao cancelar assinatura. Tente novamente.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsProcessing(false);
+      setSelectedSubscription(null);
+      setActionType(null);
+    }
+  };
+
+  const handleReactivateSubscription = async (assinatura: Assinatura) => {
+    setIsProcessing(true);
+    try {
+      // Calcular nova data de expiração (30 dias a partir de hoje)
+      const newExpirationDate = new Date();
+      newExpirationDate.setDate(newExpirationDate.getDate() + 30);
+
+      const { error } = await supabase
+        .from('assinaturas')
+        .update({ 
+          status: 'ativa',
+          data_expiracao: newExpirationDate.toISOString(),
+          updated_at: new Date().toISOString()
+        })
+        .eq('id', assinatura.id);
+
+      if (error) throw error;
+
+      // Atualizar estado local
+      setAssinaturas(prev => 
+        prev.map(a => a.id === assinatura.id 
+          ? { 
+              ...a, 
+              status: 'ativa' as const, 
+              data_expiracao: newExpirationDate.toISOString(),
+              updated_at: new Date().toISOString() 
+            }
+          : a
+        )
+      );
+
+      toast({
+        title: "Assinatura reativada",
+        description: "A assinatura foi reativada com sucesso e expira em 30 dias.",
+      });
+    } catch (error) {
+      console.error('Erro ao reativar assinatura:', error);
+      toast({
+        title: "Erro",
+        description: "Erro ao reativar assinatura. Tente novamente.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsProcessing(false);
+      setSelectedSubscription(null);
+      setActionType(null);
     }
   };
 
@@ -520,7 +623,7 @@ export default function AdminAssinaturas() {
                           {getStatusBadge(assinatura.status)}
                         </div>
                         
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm mb-4">
                           <div>
                             <p className="text-gray-600">Plano</p>
                             <p className="font-medium">{assinatura.plano}</p>
@@ -541,6 +644,37 @@ export default function AdminAssinaturas() {
                                 : 'Sem expiração'}
                             </p>
                           </div>
+                        </div>
+
+                        <div className="flex gap-2 pt-4 border-t">
+                          {assinatura.status === 'ativa' ? (
+                            <Button
+                              variant="destructive"
+                              size="sm"
+                              onClick={() => {
+                                setSelectedSubscription(assinatura);
+                                setActionType('cancelar');
+                              }}
+                              className="flex items-center gap-2"
+                            >
+                              <XCircle className="h-4 w-4" />
+                              Cancelar Assinatura
+                            </Button>
+                          ) : (
+                            <Button
+                              variant="default"
+                              size="sm"
+                              onClick={() => {
+                                setSelectedSubscription(assinatura);
+                                setActionType('reativar');
+                              }}
+                              className="flex items-center gap-2 bg-green-600 hover:bg-green-700"
+                              disabled={assinatura.status === 'reembolsada'}
+                            >
+                              <CheckCircle className="h-4 w-4" />
+                              Reativar Assinatura
+                            </Button>
+                          )}
                         </div>
                       </div>
                     ))}
@@ -617,6 +751,68 @@ export default function AdminAssinaturas() {
           </>
         )}
       </div>
+
+      <AlertDialog 
+        open={!!selectedSubscription && !!actionType} 
+        onOpenChange={(open) => {
+          if (!open) {
+            setSelectedSubscription(null);
+            setActionType(null);
+          }
+        }}
+      >
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>
+              {actionType === 'cancelar' ? 'Cancelar Assinatura?' : 'Reativar Assinatura?'}
+            </AlertDialogTitle>
+            <AlertDialogDescription>
+              {actionType === 'cancelar' ? (
+                <>
+                  Você está prestes a cancelar a assinatura de{' '}
+                  <strong>{selectedSubscription?.nome_cliente || selectedSubscription?.email}</strong>.
+                  <br />
+                  Esta ação pode ser revertida posteriormente.
+                </>
+              ) : (
+                <>
+                  Você está prestes a reativar a assinatura de{' '}
+                  <strong>{selectedSubscription?.nome_cliente || selectedSubscription?.email}</strong>.
+                  <br />
+                  A nova data de expiração será definida para 30 dias a partir de hoje.
+                </>
+              )}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel disabled={isProcessing}>
+              Cancelar
+            </AlertDialogCancel>
+            <AlertDialogAction
+              onClick={() => {
+                if (selectedSubscription) {
+                  if (actionType === 'cancelar') {
+                    handleCancelSubscription(selectedSubscription);
+                  } else {
+                    handleReactivateSubscription(selectedSubscription);
+                  }
+                }
+              }}
+              disabled={isProcessing}
+              className={actionType === 'cancelar' ? 'bg-red-600 hover:bg-red-700' : 'bg-green-600 hover:bg-green-700'}
+            >
+              {isProcessing ? (
+                <>
+                  <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                  Processando...
+                </>
+              ) : (
+                actionType === 'cancelar' ? 'Sim, Cancelar' : 'Sim, Reativar'
+              )}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }

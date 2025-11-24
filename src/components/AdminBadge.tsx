@@ -1,6 +1,7 @@
 
-import { ShieldCheck, AlertTriangle } from "lucide-react";
+import { ShieldCheck, AlertTriangle, Settings } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
+import { Link } from "react-router-dom";
 
 export function AdminBadge() {
   const { user } = useAuth();
@@ -14,6 +15,13 @@ export function AdminBadge() {
         <ShieldCheck className="w-4 h-4" />
         <span className="text-sm font-medium">Modo Administrador</span>
       </div>
+      
+      <Link to="/admin/assinaturas">
+        <div className="bg-blue-100 text-blue-800 px-3 py-1 rounded-full flex items-center gap-2 shadow-md hover:bg-blue-200 transition-colors cursor-pointer">
+          <Settings className="w-4 h-4" />
+          <span className="text-sm font-medium">Gerenciar Assinaturas</span>
+        </div>
+      </Link>
       
       {isDefaultAdmin && (
         <div className="bg-red-100 text-red-800 px-3 py-1 rounded-full flex items-center gap-2 shadow-md">

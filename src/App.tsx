@@ -23,6 +23,7 @@ import NotFound from "./pages/NotFound";
 import AcessoNegado from "./pages/AcessoNegado";
 import StatusAssinatura from "./pages/StatusAssinatura";
 import DebugAssinatura from "./pages/DebugAssinatura";
+import AdminAssinaturas from "./pages/AdminAssinaturas";
 
 // Atualizando o título do documento
 document.title = "Lista de Importadora da 25 de Março";
@@ -91,6 +92,11 @@ function AppContent() {
           <Route path="/debug-assinatura" element={
             <PrivateRoute>
               <DebugAssinatura />
+            </PrivateRoute>
+          } />
+          <Route path="/admin/assinaturas" element={
+            <PrivateRoute>
+              <AdminAssinaturas />
             </PrivateRoute>
           } />
           <Route path="*" element={

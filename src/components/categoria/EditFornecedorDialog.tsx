@@ -74,8 +74,8 @@ export default function EditFornecedorDialog({
         .update({
           nome_loja: editingFornecedor.nome_loja,
           logo_url: editingFornecedor.logo_url
-        })
-        .eq("id", editingFornecedor.id);
+        } as any)
+        .eq("id", editingFornecedor.id as any);
 
       if (error) throw error;
 

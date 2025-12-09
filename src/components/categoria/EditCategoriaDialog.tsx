@@ -34,8 +34,8 @@ const EditCategoriaDialog = ({ open, onOpenChange, onSuccess, categoria }: EditC
         .update({
           categoria: editingCategoria.categoria,
           imagem_url: editingCategoria.imagem_url
-        })
-        .eq("id", editingCategoria.id);
+        } as any)
+        .eq("id", editingCategoria.id as any);
 
       if (error) throw error;
 

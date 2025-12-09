@@ -52,17 +52,20 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       const { data, error } = await supabase
         .from('profiles')
         .select('*')
-        .eq('id', userId)
+        .eq('id', userId as any)
         .maybeSingle();
 
       if (error) {
         console.error('Erro ao buscar profile:', error);
         setProfile(null);
         setIsAdmin(false);
-      } else {
+      } else if (data) {
         console.log('Profile encontrado:', data);
-        setProfile(data);
-        setIsAdmin(data?.is_admin === true);
+        setProfile(data as Profile);
+        setIsAdmin((data as any)?.is_admin === true);
+      } else {
+        setProfile(null);
+        setIsAdmin(false);
       }
       setProfileFetched(true);
     } catch (error) {
@@ -80,7 +83,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       // Primeiro, tenta vincular assinaturas pelo e-mail
       try {
         const { data: claimedCount } = await supabase.rpc('claim_subscriptions_for_current_user');
-        if (claimedCount && claimedCount > 0) {
+        if (claimedCount && Number(claimedCount) > 0) {
           console.log(`${claimedCount} assinatura(s) vinculada(s) ao usuário pelo e-mail`);
         }
       } catch (claimError) {
@@ -91,8 +94,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       const { data: subscriptions, error } = await supabase
         .from('assinaturas')
         .select('*')
-        .eq('user_id', userId)
-        .eq('status', 'ativa')
+        .eq('user_id', userId as any)
+        .eq('status', 'ativa' as any)
         .order('created_at', { ascending: false })
         .limit(1);
 
@@ -109,23 +112,23 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       if (activeSubscription) {
         // Verificar se não expirou
         const now = new Date();
-        const expirationDate = activeSubscription.data_expiracao 
-          ? new Date(activeSubscription.data_expiracao) 
+        const expirationDate = (activeSubscription as any).data_expiracao 
+          ? new Date((activeSubscription as any).data_expiracao) 
           : null;
 
         const isActive = !expirationDate || expirationDate > now;
         
-        setSubscription(activeSubscription);
+        setSubscription(activeSubscription as Assinatura);
         setHasActiveSubscription(isActive);
 
         // Se expirou, atualizar status no banco
-        if (!isActive && activeSubscription.status === 'ativa') {
+        if (!isActive && (activeSubscription as any).status === 'ativa') {
           await supabase
             .from('assinaturas')
-            .update({ status: 'expirada' })
-            .eq('id', activeSubscription.id);
+            .update({ status: 'expirada' } as any)
+            .eq('id', (activeSubscription as any).id as any);
           
-          setSubscription({ ...activeSubscription, status: 'expirada' });
+          setSubscription({ ...activeSubscription, status: 'expirada' } as Assinatura);
           setHasActiveSubscription(false);
         }
       } else {

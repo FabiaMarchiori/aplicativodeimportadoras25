@@ -33,10 +33,10 @@ const AddCategoriaDialog = ({ open, onOpenChange, onSuccess }: AddCategoriaDialo
     try {
       const { error } = await supabase
         .from("categorias")
-        .insert([{ 
+        .insert({ 
           categoria: novaCategoria.categoria,
           imagem_url: novaCategoria.imagem_url || "https://source.unsplash.com/random/300x200/?shop" 
-        }]);
+        } as any);
 
       if (error) throw error;
 

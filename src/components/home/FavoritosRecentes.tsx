@@ -31,13 +31,11 @@ const FavoritosRecentes = () => {
             Instagram_url,
             Endereco,
             logo_url,
-            foto_destaque,
             mockup_url,
-            localizacao,
             created_at
           )
         `)
-        .eq('user_id', user?.id)
+        .eq('user_id', user?.id as any)
         .order('created_at', { ascending: false })
         .limit(3);
       
@@ -45,8 +43,8 @@ const FavoritosRecentes = () => {
       
       // Mapear os dados corretamente considerando a nova estrutura
       const mappedFornecedores = (data || [])
-        .filter(item => item.fornecedores) // Filtrar apenas itens com fornecedores válidos
-        .map(item => mapFornecedor(item.fornecedores));
+        .filter((item: any) => item.fornecedores) // Filtrar apenas itens com fornecedores válidos
+        .map((item: any) => mapFornecedor(item.fornecedores));
       
       setFavoritosRecentes(mappedFornecedores);
     } catch (error) {
@@ -72,18 +70,18 @@ const FavoritosRecentes = () => {
                     {fornecedor.logo_url ? (
                       <img
                         src={fornecedor.logo_url}
-                        alt={`Logo ${fornecedor.nome}`}
+                        alt={`Logo ${fornecedor.nome_loja || fornecedor.nome}`}
                         className="logo-img-fix"
                       />
                     ) : (
                       <div className="text-sm font-bold text-[#5FB9C3]">
-                        {fornecedor.nome.charAt(0)}
+                        {(fornecedor.nome_loja || fornecedor.nome || "?").charAt(0)}
                       </div>
                     )}
                   </div>
                   <div className="flex-1">
                     <h3 className="font-semibold text-sm text-[#111827]">
-                      {fornecedor.nome}
+                      {fornecedor.nome_loja || fornecedor.nome}
                     </h3>
                     <p className="text-xs text-gray-600">Favoritado recentemente</p>
                   </div>

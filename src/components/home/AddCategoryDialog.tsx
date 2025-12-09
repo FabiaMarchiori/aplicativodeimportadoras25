@@ -33,10 +33,10 @@ const AddCategoryDialog = ({ open, onOpenChange, onSuccess }: AddCategoryDialogP
     try {
       const { error } = await supabase
         .from("categorias")
-        .insert([{ 
+        .insert({ 
           categoria: novaCategoria.categoria,
           imagem_url: novaCategoria.imagem_url || "https://source.unsplash.com/random/300x200/?shop" 
-        }]);
+        } as any);
 
       if (error) throw error;
 
@@ -69,7 +69,7 @@ const AddCategoryDialog = ({ open, onOpenChange, onSuccess }: AddCategoryDialogP
       const fileName = `categoria-${Math.random().toString().substring(2, 10)}.${fileExt}`;
       const filePath = `categorias/${fileName}`;
       
-      const { error: uploadError, data } = await supabase.storage
+      const { error: uploadError } = await supabase.storage
         .from('public')
         .upload(filePath, file);
         

@@ -11,20 +11,25 @@ import { AuthLayout } from "@/components/auth/AuthLayout";
 export default function Login() {
   const navigate = useNavigate();
   const location = useLocation();
-  const { user, loading } = useAuth();
+  const { user, loading, hasActiveSubscription } = useAuth();
   const [forgotPasswordOpen, setForgotPasswordOpen] = useState(false);
   const [activeTab, setActiveTab] = useState("login");
 
-  console.log('Login - Estado:', { user: !!user, loading });
+  console.log('Login - Estado:', { user: !!user, loading, hasActiveSubscription });
 
-  // Redirect if already logged in - mas só quando não está loading
+  // Redirect if already logged in - verificar assinatura antes
   useEffect(() => {
     if (!loading && user) {
-      console.log('Login - Usuário já logado, redirecionando...');
-      const from = location.state?.from?.pathname || '/home';
-      navigate(from, { replace: true });
+      console.log('Login - Usuário já logado, verificando assinatura...');
+      if (hasActiveSubscription) {
+        const from = location.state?.from?.pathname || '/home';
+        navigate(from, { replace: true });
+      } else {
+        // Usuário logado mas sem assinatura ativa
+        navigate('/acesso-negado', { replace: true });
+      }
     }
-  }, [user, loading, navigate, location]);
+  }, [user, loading, hasActiveSubscription, navigate, location]);
 
   // Se ainda está carregando, mostrar tela de carregamento
   if (loading) {

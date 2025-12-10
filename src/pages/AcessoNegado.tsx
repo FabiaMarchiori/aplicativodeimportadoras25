@@ -1,22 +1,44 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { AlertTriangle, Crown, ExternalLink, Home, MessageSquare } from 'lucide-react';
+import { AlertTriangle, Crown, ExternalLink, LogIn, MessageSquare } from 'lucide-react';
 
 const AcessoNegado = () => {
   const navigate = useNavigate();
-  const { user, signOut } = useAuth();
+  const { user, loading, signOut } = useAuth();
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
 
-  // Log para debug - não fazer logout automático
+  // Redirecionar para login se não estiver logado
   useEffect(() => {
-    console.log('AcessoNegado - Usuario atual:', { 
-      userId: user?.id, 
-      email: user?.email,
-      timestamp: new Date().toISOString()
-    });
-  }, [user]);
+    if (!loading && !user) {
+      navigate('/login', { replace: true });
+    }
+  }, [user, loading, navigate]);
+
+  const handleEntrarOutraConta = async () => {
+    setIsLoggingOut(true);
+    try {
+      await signOut();
+      navigate('/login', { replace: true });
+    } catch (error) {
+      console.error('Erro ao fazer logout:', error);
+      setIsLoggingOut(false);
+    }
+  };
+
+  // Mostrar loading enquanto verifica
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#1981A7] via-[#4A9DB8] to-[#5FB9C3]">
+        <div className="text-center text-white">
+          <div className="w-8 h-8 border-4 border-white/30 border-t-white rounded-full animate-spin mx-auto mb-4"></div>
+          <p>Verificando...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#1981A7] via-[#4A9DB8] to-[#5FB9C3] p-4">
@@ -53,6 +75,15 @@ const AcessoNegado = () => {
             </div>
 
             <div className="pt-4 space-y-3">
+              <Button
+                onClick={handleEntrarOutraConta}
+                disabled={isLoggingOut}
+                className="w-full bg-gradient-to-r from-[#1981A7] to-[#4A9DB8] hover:from-[#1981A7]/90 hover:to-[#4A9DB8]/90 text-white font-bold py-3 text-lg"
+              >
+                <LogIn className="mr-2 h-5 w-5" />
+                {isLoggingOut ? 'Saindo...' : 'Entrar com outra conta'}
+              </Button>
+
               <a
                 href="https://listademportadoras.sophiamarchi.com/"
                 target="_blank"
@@ -78,15 +109,6 @@ const AcessoNegado = () => {
                   <ExternalLink className="ml-2 h-4 w-4" />
                 </Button>
               </a>
-              
-              <Button
-                onClick={() => navigate('/login')}
-                variant="ghost"
-                className="w-full text-[#1981A7] hover:bg-[#1981A7]/10"
-              >
-                <Home className="mr-2 h-4 w-4" />
-                Voltar ao Login
-              </Button>
             </div>
 
             <div className="text-xs text-gray-500 pt-2">

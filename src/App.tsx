@@ -24,6 +24,7 @@ import AcessoNegado from "./pages/AcessoNegado";
 import StatusAssinatura from "./pages/StatusAssinatura";
 import DebugAssinatura from "./pages/DebugAssinatura";
 import AdminAssinaturas from "./pages/AdminAssinaturas";
+import Mentoria from "./pages/Mentoria";
 
 // Atualizando o título do documento
 document.title = "Lista de Importadora da 25 de Março";
@@ -97,6 +98,11 @@ function AppContent() {
           <Route path="/admin/assinaturas" element={
             <PrivateRoute>
               <AdminAssinaturas />
+            </PrivateRoute>
+          } />
+          <Route path="/mentoria" element={
+            <PrivateRoute>
+              <Mentoria />
             </PrivateRoute>
           } />
           <Route path="*" element={

@@ -26,13 +26,11 @@ export function LoginForm({ onForgotPassword }: LoginFormProps) {
   });
 
   const getErrorMessage = (error: any) => {
-    console.log('Erro de login detalhado:', error);
-    
     if (!error) return "Erro desconhecido";
     
     const errorMessage = error.message || error.error_description || error.toString();
     
-    // Mapear erros específicos para mensagens mais claras
+    // Mapear erros específicos para mensagens amigáveis
     if (errorMessage.includes('Invalid login credentials')) {
       return "E-mail ou senha incorretos. Verifique suas credenciais e tente novamente.";
     }
@@ -52,8 +50,18 @@ export function LoginForm({ onForgotPassword }: LoginFormProps) {
     if (errorMessage.includes('CORS')) {
       return "Erro de configuração. Tente atualizar a página.";
     }
+
+    // Erros de e-mail
+    if (errorMessage.includes('invalid email') || errorMessage.includes('Invalid email')) {
+      return "E-mail inválido. Verifique o endereço e tente novamente.";
+    }
+
+    // Erros de senha
+    if (errorMessage.includes('Password should') || errorMessage.includes('password')) {
+      return "Senha inválida. Use no mínimo 8 caracteres incluindo letra maiúscula, minúscula, número e símbolo.";
+    }
     
-    return errorMessage;
+    return "Ocorreu um erro. Tente novamente.";
   };
 
   const handleLogin = async (e: React.FormEvent) => {

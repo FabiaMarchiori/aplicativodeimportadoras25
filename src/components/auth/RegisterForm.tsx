@@ -92,9 +92,9 @@ export function RegisterForm() {
       </CardHeader>
       <CardContent className="space-y-4">
         {error && (
-          <Alert variant="destructive">
-            <AlertCircle className="h-4 w-4" />
-            <AlertDescription>{error}</AlertDescription>
+          <Alert variant="destructive" className="bg-white border-red-300">
+            <AlertCircle className="h-4 w-4 text-red-600" />
+            <AlertDescription className="text-red-600 font-medium">{error}</AlertDescription>
           </Alert>
         )}
 

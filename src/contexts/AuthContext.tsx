@@ -1,5 +1,5 @@
 
-import { createContext, useContext, useEffect, useState } from 'react';
+import { createContext, useContext, useEffect, useState, useRef } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import type { Database } from '@/integrations/supabase/types';
 import type { Session, User } from '@supabase/supabase-js';
@@ -31,22 +31,19 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [hasActiveSubscription, setHasActiveSubscription] = useState(false);
   const [loading, setLoading] = useState(true);
   const [isAdmin, setIsAdmin] = useState(false);
-  const [profileFetched, setProfileFetched] = useState(false);
+  const [dataLoaded, setDataLoaded] = useState(false);
+  const loadingUserRef = useRef(false);
 
   console.log('AuthContext - Estado atual:', { 
     user: !!user, 
     loading, 
-    profileFetched, 
+    dataLoaded,
+    isAdmin,
     hasActiveSubscription,
     currentUrl: window.location.href 
   });
 
   async function fetchProfile(userId: string) {
-    if (profileFetched) {
-      console.log('Profile já foi buscado, pulando...');
-      return;
-    }
-
     try {
       console.log('Buscando profile para usuário:', userId);
       const { data, error } = await supabase
@@ -60,19 +57,17 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         setProfile(null);
         setIsAdmin(false);
       } else if (data) {
-        console.log('Profile encontrado:', data);
+        console.log('Profile encontrado:', data, 'isAdmin:', (data as any)?.is_admin);
         setProfile(data as Profile);
         setIsAdmin((data as any)?.is_admin === true);
       } else {
         setProfile(null);
         setIsAdmin(false);
       }
-      setProfileFetched(true);
     } catch (error) {
       console.error('Erro inesperado ao buscar profile:', error);
       setProfile(null);
       setIsAdmin(false);
-      setProfileFetched(true);
     }
   }
 
@@ -153,13 +148,22 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     console.log('AuthContext - Inicializando...');
 
     const loadUserData = async (userId: string) => {
+      if (loadingUserRef.current) {
+        console.log('Já está carregando dados do usuário, ignorando...');
+        return;
+      }
+      
+      loadingUserRef.current = true;
       console.log('Carregando dados do usuário:', userId);
+      
       await Promise.all([
         fetchProfile(userId),
         fetchSubscription(userId)
       ]);
+      
       if (mounted) {
-        console.log('Dados carregados, setando loading = false');
+        console.log('Dados carregados, setando dataLoaded = true e loading = false');
+        setDataLoaded(true);
         setLoading(false);
       }
     };
@@ -172,21 +176,20 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setSession(session);
       setUser(session?.user ?? null);
 
-      if (session?.user && !profileFetched) {
+      if (session?.user) {
         setTimeout(() => {
           if (mounted) {
             loadUserData(session.user.id);
           }
         }, 0);
-      } else if (!session?.user) {
+      } else {
+        // User logged out - reset everything
         setProfile(null);
         setIsAdmin(false);
         setSubscription(null);
         setHasActiveSubscription(false);
-        setProfileFetched(false);
-        setLoading(false);
-      } else {
-        // User exists and profile already fetched
+        setDataLoaded(false);
+        loadingUserRef.current = false;
         setLoading(false);
       }
     });
@@ -204,7 +207,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setSession(session);
       setUser(session?.user ?? null);
       
-      if (session?.user && !profileFetched) {
+      if (session?.user) {
         setTimeout(() => {
           if (mounted) {
             loadUserData(session.user.id);
@@ -257,7 +260,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const signOut = async () => {
     console.log('Fazendo logout...');
-    setProfileFetched(false);
+    loadingUserRef.current = false;
+    setDataLoaded(false);
     setSubscription(null);
     setHasActiveSubscription(false);
     await supabase.auth.signOut();

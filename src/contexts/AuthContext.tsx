@@ -152,6 +152,18 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     let mounted = true;
     console.log('AuthContext - Inicializando...');
 
+    const loadUserData = async (userId: string) => {
+      console.log('Carregando dados do usuário:', userId);
+      await Promise.all([
+        fetchProfile(userId),
+        fetchSubscription(userId)
+      ]);
+      if (mounted) {
+        console.log('Dados carregados, setando loading = false');
+        setLoading(false);
+      }
+    };
+
     const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
       console.log('Auth state changed:', event, !!session, 'URL:', window.location.href);
       
@@ -163,8 +175,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       if (session?.user && !profileFetched) {
         setTimeout(() => {
           if (mounted) {
-            fetchProfile(session.user.id);
-            fetchSubscription(session.user.id);
+            loadUserData(session.user.id);
           }
         }, 0);
       } else if (!session?.user) {
@@ -173,14 +184,18 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         setSubscription(null);
         setHasActiveSubscription(false);
         setProfileFetched(false);
+        setLoading(false);
+      } else {
+        // User exists and profile already fetched
+        setLoading(false);
       }
-
-      setLoading(false);
     });
 
     supabase.auth.getSession().then(({ data: { session }, error }) => {
       if (error) {
         console.error('Erro ao buscar sessão inicial:', error);
+        if (mounted) setLoading(false);
+        return;
       }
       
       if (!mounted) return;
@@ -192,13 +207,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       if (session?.user && !profileFetched) {
         setTimeout(() => {
           if (mounted) {
-            fetchProfile(session.user.id);
-            fetchSubscription(session.user.id);
+            loadUserData(session.user.id);
           }
         }, 0);
+      } else {
+        setLoading(false);
       }
-      
-      setLoading(false);
     });
 
     return () => {

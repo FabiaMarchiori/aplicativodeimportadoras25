@@ -22,6 +22,36 @@ export function RegisterForm() {
     confirmPassword: ""
   });
 
+  const getErrorMessage = (error: any) => {
+    if (!error) return "Erro desconhecido";
+    
+    const errorMessage = error.message || error.error_description || error.toString();
+    
+    // Erros de e-mail
+    if (errorMessage.includes('invalid email') || errorMessage.includes('Invalid email')) {
+      return "E-mail inválido. Verifique o endereço e tente novamente.";
+    }
+
+    if (errorMessage.includes('already registered') || errorMessage.includes('User already registered')) {
+      return "Este e-mail já está cadastrado. Tente fazer login.";
+    }
+
+    // Erros de senha do Supabase
+    if (errorMessage.includes('Password should') || errorMessage.includes('password')) {
+      return "Senha inválida. Use no mínimo 8 caracteres incluindo letra maiúscula, minúscula, número e símbolo.";
+    }
+
+    if (errorMessage.includes('Too many requests')) {
+      return "Muitas tentativas. Aguarde alguns minutos e tente novamente.";
+    }
+
+    if (errorMessage.includes('connection refused') || errorMessage.includes('fetch')) {
+      return "Problema de conexão. Verifique sua internet e tente novamente.";
+    }
+    
+    return "Ocorreu um erro ao criar conta. Tente novamente.";
+  };
+
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
@@ -36,7 +66,7 @@ export function RegisterForm() {
     const { error, data } = await signUp(registerData.email, registerData.password);
     
     if (error) {
-      setError(error.message || "Erro ao criar conta");
+      setError(getErrorMessage(error));
       setIsLoading(false);
       return;
     }

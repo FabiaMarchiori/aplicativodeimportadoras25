@@ -1,7 +1,7 @@
 
 import { useNavigate } from "react-router-dom";
 import { Card, CardContent } from "@/components/ui/card";
-import { Search, Gift, Heart, List, Users, Star } from "lucide-react";
+import { Search, Gift, Heart, List, Bot } from "lucide-react";
 
 const QuickActions = () => {
   const navigate = useNavigate();
@@ -29,11 +29,11 @@ const QuickActions = () => {
       action: () => navigate('/favoritos')
     },
     {
-      title: "Ir para os Bônus",
-      description: "Navegue pela área de Membro",
-      icon: Gift,
+      title: "Mentoria Soph",
+      description: "Sua assistente de IA",
+      icon: Bot,
       color: "from-[#F9C820] to-[#E6B41D]",
-      action: () => console.log("Bônus em breve")
+      action: () => navigate('/mentoria')
     }
   ];
 

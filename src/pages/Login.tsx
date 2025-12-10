@@ -11,25 +11,24 @@ import { AuthLayout } from "@/components/auth/AuthLayout";
 export default function Login() {
   const navigate = useNavigate();
   const location = useLocation();
-  const { user, loading, hasActiveSubscription } = useAuth();
+  const { user, loading, hasActiveSubscription, isAdmin } = useAuth();
   const [forgotPasswordOpen, setForgotPasswordOpen] = useState(false);
   const [activeTab, setActiveTab] = useState("login");
 
-  console.log('Login - Estado:', { user: !!user, loading, hasActiveSubscription });
+  console.log('Login - Estado:', { user: !!user, loading, hasActiveSubscription, isAdmin });
 
-  // Redirect if already logged in - verificar assinatura antes
+  // Redirect if already logged in - verificar admin OU assinatura
   useEffect(() => {
     if (!loading && user) {
-      console.log('Login - Usuário já logado, verificando assinatura...');
-      if (hasActiveSubscription) {
+      console.log('Login - Usuário já logado, verificando acesso...');
+      if (hasActiveSubscription || isAdmin) {
         const from = location.state?.from?.pathname || '/home';
         navigate(from, { replace: true });
       } else {
-        // Usuário logado mas sem assinatura ativa
         navigate('/acesso-negado', { replace: true });
       }
     }
-  }, [user, loading, hasActiveSubscription, navigate, location]);
+  }, [user, loading, hasActiveSubscription, isAdmin, navigate, location]);
 
   // Se ainda está carregando, mostrar tela de carregamento
   if (loading) {

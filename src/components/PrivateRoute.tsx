@@ -10,7 +10,7 @@ interface PrivateRouteProps {
 }
 
 const PrivateRoute = ({ children }: PrivateRouteProps) => {
-  const { user, loading: authLoading } = useAuth();
+  const { user, loading: authLoading, isAdmin } = useAuth();
   const { hasAccess, loading: subscriptionLoading } = useSubscriptionAccess();
   const location = useLocation();
 
@@ -22,6 +22,7 @@ const PrivateRoute = ({ children }: PrivateRouteProps) => {
     authLoading, 
     subscriptionLoading, 
     hasAccess,
+    isAdmin,
     path: location.pathname,
     timestamp: new Date().toISOString()
   });
@@ -46,14 +47,14 @@ const PrivateRoute = ({ children }: PrivateRouteProps) => {
     return <Navigate to="/login" state={{ from: location }} replace />;
   }
 
-  // Se o usuário está autenticado mas não tem acesso ativo, redirecionar para acesso negado
-  if (!hasAccess) {
-    console.log('PrivateRoute - Usuário sem acesso, redirecionando para acesso negado');
+  // Se o usuário está autenticado mas não tem acesso ativo E não é admin, redirecionar para acesso negado
+  if (!hasAccess && !isAdmin) {
+    console.log('PrivateRoute - Usuário sem acesso e não é admin, redirecionando para acesso negado');
     return <Navigate to="/acesso-negado" replace />;
   }
 
-  // Se o usuário está autenticado e tem acesso, renderizar o conteúdo
-  console.log('PrivateRoute - Usuário autenticado com acesso, renderizando conteúdo');
+  // Se o usuário está autenticado e tem acesso (ou é admin), renderizar o conteúdo
+  console.log('PrivateRoute - Usuário autenticado com acesso ou admin, renderizando conteúdo');
   return <>{children}</>;
 };
 

@@ -37,7 +37,7 @@ export const useSubscriptionAccess = (): SubscriptionAccess => {
         .from('profiles')
         .select('is_admin')
         .eq('id', user.id)
-        .single();
+        .maybeSingle();
 
       console.log('👤 [DEBUG] Verificação de admin:', { 
         userId: user.id, 

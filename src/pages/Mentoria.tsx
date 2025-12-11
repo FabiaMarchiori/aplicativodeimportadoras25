@@ -1,19 +1,16 @@
-import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { ArrowLeft, Bot, Sparkles, MessageCircle, Loader2 } from "lucide-react";
+import { ArrowLeft, Bot, Sparkles, MessageCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { useAuth } from "@/contexts/AuthContext";
-import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { PWAHeader } from "@/components/header/PWAHeader";
 
 const Mentoria = () => {
   const navigate = useNavigate();
   const { user, hasActiveSubscription, isAdmin } = useAuth();
-  const [loading, setLoading] = useState(false);
 
-  const handleAccessSoph = async () => {
+  const handleAccessSoph = () => {
     if (!user) {
       toast.error("Você precisa estar logado para acessar a mentoria.");
       navigate("/login");
@@ -26,27 +23,8 @@ const Mentoria = () => {
       return;
     }
 
-    setLoading(true);
-    try {
-      const { data, error } = await supabase.functions.invoke('generate-soph-token');
-
-      if (error) {
-        console.error("Error generating token:", error);
-        toast.error("Erro ao acessar a mentoria. Tente novamente.");
-        return;
-      }
-
-      if (data?.redirect_url) {
-        window.open(data.redirect_url, '_blank');
-      } else {
-        toast.error("Erro ao gerar link de acesso.");
-      }
-    } catch (err) {
-      console.error("Error:", err);
-      toast.error("Erro ao conectar com a mentoria.");
-    } finally {
-      setLoading(false);
-    }
+    // Navigate to embedded version instead of opening new tab
+    navigate("/mentoria-embedded");
   };
 
   return (
@@ -120,19 +98,9 @@ const Mentoria = () => {
               onClick={handleAccessSoph} 
               className="w-full"
               size="lg"
-              disabled={loading}
             >
-              {loading ? (
-                <>
-                  <Loader2 className="h-5 w-5 mr-2 animate-spin" />
-                  Conectando...
-                </>
-              ) : (
-                <>
-                  <Bot className="h-5 w-5 mr-2" />
-                  Acessar Mentoria com Soph
-                </>
-              )}
+              <Bot className="h-5 w-5 mr-2" />
+              Acessar Mentoria com Soph
             </Button>
           </CardContent>
         </Card>

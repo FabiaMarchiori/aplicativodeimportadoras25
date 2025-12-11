@@ -146,13 +146,11 @@ serve(async (req) => {
 
     const token = await generateJWT(payload, jwtSecret);
     console.log('[generate-soph-token] Token generated successfully');
-    console.log('[generate-soph-token] Redirect target: /sso endpoint');
+    console.log('[generate-soph-token] Returning token for postMessage flow');
 
-    // Return redirect URL with token
-    const sophUrl = `https://empreendaja-com-soph.netlify.app/sso?token=${encodeURIComponent(token)}`;
-
+    // Return token only (for postMessage flow - more secure, no URL exposure)
     return new Response(
-      JSON.stringify({ redirect_url: sophUrl }),
+      JSON.stringify({ token }),
       { status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
 

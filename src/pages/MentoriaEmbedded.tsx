@@ -3,13 +3,15 @@ import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Loader2, ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { toast } from "sonner";
+
+const SOPH_ORIGIN = "https://empreendaja-com-soph.netlify.app";
 
 const MentoriaEmbedded = () => {
   const iframeRef = useRef<HTMLIFrameElement>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [token, setToken] = useState<string | null>(null);
+  const [iframeLoaded, setIframeLoaded] = useState(false);
   const navigate = useNavigate();
 
   // Fetch token on mount
@@ -35,7 +37,7 @@ const MentoriaEmbedded = () => {
         }
 
         if (data?.token) {
-          console.log("[MentoriaEmbedded] Token received successfully");
+          console.log("[MentoriaEmbedded] Token received successfully:", data.token.substring(0, 20) + "...");
           setToken(data.token);
         } else if (data?.error) {
           console.error("[MentoriaEmbedded] API error:", data.error);
@@ -56,19 +58,56 @@ const MentoriaEmbedded = () => {
     fetchToken();
   }, []);
 
-  // Send token to iframe via postMessage when iframe loads
-  const handleIframeLoad = () => {
-    if (token && iframeRef.current?.contentWindow) {
-      console.log("[MentoriaEmbedded] Sending token via postMessage...");
-      iframeRef.current.contentWindow.postMessage(
-        {
-          type: "SSO_TOKEN",
-          token,
-        },
-        "https://empreendaja-com-soph.netlify.app"
-      );
-      setLoading(false);
+  // Send token via postMessage when both token and iframe are ready
+  useEffect(() => {
+    if (!token || !iframeLoaded) {
+      console.log("[MentoriaEmbedded] Waiting for token and iframe...", { token: !!token, iframeLoaded });
+      return;
     }
+
+    if (!iframeRef.current?.contentWindow) {
+      console.error("[MentoriaEmbedded] Iframe contentWindow not available");
+      return;
+    }
+
+    const sendToken = () => {
+      console.log("[MentoriaEmbedded] Sending token via postMessage to:", SOPH_ORIGIN);
+      iframeRef.current?.contentWindow?.postMessage(
+        { type: "SSO_TOKEN", token },
+        SOPH_ORIGIN
+      );
+    };
+
+    // Send immediately
+    sendToken();
+
+    // Retry after 500ms and 1500ms to ensure delivery
+    const retry1 = setTimeout(() => {
+      console.log("[MentoriaEmbedded] Retry 1: Sending token...");
+      sendToken();
+    }, 500);
+
+    const retry2 = setTimeout(() => {
+      console.log("[MentoriaEmbedded] Retry 2: Sending token...");
+      sendToken();
+    }, 1500);
+
+    // Hide loading after sending
+    const hideLoading = setTimeout(() => {
+      console.log("[MentoriaEmbedded] Hiding loading overlay");
+      setLoading(false);
+    }, 2000);
+
+    return () => {
+      clearTimeout(retry1);
+      clearTimeout(retry2);
+      clearTimeout(hideLoading);
+    };
+  }, [token, iframeLoaded]);
+
+  const handleIframeLoad = () => {
+    console.log("[MentoriaEmbedded] Iframe onLoad fired");
+    setIframeLoaded(true);
   };
 
   const handleBack = () => {
@@ -97,7 +136,7 @@ const MentoriaEmbedded = () => {
         </div>
       )}
 
-      {/* Back button - always visible */}
+      {/* Back button */}
       <Button
         onClick={handleBack}
         variant="ghost"
@@ -108,27 +147,16 @@ const MentoriaEmbedded = () => {
         Voltar
       </Button>
 
-      {/* Iframe - only render when we have a token */}
+      {/* Iframe - render when token exists */}
       {token && (
         <iframe
           ref={iframeRef}
-          src="https://empreendaja-com-soph.netlify.app/embedded"
+          src={`${SOPH_ORIGIN}/embedded`}
           onLoad={handleIframeLoad}
           sandbox="allow-scripts allow-same-origin allow-forms allow-popups"
-          referrerPolicy="no-referrer"
           allow="clipboard-write; fullscreen"
-          className="w-full h-full border-0"
-          style={{
-            position: "absolute",
-            top: 0,
-            left: 0,
-            width: "100%",
-            height: "100%",
-            border: "none",
-            margin: 0,
-            padding: 0,
-            overflow: "hidden",
-          }}
+          referrerPolicy="no-referrer"
+          className="w-full h-full border-none"
         />
       )}
     </div>

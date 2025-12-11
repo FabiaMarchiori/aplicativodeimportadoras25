@@ -25,6 +25,7 @@ import StatusAssinatura from "./pages/StatusAssinatura";
 import DebugAssinatura from "./pages/DebugAssinatura";
 import AdminAssinaturas from "./pages/AdminAssinaturas";
 import Mentoria from "./pages/Mentoria";
+import MentoriaEmbedded from "./pages/MentoriaEmbedded";
 
 // Atualizando o título do documento
 document.title = "Lista de Importadora da 25 de Março";
@@ -103,6 +104,11 @@ function AppContent() {
           <Route path="/mentoria" element={
             <PrivateRoute>
               <Mentoria />
+            </PrivateRoute>
+          } />
+          <Route path="/mentoria-embedded" element={
+            <PrivateRoute>
+              <MentoriaEmbedded />
             </PrivateRoute>
           } />
           <Route path="*" element={

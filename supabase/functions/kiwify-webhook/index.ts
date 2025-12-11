@@ -97,6 +97,8 @@ serve(async (req) => {
     return new Response('ok', { headers: corsHeaders })
   }
 
+  let logId: string | undefined;
+
   try {
     // Extrair signature da URL (método usado pela Kiwify)
     const url = new URL(req.url)
@@ -200,7 +202,7 @@ serve(async (req) => {
       console.error('⚠️ Erro ao criar log inicial:', logError)
     }
 
-    const logId = logData?.id
+    logId = logData?.id
     console.log('📝 Log ID criado:', logId)
 
     // Mapeia eventos da Kiwify para processamento
@@ -282,10 +284,7 @@ serve(async (req) => {
     )
 
     try {
-      // Tenta obter o logId do escopo anterior se disponível
-      const logIdFromScope = typeof logId !== 'undefined' ? logId : null;
-      
-      if (logIdFromScope) {
+      if (logId) {
         // Atualizar log existente com erro
         await supabaseClient
           .from('webhook_logs')
@@ -298,8 +297,8 @@ serve(async (req) => {
               timestamp: new Date().toISOString()
             }
           })
-          .eq('id', logIdFromScope)
-        console.log('✅ Log atualizado para error:', logIdFromScope)
+          .eq('id', logId)
+        console.log('✅ Log atualizado para error:', logId)
       } else {
         // Criar novo log de erro se não houver log inicial
         await supabaseClient
@@ -344,7 +343,7 @@ async function processSubscriptionCreated(supabaseClient: any, payload: KiwifyWe
   // Normalizar plano e calcular valores
   const planoNormalizado = normalizarPlano(product?.product_name || '', commissions?.charge_amount);
   const valorNormalizado = normalizarValor(commissions?.charge_amount, planoNormalizado);
-  const dataInicio = payload.created_at ? new Date(payload.created_at).toISOString() : new Date().toISOString();
+  const dataInicio = payload.approved_date ? new Date(payload.approved_date).toISOString() : new Date().toISOString();
   const dataExpiracao = calcularDataExpiracao(planoNormalizado, dataInicio, subscription?.next_payment);
   
   console.log('📦 Plano normalizado:', planoNormalizado);

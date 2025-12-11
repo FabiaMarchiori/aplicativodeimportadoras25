@@ -146,6 +146,7 @@ serve(async (req) => {
 
     const token = await generateJWT(payload, jwtSecret);
     console.log('[generate-soph-token] Token generated successfully');
+    console.log('[generate-soph-token] Redirect target: /sso endpoint');
 
     // Return redirect URL with token
     const sophUrl = `https://empreendaja-com-soph.netlify.app/sso?token=${encodeURIComponent(token)}`;

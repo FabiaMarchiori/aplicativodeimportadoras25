@@ -148,7 +148,7 @@ serve(async (req) => {
     console.log('[generate-soph-token] Token generated successfully');
 
     // Return redirect URL with token
-    const sophUrl = `https://empreendaja-com-soph.netlify.app/?token=${encodeURIComponent(token)}`;
+    const sophUrl = `https://empreendaja-com-soph.netlify.app/sso?token=${encodeURIComponent(token)}`;
 
     return new Response(
       JSON.stringify({ redirect_url: sophUrl }),

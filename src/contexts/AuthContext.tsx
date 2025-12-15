@@ -73,7 +73,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   async function fetchSubscription(userId: string) {
     try {
-      console.log('Buscando assinatura para usuário:', userId);
+      // Obter email do usuário
+      const { data: { user: currentUser } } = await supabase.auth.getUser();
+      const userEmail = currentUser?.email;
+      
+      console.log('Buscando assinatura para usuário:', userId, 'email:', userEmail);
       
       // Primeiro, tenta vincular assinaturas pelo e-mail
       try {
@@ -85,8 +89,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         console.warn('Erro ao tentar vincular assinaturas:', claimError);
       }
       
-      // Buscar assinatura ativa do usuário
-      const { data: subscriptions, error } = await supabase
+      // Buscar assinatura ativa por user_id
+      const { data: subscriptionsByUserId, error: errorById } = await supabase
         .from('assinaturas')
         .select('*')
         .eq('user_id', userId as any)
@@ -94,14 +98,24 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         .order('created_at', { ascending: false })
         .limit(1);
 
-      if (error) {
-        console.error('Erro ao buscar assinatura:', error);
-        setSubscription(null);
-        setHasActiveSubscription(false);
-        return;
+      console.log('Busca por user_id:', { data: subscriptionsByUserId, error: errorById?.message });
+
+      // Fallback: buscar por email se não encontrou por user_id
+      let subscriptionsByEmail: any[] = [];
+      if ((!subscriptionsByUserId || subscriptionsByUserId.length === 0) && userEmail) {
+        const { data, error: errorByEmail } = await supabase
+          .from('assinaturas')
+          .select('*')
+          .eq('email', userEmail as any)
+          .eq('status', 'ativa' as any)
+          .order('created_at', { ascending: false })
+          .limit(1);
+        
+        subscriptionsByEmail = data || [];
+        console.log('Busca por email:', { data: subscriptionsByEmail, error: errorByEmail?.message });
       }
 
-      const activeSubscription = subscriptions?.[0] || null;
+      const activeSubscription = subscriptionsByUserId?.[0] || subscriptionsByEmail?.[0] || null;
       console.log('Assinatura encontrada:', activeSubscription);
       
       if (activeSubscription) {
@@ -115,6 +129,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         
         setSubscription(activeSubscription as Assinatura);
         setHasActiveSubscription(isActive);
+        console.log('Assinatura ativa:', isActive, 'Expira em:', expirationDate);
 
         // Se expirou, atualizar status no banco
         if (!isActive && (activeSubscription as any).status === 'ativa') {
@@ -127,6 +142,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           setHasActiveSubscription(false);
         }
       } else {
+        console.log('Nenhuma assinatura ativa encontrada');
         setSubscription(null);
         setHasActiveSubscription(false);
       }

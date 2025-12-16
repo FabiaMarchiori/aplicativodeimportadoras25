@@ -19,6 +19,7 @@ interface AuthContextType {
   loading: boolean;
   isAdmin: boolean;
   refreshSubscription: () => Promise<void>;
+  dataLoaded: boolean;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -297,6 +298,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         loading,
         isAdmin,
         refreshSubscription,
+        dataLoaded,
       }}
     >
       {children}

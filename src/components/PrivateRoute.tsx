@@ -10,17 +10,19 @@ interface PrivateRouteProps {
 }
 
 const PrivateRoute = ({ children }: PrivateRouteProps) => {
-  const { user, loading: authLoading, isAdmin } = useAuth();
+  const { user, loading: authLoading, isAdmin, dataLoaded } = useAuth();
   const { hasAccess, loading: subscriptionLoading } = useSubscriptionAccess();
   const location = useLocation();
 
-  const loading = authLoading || subscriptionLoading;
+  // Considerar carregando se auth está carregando OU dados não foram carregados ainda (quando há usuário)
+  const loading = authLoading || subscriptionLoading || (user && !dataLoaded);
 
   console.log('PrivateRoute - Estado completo:', { 
     user: !!user, 
     userEmail: user?.email,
     authLoading, 
-    subscriptionLoading, 
+    subscriptionLoading,
+    dataLoaded,
     hasAccess,
     isAdmin,
     path: location.pathname,

@@ -23,8 +23,8 @@ const Mentoria = () => {
       return;
     }
 
-    // Navigate to embedded version instead of opening new tab
-    navigate("/mentoria-embedded");
+    // Navigate to chat page with iframe
+    navigate("/mentoria/chat");
   };
 
   return (

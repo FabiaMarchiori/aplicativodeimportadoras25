@@ -34,9 +34,8 @@ export function FavoritoButton({
       size="icon"
       className={cn(
         sizeClasses[size],
-        "bg-white/80 hover:bg-white/90 border border-gray-200 transition-all duration-200",
-        isFavorito && "text-red-500 hover:text-red-600",
-        !isFavorito && "text-gray-400 hover:text-red-400",
+        "bg-transparent hover:bg-transparent border-none transition-all duration-300",
+        "hover:shadow-[0_0_12px_rgba(90,215,255,0.4)]",
         className
       )}
       onClick={(e) => {
@@ -47,8 +46,10 @@ export function FavoritoButton({
       <Heart 
         size={iconSizes[size]} 
         className={cn(
-          "transition-all duration-200",
-          isFavorito && "fill-current"
+          "transition-all duration-300",
+          isFavorito 
+            ? "text-[#5AD7FF] fill-[#5AD7FF]/60" 
+            : "text-[#5AD7FF] fill-transparent hover:text-[#7EEDFF]"
         )} 
       />
     </Button>

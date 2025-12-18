@@ -12,7 +12,7 @@ export default function BottomNavigation() {
   };
 
   return (
-    <nav className="fixed bottom-0 left-0 right-0 z-50 bg-[#0a1628] border-t border-white/10 shadow-[0_-4px_20px_rgba(0,0,0,0.3)]">
+    <nav className="fixed bottom-0 left-0 right-0 z-50 bg-[#050d1a] border-t border-cyan-500/20 shadow-[0_-2px_20px_rgba(6,182,212,0.08)]">
       <div className="flex justify-around items-center h-16">
         <NavItem 
           to="/" 
@@ -61,21 +61,27 @@ function NavItem({ to, icon, label, active }: NavItemProps) {
     <Link
       to={to}
       className={cn(
-        "flex flex-col items-center justify-center px-3 py-1 rounded-lg transition-all duration-200",
+        "flex flex-col items-center justify-center px-3 py-1 rounded-lg",
+        "transition-all duration-300 ease-out",
+        "active:opacity-70 active:scale-95",
         active
           ? "text-cyan-400"
-          : "text-gray-400 hover:text-gray-200"
+          : "text-slate-400 hover:text-slate-200"
       )}
     >
       <div className={cn(
-        "transition-all duration-200",
-        active && "scale-110 drop-shadow-[0_0_8px_rgba(34,211,238,0.6)]"
+        "transition-all duration-300 ease-out",
+        active 
+          ? "scale-105 text-cyan-400 drop-shadow-[0_0_10px_rgba(34,211,238,0.7)]" 
+          : "hover:scale-105 hover:drop-shadow-[0_0_6px_rgba(148,163,184,0.4)]"
       )}>
         {icon}
       </div>
       <span className={cn(
-        "text-xs mt-1",
-        active ? "font-semibold text-cyan-400" : "font-medium"
+        "text-[10px] mt-1 transition-all duration-300",
+        active 
+          ? "font-semibold text-cyan-300" 
+          : "font-medium text-slate-500"
       )}>
         {label}
       </span>

@@ -6,31 +6,27 @@ const BenefitsSection = () => {
     {
       icon: Clock,
       title: "Economia de Tempo",
-      description: "Encontre todos os fornecedores em um só lugar, sem precisar percorrer toda a 25 de Março",
-      iconColor: "text-cyan-400"
+      description: "Encontre todos os fornecedores em um só lugar, sem precisar percorrer toda a 25 de Março"
     },
     {
       icon: Shield,
       title: "Fornecedores Verificados",
-      description: "Todos os fornecedores são verificados e possuem avaliações reais de outros compradores",
-      iconColor: "text-emerald-400"
+      description: "Todos os fornecedores são verificados e possuem avaliações reais de outros compradores"
     },
     {
       icon: TrendingDown,
       title: "Preços Competitivos",
-      description: "Compare preços e encontre as melhores ofertas do mercado atacadista",
-      iconColor: "text-[#F9C820]"
+      description: "Compare preços e encontre as melhores ofertas do mercado atacadista"
     },
     {
       icon: Star,
       title: "Avaliações Reais",
-      description: "Sistema de avaliações transparente para você escolher com confiança",
-      iconColor: "text-orange-400"
+      description: "Sistema de avaliações transparente para você escolher com confiança"
     }
   ];
 
   return (
-    <div className="mb-6">
+    <div className="mb-6 animate-section-entry" style={{ animationDelay: '0.4s' }}>
       <div className="text-center mb-5">
         <h2 className="text-2xl font-bold text-white mb-2">
           Por que escolher nossa plataforma?
@@ -44,12 +40,13 @@ const BenefitsSection = () => {
         {benefits.map((benefit, index) => (
           <Card 
             key={index} 
-            className="transition-all duration-300 border-0 card-dark-glass group"
+            className="transition-all duration-300 card-action-premium group"
+            style={{ animationDelay: `${0.5 + index * 0.1}s` }}
           >
             <CardContent className="p-5">
               <div className="flex items-start gap-4">
-                <div className="w-11 h-11 rounded-xl bg-white/5 flex items-center justify-center group-hover:bg-white/10 transition-colors flex-shrink-0">
-                  <benefit.icon className={`h-5 w-5 ${benefit.iconColor}`} />
+                <div className="w-11 h-11 rounded-xl bg-cyan-500/15 flex items-center justify-center group-hover:bg-cyan-500/25 transition-all duration-300 flex-shrink-0 group-hover:shadow-[0_0_15px_rgba(34,211,238,0.25)]">
+                  <benefit.icon className="h-5 w-5 text-cyan-400" />
                 </div>
                 <div className="flex-1">
                   <h3 className="font-semibold text-white mb-1">

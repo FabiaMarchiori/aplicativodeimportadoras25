@@ -12,7 +12,7 @@ export default function BottomNavigation() {
   };
 
   return (
-    <nav className="fixed bottom-0 left-0 right-0 z-50 bg-[#F9C820] shadow-lg">
+    <nav className="fixed bottom-0 left-0 right-0 z-50 bg-[#0a1628] border-t border-white/10 shadow-[0_-4px_20px_rgba(0,0,0,0.3)]">
       <div className="flex justify-around items-center h-16">
         <NavItem 
           to="/" 
@@ -63,19 +63,19 @@ function NavItem({ to, icon, label, active }: NavItemProps) {
       className={cn(
         "flex flex-col items-center justify-center px-3 py-1 rounded-lg transition-all duration-200",
         active
-          ? "text-[#111827] nav-active-glow"
-          : "text-[#111827]/70 hover:text-[#111827]"
+          ? "text-cyan-400"
+          : "text-gray-400 hover:text-gray-200"
       )}
     >
       <div className={cn(
-        "transition-transform duration-200",
-        active && "scale-110"
+        "transition-all duration-200",
+        active && "scale-110 drop-shadow-[0_0_8px_rgba(34,211,238,0.6)]"
       )}>
         {icon}
       </div>
       <span className={cn(
         "text-xs mt-1",
-        active ? "font-semibold" : "font-medium"
+        active ? "font-semibold text-cyan-400" : "font-medium"
       )}>
         {label}
       </span>

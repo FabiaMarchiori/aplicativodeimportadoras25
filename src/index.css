@@ -464,31 +464,93 @@ div[style*="Edit with Lovable"],
 
 /* Dark gradient background for Home */
 .bg-home-gradient {
-  background: linear-gradient(135deg, #111827 0%, #1e3a46 40%, #0f2027 100%);
+  background: linear-gradient(135deg, #0a1628 0%, #0d2d3a 50%, #0f3443 100%);
 }
 
-/* Dark glass card for Home */
-.card-dark-glass {
-  background: rgba(255, 255, 255, 0.05);
+/* Hero particles float animation */
+@keyframes heroParticleFloat {
+  0%, 100% { 
+    transform: translateY(0) translateX(0) scale(1); 
+    opacity: 0.12;
+  }
+  33% { 
+    transform: translateY(-20px) translateX(15px) scale(1.05); 
+    opacity: 0.18;
+  }
+  66% { 
+    transform: translateY(-10px) translateX(-10px) scale(0.95); 
+    opacity: 0.15;
+  }
+}
+
+/* Hero entry animation */
+@keyframes heroEntry {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-hero-entry {
+  animation: heroEntry 0.5s ease-out forwards;
+}
+
+/* Hero counter animation */
+@keyframes heroCounterEntry {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-hero-counter {
+  animation: heroCounterEntry 0.5s ease-out forwards;
+  opacity: 0;
+}
+
+/* Section entry animation */
+@keyframes sectionEntry {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-section-entry {
+  animation: sectionEntry 0.5s ease-out forwards;
+  opacity: 0;
+}
+
+/* Premium action card for Home */
+.card-action-premium {
+  background: rgba(13, 45, 58, 0.6);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(34, 211, 238, 0.15);
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
   transition: all 0.3s ease;
 }
 
-.card-dark-glass:hover {
-  background: rgba(255, 255, 255, 0.08);
-  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4), 0 0 20px rgba(34, 211, 238, 0.1);
-  transform: translateY(-2px);
+.card-action-premium:hover {
+  background: rgba(13, 45, 58, 0.8);
+  border-color: rgba(34, 211, 238, 0.3);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4), 0 0 25px rgba(34, 211, 238, 0.15);
+  transform: translateY(-3px);
 }
 
 /* Hero title glow */
 .hero-title-glow {
-  text-shadow: 0 0 30px rgba(255, 255, 255, 0.1);
-}
-
-/* Bottom nav active glow */
-.nav-active-glow {
-  filter: drop-shadow(0 0 6px rgba(17, 24, 39, 0.3));
+  text-shadow: 0 0 40px rgba(34, 211, 238, 0.15);
 }

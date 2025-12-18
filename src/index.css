@@ -554,3 +554,15 @@ div[style*="Edit with Lovable"],
 .hero-title-glow {
   text-shadow: 0 0 40px rgba(34, 211, 238, 0.15);
 }
+
+/* Category card fade-in animation */
+@keyframes categoryFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

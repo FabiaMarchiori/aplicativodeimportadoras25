@@ -5,7 +5,6 @@ import { useAuth } from "@/contexts/AuthContext";
 import FloatingActionButton from "@/components/FloatingActionButton";
 import { useToast } from "@/components/ui/use-toast";
 import { Loader2 } from "lucide-react";
-import CategoriaBanner from "@/components/categoria/CategoriaBanner";
 import CategoriaHeader from "@/components/categoria/CategoriaHeader";
 import CategoriaGrid from "@/components/categoria/CategoriaGrid";
 import AddCategoriaDialog from "@/components/categoria/AddCategoriaDialog";
@@ -52,9 +51,9 @@ export default function Categorias() {
   };
 
   return (
-    <div className="page-container fade-in">
-      <CategoriaBanner />
-      <CategoriaHeader />
+    <div className="min-h-screen bg-gradient-to-br from-[#0a1628] via-[#0d1f35] to-[#0a1a2e] pb-20">
+      <div className="px-4 pt-4">
+        <CategoriaHeader />
       
       {loading ? (
         <div className="flex justify-center py-12">
@@ -85,6 +84,7 @@ export default function Categorias() {
           />
         </>
       )}
+      </div>
     </div>
   );
 }

@@ -27,10 +27,10 @@ export default function FornecedorGrid({
 
   if (fornecedores.length === 0) {
     return (
-      <div className="text-center py-12 text-muted-foreground">
+      <div className="text-center py-12 text-white/60">
         <p className="text-lg">Nenhum fornecedor encontrado</p>
         {searchQuery && (
-          <Button variant="link" onClick={() => setSearchQuery("")}>
+          <Button variant="link" onClick={() => setSearchQuery("")} className="text-[#9AE6FF]">
             Limpar busca
           </Button>
         )}

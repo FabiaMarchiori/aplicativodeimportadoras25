@@ -6,7 +6,6 @@ import { useAuth } from "@/contexts/AuthContext";
 import SearchHeader from "@/components/categoria/SearchHeader";
 import FornecedorGrid from "@/components/categoria/FornecedorGrid";
 import EditFornecedorDialog from "@/components/categoria/EditFornecedorDialog";
-import CategoriaBanner from "@/components/categoria/CategoriaBanner";
 import { useCategoriaData } from "@/hooks/useCategoriaData";
 
 export default function Categoria() {
@@ -25,8 +24,7 @@ export default function Categoria() {
   } = useCategoriaData(id);
 
   return (
-    <div className="page-container fade-in bg-white">
-      <CategoriaBanner />
+    <div className="page-container fade-in min-h-screen bg-gradient-to-br from-[#0a1628] via-[#0d1f35] to-[#0a1a2e]">
       
       <SearchHeader 
         categoria={categoria} 

@@ -70,15 +70,15 @@ const CategoriaGrid = ({ categorias, onEdit }: CategoriaGridProps) => {
               onClick={() => navigate(`/categoria/${encodeURIComponent(categoria.categoria)}`)}
               className="flex flex-col items-center transition-all duration-300 ease-out hover:scale-105"
             >
-              {/* Anel circular com ícone centralizado */}
-              <div className="w-full aspect-square flex items-center justify-center rounded-full bg-[#0a1628] border-2 border-cyan-500/30 transition-all duration-300 group-hover:shadow-[0_0_25px_rgba(34,211,238,0.25)] group-hover:border-cyan-400/60">
+              {/* Anel circular com borda branca grossa */}
+              <div className="w-full aspect-square flex items-center justify-center rounded-full bg-[#0a1628] border-[4px] border-white/60 transition-all duration-300 group-hover:shadow-[0_0_18px_rgba(0,183,255,0.35)] group-hover:border-white/80">
                 <IconComponent 
-                  className="w-[55%] h-[55%] text-cyan-400 transition-all duration-300 group-hover:text-cyan-300 group-hover:drop-shadow-[0_0_8px_rgba(34,211,238,0.5)]" 
+                  className="w-[55%] h-[55%] text-white transition-all duration-300 group-hover:text-[#5AD7FF] group-hover:drop-shadow-[0_0_8px_rgba(90,215,255,0.4)]" 
                   strokeWidth={1.5}
                 />
               </div>
               <div className="p-2 text-center">
-                <h3 className="font-bold text-cyan-400 text-xs transition-all duration-300 group-hover:text-cyan-300">{categoria.categoria}</h3>
+                <h3 className="font-bold text-[#9AE6FF] text-xs transition-all duration-300">{categoria.categoria}</h3>
               </div>
             </div>
             

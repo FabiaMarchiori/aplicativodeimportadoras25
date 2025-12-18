@@ -1,4 +1,3 @@
-
 import { Home, Search, Heart, User, Grid } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
 import { cn } from "@/lib/utils";
@@ -13,35 +12,35 @@ export default function BottomNavigation() {
   };
 
   return (
-    <nav className="fixed bottom-0 left-0 right-0 z-50 bg-[#F9C820] shadow-md">
+    <nav className="fixed bottom-0 left-0 right-0 z-50 bg-[#F9C820] shadow-lg">
       <div className="flex justify-around items-center h-16">
         <NavItem 
           to="/" 
-          icon={<Home className="nav-icon text-white" />} 
+          icon={<Home className="h-5 w-5" />} 
           label="Início" 
           active={isActive('/')}
         />
         <NavItem 
           to="/categorias" 
-          icon={<Grid className="nav-icon text-white" />} 
+          icon={<Grid className="h-5 w-5" />} 
           label="Categorias" 
           active={isActive('/categorias')}
         />
         <NavItem 
           to="/buscar" 
-          icon={<Search className="nav-icon text-white" />} 
+          icon={<Search className="h-5 w-5" />} 
           label="Buscar" 
           active={isActive('/buscar')}
         />
         <NavItem 
           to="/favoritos" 
-          icon={<Heart className="nav-icon text-white" />} 
+          icon={<Heart className="h-5 w-5" />} 
           label="Favoritos" 
           active={isActive('/favoritos')}
         />
         <NavItem 
           to="/perfil" 
-          icon={<User className="nav-icon text-white" />} 
+          icon={<User className="h-5 w-5" />} 
           label="Perfil" 
           active={isActive('/perfil')}
         />
@@ -62,14 +61,24 @@ function NavItem({ to, icon, label, active }: NavItemProps) {
     <Link
       to={to}
       className={cn(
-        "flex flex-col items-center justify-center px-2 py-1 rounded-md transition-colors group",
+        "flex flex-col items-center justify-center px-3 py-1 rounded-lg transition-all duration-200",
         active
-          ? "text-[#5FB9C3] font-medium"  // Mantendo a cor azul para o ícone ativo
-          : "text-white hover:text-[#5FB9C3]"  // Alterado para branco quando não ativo com hover azul
+          ? "text-[#111827] nav-active-glow"
+          : "text-[#111827]/70 hover:text-[#111827]"
       )}
     >
-      {icon}
-      <span className="text-xs mt-1 font-medium text-white">{label}</span>
+      <div className={cn(
+        "transition-transform duration-200",
+        active && "scale-110"
+      )}>
+        {icon}
+      </div>
+      <span className={cn(
+        "text-xs mt-1",
+        active ? "font-semibold" : "font-medium"
+      )}>
+        {label}
+      </span>
     </Link>
   );
 }

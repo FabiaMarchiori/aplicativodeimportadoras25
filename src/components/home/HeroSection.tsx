@@ -3,17 +3,17 @@ import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { MapPin, Users, Store, Star } from "lucide-react";
+
 const HeroSection = () => {
   const navigate = useNavigate();
-  const {
-    user
-  } = useAuth();
+  const { user } = useAuth();
   const [counts, setCounts] = useState({
     fornecedores: 0,
     categorias: 0,
     usuarios: 0,
     produtos: 0
   });
+
   console.log("HeroSection renderizado - user:", user);
   const firstName = user?.user_metadata?.first_name || "Visitante";
 
@@ -26,10 +26,11 @@ const HeroSection = () => {
       usuarios: 2000,
       produtos: 1500
     };
-    const duration = 2000; // 2 segundos
+    const duration = 2000;
     const steps = 60;
     const stepDuration = duration / steps;
     let currentStep = 0;
+    
     const timer = setInterval(() => {
       currentStep++;
       const progress = currentStep / steps;
@@ -45,44 +46,59 @@ const HeroSection = () => {
         console.log("Animação dos contadores concluída");
       }
     }, stepDuration);
+    
     return () => clearInterval(timer);
   }, []);
-  return <div className="relative overflow-hidden rounded-xl mb-8">
-      {/* Background com gradiente limpo (sem imagem) */}
-      <div className="relative bg-cover bg-center min-h-[400px] flex items-center" style={{
-      background: `linear-gradient(135deg, rgba(95, 185, 195, 0.9) 0%, rgba(60, 187, 199, 0.8) 100%)`
-    }}>
-        <div className="container mx-auto px-6 py-12">
+
+  return (
+    <div className="relative overflow-hidden mb-6">
+      {/* Background dark com gradiente */}
+      <div 
+        className="relative min-h-[420px] flex items-center"
+        style={{
+          background: `linear-gradient(135deg, rgba(17, 24, 39, 0.95) 0%, rgba(30, 58, 70, 0.95) 50%, rgba(17, 24, 39, 0.95) 100%)`
+        }}
+      >
+        <div className="container mx-auto px-6 py-10">
           <div className="max-w-3xl">
             {/* Saudação personalizada */}
-            <div className="text-white/90 text-lg mb-2">
+            <div className="text-cyan-300/90 text-lg mb-2">
               Bem-vindo de volta, {firstName}! 👋
             </div>
             
-            {/* Título principal */}
-            <h1 className="text-4xl md:text-5xl font-bold text-white mb-4 leading-tight">
+            {/* Título principal com glow sutil */}
+            <h1 className="text-4xl md:text-5xl font-bold text-white mb-4 leading-tight hero-title-glow">
               Sua jornada comercial na
               <span className="block text-[#F9C820]">25 de Março</span>
               começa aqui
             </h1>
             
             {/* Subtítulo */}
-            <p className="text-xl text-white/90 mb-8 max-w-2xl">
+            <p className="text-xl text-white/80 mb-8 max-w-2xl">
               Conecte-se aos melhores fornecedores, descubra oportunidades únicas e 
               transforme seu negócio no maior centro comercial da América Latina.
             </p>
             
             {/* CTAs principais */}
-            <div className="flex flex-col sm:flex-row gap-4 mb-12">
-              <Button onClick={() => navigate('/buscar')} size="lg" className="bg-[#F9C820] text-[#111827] hover:bg-[#F9C820]/90 font-semibold text-lg px-8 py-4">
+            <div className="flex flex-col sm:flex-row gap-4 mb-10">
+              <Button 
+                onClick={() => navigate('/buscar')} 
+                size="lg" 
+                className="bg-[#F9C820] text-[#111827] hover:bg-[#F9C820]/90 font-semibold text-lg px-8 py-4"
+              >
                 Explorar Fornecedores
               </Button>
-              <Button onClick={() => navigate('/categorias')} variant="outline" size="lg" className="border-white text-white font-semibold text-lg px-8 py-4 bg-red-600 hover:bg-red-500">
+              <Button 
+                onClick={() => navigate('/categorias')} 
+                variant="outline" 
+                size="lg" 
+                className="border-white text-white font-semibold text-lg px-8 py-4 bg-red-600 hover:bg-red-500 border-0"
+              >
                 Ver Categorias
               </Button>
             </div>
             
-            {/* Contadores animados */}
+            {/* Contadores animados - números em branco */}
             <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
               <div className="text-center">
                 <div className="flex items-center justify-center mb-2">
@@ -91,7 +107,7 @@ const HeroSection = () => {
                     {counts.fornecedores.toLocaleString()}+
                   </span>
                 </div>
-                <p className="text-white/80 text-sm">Fornecedores</p>
+                <p className="text-white/70 text-sm">Fornecedores</p>
               </div>
               
               <div className="text-center">
@@ -101,7 +117,7 @@ const HeroSection = () => {
                     {counts.categorias}+
                   </span>
                 </div>
-                <p className="text-white/80 text-sm">Categorias</p>
+                <p className="text-white/70 text-sm">Categorias</p>
               </div>
               
               <div className="text-center">
@@ -111,7 +127,7 @@ const HeroSection = () => {
                     {counts.usuarios.toLocaleString()}+
                   </span>
                 </div>
-                <p className="text-white/80 text-sm">Usuários Ativos</p>
+                <p className="text-white/70 text-sm">Usuários Ativos</p>
               </div>
               
               <div className="text-center">
@@ -121,12 +137,14 @@ const HeroSection = () => {
                     {counts.produtos.toLocaleString()}+
                   </span>
                 </div>
-                <p className="text-white/80 text-sm">Produtos</p>
+                <p className="text-white/70 text-sm">Produtos</p>
               </div>
             </div>
           </div>
         </div>
       </div>
-    </div>;
+    </div>
+  );
 };
+
 export default HeroSection;

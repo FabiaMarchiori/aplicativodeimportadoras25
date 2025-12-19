@@ -25,8 +25,12 @@ import { useAuth } from "@/contexts/AuthContext";
 
 // Mapeamento de categorias para imagens personalizadas
 const categoryImageMap: Record<string, string> = {
-  "ACESSÓRIOS E LAÇOS": "/lovable-uploads/BRINQUEDO_1.png",
-  "BIJOUTERIAS E SEMIJOIAS": "/lovable-uploads/BRINQUEDO.png",
+  "ACESSÓRIOS E LAÇOS": "/lovable-uploads/ACESSÓRIOS_E_LAÇOS.png",
+  "BIJOUTERIAS E SEMIJOIAS": "/lovable-uploads/BIJOUTERIAS_E_SEMIJOIAS.png",
+  "COSMÉTICOS E PERFUMES": "/lovable-uploads/COSMETICOS_E_PERFUMES.png",
+  "ELETRÔNICOS": "/lovable-uploads/ELETRÔNICOS.png",
+  "EMBALAGENS PERSONALIZADAS": "/lovable-uploads/EMBALAGENS_PERSONALIZADAS.png",
+  "GAMES E ACESSÓRIOS": "/lovable-uploads/GAMES_E_ACESSÓRIOS.png",
 };
 
 // Mapeamento de categorias para ícones Lucide

@@ -23,6 +23,12 @@ import {
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 
+// Mapeamento de categorias para imagens personalizadas
+const categoryImageMap: Record<string, string> = {
+  "ACESSÓRIOS E LAÇOS": "/lovable-uploads/BRINQUEDO_1.png",
+  "BIJOUTERIAS E SEMIJOIAS": "/lovable-uploads/BRINQUEDO.png",
+};
+
 // Mapeamento de categorias para ícones Lucide
 const categoryIconMap: Record<string, LucideIcon> = {
   "ACESSÓRIOS E LAÇOS": Sparkles,
@@ -72,10 +78,18 @@ const CategoriaGrid = ({ categorias, onEdit }: CategoriaGridProps) => {
             >
               {/* Anel circular com borda branca grossa */}
               <div className="w-full aspect-square flex items-center justify-center rounded-full bg-[#0a1628] border-[4px] border-white/60 transition-all duration-300 group-hover:shadow-[0_0_18px_rgba(0,183,255,0.35)] group-hover:border-white/80">
-                <IconComponent 
-                  className="w-[55%] h-[55%] text-white transition-all duration-300 group-hover:text-[#5AD7FF] group-hover:drop-shadow-[0_0_8px_rgba(90,215,255,0.4)]" 
-                  strokeWidth={1.5}
-                />
+                {categoryImageMap[categoria.categoria] ? (
+                  <img 
+                    src={categoryImageMap[categoria.categoria]} 
+                    alt={categoria.categoria}
+                    className="w-[70%] h-[70%] object-contain transition-all duration-300 group-hover:scale-105"
+                  />
+                ) : (
+                  <IconComponent 
+                    className="w-[55%] h-[55%] text-white transition-all duration-300 group-hover:text-[#5AD7FF] group-hover:drop-shadow-[0_0_8px_rgba(90,215,255,0.4)]" 
+                    strokeWidth={1.5}
+                  />
+                )}
               </div>
               <div className="p-2 text-center">
                 <h3 className="font-bold text-[#9AE6FF] text-xs transition-all duration-300">{categoria.categoria}</h3>

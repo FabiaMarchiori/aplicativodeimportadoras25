@@ -29,15 +29,15 @@ export default function FornecedorCard({ fornecedor }: FornecedorCardProps) {
         <div className="w-20 h-20 xs:w-24 xs:h-24 sm:w-28 sm:h-28 md:w-32 md:h-32 lg:w-36 lg:h-36 
                         rounded-full border-2 border-cyan-400 
                         transition-all duration-200 ease-out
-                        group-hover:shadow-[0_0_12px_rgba(34,211,238,0.4)]
+                        group-hover:shadow-[0_0_12px_rgba(34,211,238,0.45)]
                         mb-2 sm:mb-3">
-          {/* Disco branco interno */}
-          <div className="w-full h-full rounded-full bg-white flex items-center justify-center overflow-hidden">
-            {/* Logo centralizada */}
+          {/* Disco branco interno - SEM padding, SEM flex extra */}
+          <div className="w-full h-full rounded-full bg-white overflow-hidden">
+            {/* Logo 100% do disco */}
             <img
               src={fornecedor.logo_url || "/placeholder.svg"}
               alt={`Logo ${fornecedor.nome_loja || fornecedor.nome || ""}`}
-              className="w-[92%] h-[92%] object-contain"
+              className="w-full h-full object-contain"
             />
           </div>
         </div>

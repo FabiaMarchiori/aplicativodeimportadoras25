@@ -25,12 +25,23 @@ export default function FornecedorCard({ fornecedor }: FornecedorCardProps) {
         onClick={() => navigate(`/fornecedor/${fornecedor.id}`)}
         className="flex flex-col items-center w-full"
       >
-        <div className="w-20 h-20 xs:w-24 xs:h-24 sm:w-28 sm:h-28 md:w-32 md:h-32 lg:w-36 lg:h-36 border-[3px] sm:border-4 border-white/80 bg-white overflow-hidden rounded-full mb-2 sm:mb-3 transition-all duration-300 group-hover:shadow-[0_0_18px_rgba(255,255,255,0.35)] group-hover:border-white logo-circular-fix">
-          <img
-            src={fornecedor.logo_url || "/placeholder.svg"}
-            alt={`Logo ${fornecedor.nome_loja || fornecedor.nome || ""}`}
-            className="logo-img-fix"
-          />
+        {/* Anel externo */}
+        <div className="w-20 h-20 xs:w-24 xs:h-24 sm:w-28 sm:h-28 md:w-32 md:h-32 lg:w-36 lg:h-36 
+                        rounded-full border-[3px] sm:border-4 border-white/80 
+                        bg-transparent p-1
+                        transition-all duration-200 ease-out
+                        group-hover:shadow-[0_0_12px_rgba(34,211,238,0.35)] 
+                        group-hover:border-white
+                        mb-2 sm:mb-3">
+          {/* Disco branco interno */}
+          <div className="w-full h-full rounded-full bg-white flex items-center justify-center p-2">
+            {/* Logo flutuando */}
+            <img
+              src={fornecedor.logo_url || "/placeholder.svg"}
+              alt={`Logo ${fornecedor.nome_loja || fornecedor.nome || ""}`}
+              className="max-w-[80%] max-h-[80%] object-contain"
+            />
+          </div>
         </div>
         <h3 className="text-xs xs:text-sm sm:text-base font-semibold text-center text-[#9AE6FF] mt-1 sm:mt-2 leading-tight px-1 line-clamp-2">
           {fornecedor.nome_loja || fornecedor.nome || "Sem nome"}

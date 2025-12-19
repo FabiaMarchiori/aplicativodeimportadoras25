@@ -2,7 +2,6 @@
 import { Edit } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Fornecedor } from "@/lib/supabase";
-import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { FavoritoButton } from "@/components/FavoritoButton";
 import { useFavoritos } from "@/hooks/useFavoritos";
 
@@ -16,28 +15,9 @@ export function FornecedorHeader({ fornecedor, isAdmin, onEditClick }: Fornecedo
   const { toggleFavorito, isFavorito } = useFavoritos();
 
   return (
-    <header className="mb-6 relative">
-      <div className="flex flex-col items-center">
-        <div className="mb-6">
-          <div className="w-36 h-36 border-4 border-[#3CBBC7] shadow-md rounded-full flex items-center justify-center overflow-hidden logo-circular-fix">
-            {fornecedor.logo_url ? (
-              <img 
-                src={fornecedor.logo_url} 
-                alt={fornecedor.nome} 
-                className="logo-img-fix" 
-              />
-            ) : (
-              <div className="w-full h-full bg-[#3CBBC7]/10 text-[#3CBBC7] text-4xl rounded-full flex items-center justify-center">
-                {fornecedor.nome?.charAt(0)}
-              </div>
-            )}
-          </div>
-        </div>
-        <h1 className="text-3xl font-bold text-[#322523]">{fornecedor.nome_loja || fornecedor.nome}</h1>
-        <p className="text-gray-500 text-lg">{fornecedor.categoria}</p>
-      </div>
-      
-      <div className="absolute top-4 right-4 flex gap-2 z-10">
+    <header className="mb-8 relative">
+      {/* Action buttons - top right */}
+      <div className="absolute top-0 right-0 flex gap-2 z-10">
         <FavoritoButton
           isFavorito={isFavorito(fornecedor.id)}
           onToggle={() => toggleFavorito(fornecedor.id)}
@@ -48,12 +28,50 @@ export function FornecedorHeader({ fornecedor, isAdmin, onEditClick }: Fornecedo
           <Button 
             variant="outline" 
             size="icon" 
-            className="bg-white hover:bg-[#FBE02F]/20 border-[#3CBBC7]"
+            className="bg-[#0d2847]/80 hover:bg-[#0d2847] border-[#3CBBC7]/30 hover:border-[#3CBBC7]/60 backdrop-blur-sm transition-all duration-300"
             onClick={onEditClick}
           >
             <Edit className="h-4 w-4 text-[#3CBBC7]" />
           </Button>
         )}
+      </div>
+
+      {/* Centered content */}
+      <div className="flex flex-col items-center pt-8">
+        {/* Logo with white ring and glow effect */}
+        <div className="mb-6 group">
+          <div className="relative">
+            {/* Outer glow on hover */}
+            <div className="absolute inset-0 bg-white/20 rounded-full blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 scale-110" />
+            
+            {/* Logo container */}
+            <div className="relative w-36 h-36 rounded-full p-1 bg-white/20 backdrop-blur-sm transition-all duration-300 group-hover:shadow-[0_0_30px_rgba(255,255,255,0.4)]">
+              <div className="w-full h-full rounded-full bg-white flex items-center justify-center overflow-hidden">
+                {fornecedor.logo_url ? (
+                  <img 
+                    src={fornecedor.logo_url} 
+                    alt={fornecedor.nome} 
+                    className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105" 
+                  />
+                ) : (
+                  <div className="w-full h-full bg-gradient-to-br from-[#3CBBC7]/20 to-[#3CBBC7]/40 flex items-center justify-center">
+                    <span className="text-4xl font-bold text-[#3CBBC7]">
+                      {fornecedor.nome?.charAt(0)}
+                    </span>
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Name and category */}
+        <h1 className="text-3xl font-bold text-white text-center mb-2">
+          {fornecedor.nome_loja || fornecedor.nome}
+        </h1>
+        <p className="text-[#3CBBC7] text-lg font-medium">
+          {fornecedor.categoria}
+        </p>
       </div>
     </header>
   );

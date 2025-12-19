@@ -44,7 +44,7 @@ export default function FornecedorSearchCard({ fornecedor }: FornecedorSearchCar
       <CardFooter className="p-4 pt-0">
         <Button 
           asChild 
-          className="w-full hover:bg-[#FBE02F] hover:text-[#322523] text-sm"
+          className="w-full bg-cyan-500 hover:bg-cyan-600 text-white hover:shadow-[0_0_12px_rgba(34,211,238,0.4)] transition-all duration-200 ease-out text-sm"
         >
           <Link to={`/fornecedor/${fornecedor.id}`}>
             Ver detalhes

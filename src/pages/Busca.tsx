@@ -2,7 +2,6 @@
 import { useState, useEffect } from "react";
 import { Fornecedor, supabase, mapFornecedor } from "@/lib/supabase";
 import { useToast } from "@/components/ui/use-toast";
-import SearchBanner from "@/components/search/SearchBanner";
 import SearchHeader from "@/components/search/SearchHeader";
 import SearchResults from "@/components/search/SearchResults";
 
@@ -75,8 +74,7 @@ export default function Busca() {
   };
 
   return (
-    <div className="page-container fade-in">
-      <SearchBanner />
+    <div className="page-container fade-in pt-4">
       <SearchHeader searchQuery={searchQuery} setSearchQuery={setSearchQuery} />
       <SearchResults 
         filteredFornecedores={filteredFornecedores}

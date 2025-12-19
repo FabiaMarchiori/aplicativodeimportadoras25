@@ -32,9 +32,9 @@ const FornecedorDetalhesCard: React.FC<Props> = ({ fornecedor, isAdmin, onEditCl
   return (
     <div className="w-full max-w-2xl mx-auto flex flex-col items-center">
       {/* Action Cards - WhatsApp, Instagram, Endereço */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 w-full mb-10">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 w-full mb-6">
         {/* WhatsApp */}
-        <Card className="group p-6 flex flex-col items-center gap-4 bg-[#0d2847]/80 backdrop-blur-sm border border-[#3CBBC7]/20 hover:border-[#3CBBC7]/50 transition-all duration-300 hover:shadow-lg hover:shadow-[#3CBBC7]/10 hover:-translate-y-1">
+        <Card className="group p-4 flex flex-col items-center gap-3 bg-[#0d2847]/80 backdrop-blur-sm border border-[#3CBBC7]/20 hover:border-[#3CBBC7]/50 transition-all duration-300 hover:shadow-lg hover:shadow-[#3CBBC7]/10 hover:-translate-y-1">
           <div className="p-3 rounded-full bg-[#3CBBC7]/10 transition-transform duration-300 group-hover:scale-110">
             <Phone className="h-7 w-7 text-[#3CBBC7]" />
           </div>
@@ -49,7 +49,7 @@ const FornecedorDetalhesCard: React.FC<Props> = ({ fornecedor, isAdmin, onEditCl
         </Card>
         
         {/* Instagram */}
-        <Card className="group p-6 flex flex-col items-center gap-4 bg-[#0d2847]/80 backdrop-blur-sm border border-[#3CBBC7]/20 hover:border-[#3CBBC7]/50 transition-all duration-300 hover:shadow-lg hover:shadow-[#3CBBC7]/10 hover:-translate-y-1">
+        <Card className="group p-4 flex flex-col items-center gap-3 bg-[#0d2847]/80 backdrop-blur-sm border border-[#3CBBC7]/20 hover:border-[#3CBBC7]/50 transition-all duration-300 hover:shadow-lg hover:shadow-[#3CBBC7]/10 hover:-translate-y-1">
           <div className="p-3 rounded-full bg-[#3CBBC7]/10 transition-transform duration-300 group-hover:scale-110">
             <Instagram className="h-7 w-7 text-[#3CBBC7]" />
           </div>
@@ -67,7 +67,7 @@ const FornecedorDetalhesCard: React.FC<Props> = ({ fornecedor, isAdmin, onEditCl
         </Card>
         
         {/* Endereço */}
-        <Card className="group p-6 flex flex-col items-center gap-4 bg-[#0d2847]/80 backdrop-blur-sm border border-[#3CBBC7]/20 hover:border-[#3CBBC7]/50 transition-all duration-300 hover:shadow-lg hover:shadow-[#3CBBC7]/10 hover:-translate-y-1">
+        <Card className="group p-4 flex flex-col items-center gap-3 bg-[#0d2847]/80 backdrop-blur-sm border border-[#3CBBC7]/20 hover:border-[#3CBBC7]/50 transition-all duration-300 hover:shadow-lg hover:shadow-[#3CBBC7]/10 hover:-translate-y-1">
           <div className="p-3 rounded-full bg-[#3CBBC7]/10 transition-transform duration-300 group-hover:scale-110">
             <MapPin className="h-7 w-7 text-[#3CBBC7]" />
           </div>
@@ -86,8 +86,8 @@ const FornecedorDetalhesCard: React.FC<Props> = ({ fornecedor, isAdmin, onEditCl
       </div>
 
       {/* Instagram Embed Section */}
-      <Card className="w-full max-w-md p-6 bg-[#0d2847]/80 backdrop-blur-sm border border-[#3CBBC7]/20">
-        <h2 className="text-xl text-white font-semibold mb-6 text-center flex items-center justify-center gap-2">
+      <Card className="w-full max-w-md p-4 bg-[#0d2847]/80 backdrop-blur-sm border border-[#3CBBC7]/20">
+        <h2 className="text-xl text-white font-semibold mb-4 text-center flex items-center justify-center gap-2">
           <Instagram className="h-5 w-5 text-[#3CBBC7]" />
           Instagram
         </h2>

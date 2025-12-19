@@ -15,7 +15,7 @@ export function FornecedorHeader({ fornecedor, isAdmin, onEditClick }: Fornecedo
   const { toggleFavorito, isFavorito } = useFavoritos();
 
   return (
-    <header className="mb-8 relative">
+    <header className="mb-4 relative">
       {/* Action buttons - top right */}
       <div className="absolute top-0 right-0 flex gap-2 z-10">
         <FavoritoButton
@@ -37,9 +37,9 @@ export function FornecedorHeader({ fornecedor, isAdmin, onEditClick }: Fornecedo
       </div>
 
       {/* Centered content */}
-      <div className="flex flex-col items-center pt-8">
+      <div className="flex flex-col items-center pt-2">
         {/* Logo with white ring and glow effect */}
-        <div className="mb-6 group">
+        <div className="mb-3 group">
           <div className="relative">
             {/* Outer glow on hover */}
             <div className="absolute inset-0 bg-white/20 rounded-full blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 scale-110" />

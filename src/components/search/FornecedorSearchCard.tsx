@@ -14,7 +14,7 @@ export default function FornecedorSearchCard({ fornecedor }: FornecedorSearchCar
   const { toggleFavorito, isFavorito } = useFavoritos();
 
   return (
-    <Card className="overflow-hidden card-hover border-[#3CBBC7]/20 relative h-full flex flex-col">
+    <Card className="overflow-hidden card-hover bg-[#0D2238]/80 border-cyan-400/20 relative h-full flex flex-col">
       <FavoritoButton
         isFavorito={isFavorito(fornecedor.id)}
         onToggle={() => toggleFavorito(fornecedor.id)}
@@ -23,7 +23,7 @@ export default function FornecedorSearchCard({ fornecedor }: FornecedorSearchCar
       />
 
       <CardContent className="p-6 flex-1 flex flex-col items-center text-center">
-        <div className="w-20 h-20 md:w-24 md:h-24 overflow-hidden rounded-full bg-muted border-2 border-[#3CBBC7] mb-4 logo-circular-fix">
+        <div className="w-20 h-20 md:w-24 md:h-24 overflow-hidden rounded-full bg-white border-2 border-cyan-400 mb-4 logo-circular-fix">
           {fornecedor.logo_url ? (
             <img
               src={fornecedor.logo_url}
@@ -31,12 +31,12 @@ export default function FornecedorSearchCard({ fornecedor }: FornecedorSearchCar
               className="logo-img-fix"
             />
           ) : (
-            <div className="text-2xl md:text-3xl font-bold text-[#3CBBC7] w-full h-full flex items-center justify-center">
+            <div className="text-2xl md:text-3xl font-bold text-cyan-400 w-full h-full flex items-center justify-center bg-[#0D2238]">
               {fornecedor.nome.charAt(0)}
             </div>
           )}
         </div>
-        <h3 className="font-semibold text-[#322523] text-base md:text-lg leading-tight">
+        <h3 className="font-semibold text-white text-base md:text-lg leading-tight">
           {fornecedor.nome}
         </h3>
       </CardContent>

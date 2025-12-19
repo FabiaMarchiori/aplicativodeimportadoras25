@@ -74,7 +74,7 @@ export default function Busca() {
   };
 
   return (
-    <div className="page-container fade-in pt-4">
+    <div className="min-h-screen bg-[#0B1A2A] px-4 py-6 fade-in">
       <SearchHeader searchQuery={searchQuery} setSearchQuery={setSearchQuery} />
       <SearchResults 
         filteredFornecedores={filteredFornecedores}

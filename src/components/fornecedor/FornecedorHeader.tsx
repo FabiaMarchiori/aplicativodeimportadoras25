@@ -37,7 +37,7 @@ export function FornecedorHeader({ fornecedor, isAdmin, onEditClick }: Fornecedo
       </div>
 
       {/* Centered content */}
-      <div className="flex flex-col items-center pt-2">
+      <div className="flex flex-col items-center">
         {/* Logo with white ring and glow effect */}
         <div className="mb-3 group">
           <div className="relative">

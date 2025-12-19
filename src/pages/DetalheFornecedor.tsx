@@ -84,15 +84,8 @@ const DetalheFornecedor = () => {
   };
 
   return (
-    <div className="min-h-screen pb-24 relative overflow-hidden">
-      {/* Gradient Background - mesmo da Home */}
-      <div className="fixed inset-0 bg-gradient-to-br from-[#0a1628] via-[#0d2847] to-[#0f3460] -z-10" />
-      
-      {/* Decorative elements */}
-      <div className="fixed top-20 right-10 w-64 h-64 bg-[#3CBBC7]/10 rounded-full blur-3xl -z-10" />
-      <div className="fixed bottom-40 left-10 w-80 h-80 bg-[#3CBBC7]/5 rounded-full blur-3xl -z-10" />
-
-      <div className="relative z-10 px-4 pt-2 pb-6">
+    <div className="min-h-screen pb-24 bg-gradient-to-br from-[#0a1628] via-[#0d2847] to-[#0f3460]">
+      <div className="px-4 pt-4 pb-6">
         {loading ? (
           <div className="flex justify-center py-12">
             <Loader2 className="h-10 w-10 animate-spin text-[#3CBBC7]" />

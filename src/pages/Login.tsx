@@ -34,7 +34,7 @@ export default function Login() {
   // Se ainda está carregando, mostrar tela de carregamento
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#061a2e] via-[#0b2a3f] to-[#0e3a52]">
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#0a1628] via-[#0d1f35] to-[#0a1a2e]">
         <div className="text-center text-white">
           <div className="w-8 h-8 border-4 border-cyan-400/30 border-t-cyan-400 rounded-full animate-spin mx-auto mb-4"></div>
           <p className="text-white/70">Verificando autenticação...</p>

@@ -213,55 +213,112 @@ export default function Perfil() {
         </div>
       </div>
 
-      {/* Modal de Alteração de Senha */}
+      {/* Modal de Alteração de Senha - Visual Premium */}
       <Dialog open={modalOpen} onOpenChange={setModalOpen}>
-        <DialogContent className="bg-gradient-to-br from-[#0b2a3f] to-[#0e3a52] text-white border-white/10 backdrop-blur-md rounded-2xl shadow-2xl">
+        <DialogContent className="bg-[#0b2a3f]/95 backdrop-blur-xl text-white border border-white/15 rounded-2xl shadow-[0_25px_50px_-12px_rgba(0,0,0,0.5)] data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=open]:zoom-in-95 duration-300">
           <DialogHeader>
-            <DialogTitle className="text-white flex items-center gap-2">
-              <Lock className="h-5 w-5 text-cyan-400" />
+            <DialogTitle className="text-white flex items-center gap-2 text-lg">
+              <div className="p-2 rounded-lg bg-cyan-400/20 border border-cyan-400/30">
+                <Lock className="h-4 w-4 text-cyan-400 drop-shadow-[0_0_6px_rgba(34,211,238,0.5)]" />
+              </div>
               Alterar senha
             </DialogTitle>
           </DialogHeader>
           <form onSubmit={handleChangePassword}>
             <div className="space-y-4 py-4">
-              {error && <div className="text-sm font-medium text-red-300 bg-red-500/20 p-3 rounded-lg border border-red-400/30">
+              {error && (
+                <div className="text-sm font-medium text-red-300 bg-red-500/20 p-3 rounded-xl border border-red-400/30 animate-fade-in">
                   {error}
-                </div>}
+                </div>
+              )}
               <div className="space-y-2">
-                <Label htmlFor="current-password" className="text-white/70">Senha atual</Label>
-                <Input id="current-password" type="password" value={password.currentPassword} onChange={e => setPassword({
-                ...password,
-                currentPassword: e.target.value
-              })} className="bg-white/10 text-white border-white/20" required />
+                <Label htmlFor="current-password" className="text-white/70 text-sm">Senha atual</Label>
+                <Input 
+                  id="current-password" 
+                  type="password" 
+                  placeholder="Digite sua senha atual"
+                  value={password.currentPassword} 
+                  onChange={e => setPassword({
+                    ...password,
+                    currentPassword: e.target.value
+                  })} 
+                  className="bg-white/10 text-white border-white/20 rounded-xl
+                             placeholder:text-white/40
+                             focus:border-cyan-400/50 focus:ring-cyan-400/20
+                             focus:shadow-[0_0_15px_rgba(34,211,238,0.15)]
+                             transition-all duration-300" 
+                  required 
+                />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="new-password" className="text-white/70">Nova senha</Label>
-                <Input id="new-password" type="password" value={password.newPassword} onChange={e => setPassword({
-                ...password,
-                newPassword: e.target.value
-              })} className="bg-white/10 text-white border-white/20" required />
+                <Label htmlFor="new-password" className="text-white/70 text-sm">Nova senha</Label>
+                <Input 
+                  id="new-password" 
+                  type="password" 
+                  placeholder="Digite a nova senha"
+                  value={password.newPassword} 
+                  onChange={e => setPassword({
+                    ...password,
+                    newPassword: e.target.value
+                  })} 
+                  className="bg-white/10 text-white border-white/20 rounded-xl
+                             placeholder:text-white/40
+                             focus:border-cyan-400/50 focus:ring-cyan-400/20
+                             focus:shadow-[0_0_15px_rgba(34,211,238,0.15)]
+                             transition-all duration-300" 
+                  required 
+                />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="confirm-password" className="text-white/70">Confirmar nova senha</Label>
-                <Input id="confirm-password" type="password" value={password.confirmPassword} onChange={e => setPassword({
-                ...password,
-                confirmPassword: e.target.value
-              })} className="bg-white/10 text-white border-white/20" required />
+                <Label htmlFor="confirm-password" className="text-white/70 text-sm">Confirmar nova senha</Label>
+                <Input 
+                  id="confirm-password" 
+                  type="password" 
+                  placeholder="Confirme a nova senha"
+                  value={password.confirmPassword} 
+                  onChange={e => setPassword({
+                    ...password,
+                    confirmPassword: e.target.value
+                  })} 
+                  className="bg-white/10 text-white border-white/20 rounded-xl
+                             placeholder:text-white/40
+                             focus:border-cyan-400/50 focus:ring-cyan-400/20
+                             focus:shadow-[0_0_15px_rgba(34,211,238,0.15)]
+                             transition-all duration-300" 
+                  required 
+                />
               </div>
             </div>
-            <DialogFooter className="gap-2">
-              <Button type="button" variant="outline" onClick={() => setModalOpen(false)} className="border-white/30 text-white hover:bg-white/10 rounded-xl">
+            <DialogFooter className="gap-2 sm:gap-3">
+              <Button 
+                type="button" 
+                variant="outline" 
+                onClick={() => setModalOpen(false)} 
+                className="border-white/30 text-white bg-transparent
+                           hover:bg-white/10 hover:border-white/50
+                           hover:scale-[1.02]
+                           transition-all duration-300 rounded-xl"
+              >
                 Cancelar
               </Button>
               <Button 
                 type="submit" 
                 disabled={isLoading} 
-                className="bg-gradient-to-r from-cyan-500 to-cyan-400 text-[#061a2e] font-semibold hover:shadow-[0_0_20px_rgba(34,211,238,0.4)] rounded-xl"
+                className="bg-gradient-to-r from-cyan-500 to-cyan-400 
+                           text-[#061a2e] font-semibold rounded-xl
+                           hover:shadow-[0_0_25px_rgba(34,211,238,0.4)]
+                           hover:scale-[1.02]
+                           transition-all duration-300
+                           disabled:opacity-70"
               >
-                {isLoading ? <>
+                {isLoading ? (
+                  <>
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                     Alterando...
-                  </> : "Salvar nova senha"}
+                  </>
+                ) : (
+                  "Salvar nova senha"
+                )}
               </Button>
             </DialogFooter>
           </form>

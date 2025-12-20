@@ -1,4 +1,4 @@
-// Build refresh - força recompilação - 2024-12-20-v5
+// Build refresh - força recompilação - 2024-12-20-v6
 import { ReactNode, useMemo } from "react";
 
 type AuthLayoutProps = {
@@ -34,7 +34,7 @@ export function AuthLayout({
   );
 
   return (
-    <div className={`relative flex flex-col items-center justify-start min-h-screen pt-2 px-4 pb-4 fade-in overflow-hidden bg-gradient-to-br from-[#0B1F33] via-[#0d2540] to-[#0a1a2e] ${containerClass}`}>
+    <div className={`relative flex flex-col items-center justify-start h-screen pt-6 px-4 pb-4 fade-in overflow-hidden bg-gradient-to-br from-[#0B1F33] via-[#0d2540] to-[#0a1a2e] ${containerClass}`}>
       {/* Bolhas flutuantes animadas */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         {bubbles.map((bubble, i) => (

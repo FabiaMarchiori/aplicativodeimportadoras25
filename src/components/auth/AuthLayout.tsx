@@ -20,7 +20,7 @@ export function AuthLayout({
   );
 
   return (
-    <div className={`relative flex flex-col items-center justify-center min-h-screen p-4 fade-in overflow-hidden bg-gradient-to-br from-[#0B1F33] via-[#0a1929] to-[#061420] ${containerClass}`}>
+    <div className={`relative flex flex-col items-center justify-center min-h-screen p-4 fade-in overflow-hidden bg-gradient-to-br from-[#0a1628] via-[#0d1f35] to-[#0a1a2e] ${containerClass}`}>
       {/* Bolhas sutis de fundo */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         {bubbles.map((bubble, i) => (

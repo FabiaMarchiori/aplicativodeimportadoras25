@@ -137,7 +137,7 @@ export function LoginForm({ onForgotPassword }: LoginFormProps) {
             <span className="w-full border-t border-white/20" />
           </div>
           <div className="relative flex justify-center text-xs uppercase">
-            <span className="bg-[#0b2a3f] px-3 text-white/50">Ou continue com</span>
+            <span className="bg-[#0B1F33]/80 px-3 text-white/50">Ou continue com</span>
           </div>
         </div>
 

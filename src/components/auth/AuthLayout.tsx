@@ -1,3 +1,4 @@
+// Build refresh - força recompilação - 2024-12-20-v2
 import { ReactNode, useMemo } from "react";
 
 type AuthLayoutProps = {

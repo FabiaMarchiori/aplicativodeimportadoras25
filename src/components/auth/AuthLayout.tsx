@@ -78,7 +78,7 @@ export function AuthLayout({
       
       {/* WRAPPER INTERNO COM SCROLL */}
       <div className="flex-1 overflow-y-auto relative z-10">
-        <div className="flex flex-col items-center pt-6 px-4 pb-4 fade-in">
+        <div className="flex flex-col items-center pt-0 mt-0 px-4 pb-4 fade-in">
           <div className="w-full max-w-md">
             <div className="text-center mb-8 animate-fade-in">
               <h1 className="text-3xl font-bold text-white mb-2">Importadoras da 25 de Março</h1>

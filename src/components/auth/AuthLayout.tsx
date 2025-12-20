@@ -1,5 +1,6 @@
-// Build refresh - força recompilação - 2024-12-20-v10
+// Build refresh - força recompilação - 2024-12-20-v12 - PORTAL APPROACH
 import { ReactNode, useMemo } from "react";
+import { createPortal } from "react-dom";
 
 type AuthLayoutProps = {
   children: ReactNode;
@@ -33,18 +34,28 @@ export function AuthLayout({
     })), []
   );
 
-  return (
+  const content = (
     <div 
-      className="min-h-screen bg-gradient-to-br from-[#0B1F33] via-[#0d2540] to-[#0a1a2e]"
-      style={{ position: 'relative' }}
+      className={`auth-layout-root ${containerClass}`}
+      style={{
+        position: 'fixed',
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+        zIndex: 9999,
+        overflowY: 'auto',
+        background: 'linear-gradient(to bottom right, #0B1F33, #0d2540, #0a1a2e)',
+      }}
     >
-      {/* Bolhas flutuantes animadas - fixas no fundo */}
-      <div className="fixed inset-0 overflow-hidden pointer-events-none">
+      {/* Bolhas flutuantes animadas */}
+      <div style={{ position: 'absolute', inset: 0, overflow: 'hidden', pointerEvents: 'none' }}>
         {bubbles.map((bubble, i) => (
           <div
             key={`bubble-${i}`}
-            className="absolute rounded-full bg-cyan-400/[0.08]"
+            className="rounded-full bg-cyan-400/[0.08]"
             style={{
+              position: 'absolute',
               width: `${bubble.size}px`,
               height: `${bubble.size}px`,
               left: `${bubble.left}%`,
@@ -57,13 +68,14 @@ export function AuthLayout({
         ))}
       </div>
 
-      {/* Quadrados decorativos flutuantes - fixos no fundo */}
-      <div className="fixed inset-0 overflow-hidden pointer-events-none">
+      {/* Quadrados decorativos flutuantes */}
+      <div style={{ position: 'absolute', inset: 0, overflow: 'hidden', pointerEvents: 'none' }}>
         {squares.map((square, i) => (
           <div
             key={`square-${i}`}
-            className="absolute border border-cyan-400/20"
+            className="border border-cyan-400/20"
             style={{
+              position: 'absolute',
               width: `${square.size}px`,
               height: `${square.size}px`,
               left: `${square.left}%`,
@@ -76,11 +88,34 @@ export function AuthLayout({
         ))}
       </div>
 
-      {/* Efeito de glow central sutil - fixo no fundo */}
-      <div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-cyan-400/[0.03] rounded-full blur-[100px] pointer-events-none" />
+      {/* Efeito de glow central sutil */}
+      <div 
+        style={{
+          position: 'absolute',
+          top: '50%',
+          left: '50%',
+          transform: 'translate(-50%, -50%)',
+          width: '600px',
+          height: '600px',
+          background: 'rgba(34, 211, 238, 0.03)',
+          borderRadius: '50%',
+          filter: 'blur(100px)',
+          pointerEvents: 'none',
+        }}
+      />
       
-      {/* Conteúdo - alinhado ao topo com padding mínimo */}
-      <div className="relative z-10 w-full max-w-md mx-auto px-4 pt-4 pb-8 fade-in" style={{ marginTop: 0, paddingTop: '16px' }}>
+      {/* Conteúdo - alinhado ao topo */}
+      <div 
+        style={{
+          position: 'relative',
+          zIndex: 10,
+          width: '100%',
+          maxWidth: '28rem',
+          margin: '0 auto',
+          padding: '16px 16px 32px 16px',
+        }}
+        className="fade-in"
+      >
         <div className="text-center mb-6 animate-fade-in">
           <h1 className="text-3xl font-bold text-white mb-2">Importadoras da 25 de Março</h1>
           <p className="text-white/70 text-lg">Seu Aplicativo de fornecedores</p>
@@ -90,4 +125,7 @@ export function AuthLayout({
       </div>
     </div>
   );
+
+  // Renderiza diretamente no body para ignorar qualquer wrapper
+  return createPortal(content, document.body);
 }

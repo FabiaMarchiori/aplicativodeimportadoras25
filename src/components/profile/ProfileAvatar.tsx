@@ -1,4 +1,3 @@
-
 import { User } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
@@ -21,12 +20,14 @@ export default function ProfileAvatar({ user, size = "lg" }: ProfileAvatarProps)
   };
 
   return (
-    <div className="relative">
-      <div className="absolute -inset-1 bg-gradient-to-r from-[#5FB9C3] to-[#F9C820] rounded-full opacity-75 blur-sm animate-pulse"></div>
-      <Avatar className={`relative ${sizeClasses[size]} border-3 border-white shadow-lg`}>
+    <div className="relative p-1 rounded-full bg-white/10 backdrop-blur-md">
+      {/* Glow ciano */}
+      <div className="absolute -inset-1 bg-cyan-400/30 rounded-full blur-md"></div>
+      
+      <Avatar className={`relative ${sizeClasses[size]} border-2 border-white/30 shadow-lg`}>
         <AvatarImage src="" alt={user?.email} />
-        <AvatarFallback className="bg-gradient-to-br from-[#5FB9C3] to-[#1981A7] text-white">
-          <User className={iconSizes[size]} />
+        <AvatarFallback className="bg-gradient-to-br from-[#0b2a3f] to-[#0e3a52]">
+          <User className={`${iconSizes[size]} text-white drop-shadow-[0_0_8px_rgba(34,211,238,0.5)]`} />
         </AvatarFallback>
       </Avatar>
     </div>

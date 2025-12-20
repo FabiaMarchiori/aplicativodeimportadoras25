@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
@@ -11,6 +11,7 @@ import { useToast } from "@/components/ui/use-toast";
 import ProfileAvatar from "@/components/profile/ProfileAvatar";
 import ProfileInfoCard from "@/components/profile/ProfileInfoCard";
 import ProfileStats from "@/components/profile/ProfileStats";
+
 export default function Perfil() {
   const {
     user,
@@ -30,6 +31,17 @@ export default function Perfil() {
     confirmPassword: ""
   });
   const [error, setError] = useState("");
+
+  // Gerar bolhas de fundo apenas uma vez
+  const bubbles = useMemo(() => 
+    [...Array(8)].map((_, i) => ({
+      width: Math.random() * 120 + 60,
+      height: Math.random() * 120 + 60,
+      left: Math.random() * 100,
+      top: Math.random() * 100,
+    })), []
+  );
+
   const handleSignOut = async () => {
     try {
       await signOut();
@@ -38,6 +50,7 @@ export default function Perfil() {
       console.error("Erro ao fazer logout:", error);
     }
   };
+
   const handleChangePassword = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
@@ -53,7 +66,6 @@ export default function Perfil() {
       return;
     }
     try {
-      // Primeiro, verifique a senha atual
       const {
         error: signInError
       } = await supabase.auth.signInWithPassword({
@@ -64,7 +76,6 @@ export default function Perfil() {
         throw new Error("Senha atual incorreta");
       }
 
-      // Agora atualize a senha
       const {
         error: updateError
       } = await supabase.auth.updateUser({
@@ -87,6 +98,7 @@ export default function Perfil() {
       setIsLoading(false);
     }
   };
+
   if (!user) {
     return <div className="page-container">
         <div className="flex flex-col items-center justify-center min-h-[60vh]">
@@ -98,51 +110,84 @@ export default function Perfil() {
         </div>
       </div>;
   }
-  return <div className="min-h-screen bg-gradient-to-br from-[#1981A7] via-[#4A9DB8] to-[#5FB9C3] text-white relative overflow-hidden">
-      {/* Background decorativo */}
-      <div className="absolute inset-0 overflow-hidden">
-        <div className="absolute -top-40 -right-40 w-80 h-80 bg-white/5 rounded-full blur-3xl animate-float-slow"></div>
-        <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-[#F9C820]/10 rounded-full blur-3xl animate-float-medium"></div>
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-[#061a2e] via-[#0b2a3f] to-[#0e3a52] text-white relative overflow-hidden">
+      {/* Bolhas sutis de fundo */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        {bubbles.map((bubble, i) => (
+          <div
+            key={i}
+            className="absolute rounded-full bg-cyan-400/[0.06]"
+            style={{
+              width: `${bubble.width}px`,
+              height: `${bubble.height}px`,
+              left: `${bubble.left}%`,
+              top: `${bubble.top}%`,
+              filter: 'blur(40px)',
+            }}
+          />
+        ))}
       </div>
 
       <div className="relative z-10 page-container max-w-md mx-auto fade-in pt-6 pb-20">
         {/* Header com Avatar */}
-        <div className="text-center mb-8 animate-scale-in">
+        <div className="text-center mb-8 animate-fade-in">
           <div className="flex justify-center mb-4">
             <ProfileAvatar user={user} size="lg" />
           </div>
-          <h1 className="text-2xl font-bold text-white mb-1">Meu Perfil</h1>
-          <p className="text-white/80 text-sm">{user.email}</p>
+          <h1 className="text-2xl font-semibold text-white mb-1">Meu Perfil</h1>
+          <p className="text-white/70 text-sm">{user.email}</p>
         </div>
 
         {/* Seção de Informações Pessoais */}
         <div className="space-y-4 mb-6">
-          <ProfileInfoCard title="Informações Pessoais" icon={User}>
+          <ProfileInfoCard title="Informações Pessoais" icon={User} className="animate-fade-in">
             <div className="space-y-3">
               <div>
-                <Label htmlFor="email" className="text-white/80 text-sm">E-mail</Label>
+                <Label htmlFor="email" className="text-white/70 text-sm">E-mail</Label>
                 <Input id="email" value={user.email || ""} disabled className="bg-white/10 text-white border-white/20 mt-1" />
               </div>
             </div>
           </ProfileInfoCard>
 
           {/* Estatísticas */}
-          <ProfileInfoCard title="Estatísticas" icon={Mail}>
+          <ProfileInfoCard 
+            title="Estatísticas" 
+            icon={Mail} 
+            className="animate-fade-in"
+            style={{ animationDelay: '100ms' }}
+          >
             <ProfileStats isAdmin={isAdmin} createdAt={user.created_at} />
           </ProfileInfoCard>
 
           {/* Seção de Configurações */}
-          <ProfileInfoCard title="Configurações" icon={Settings}>
+          <ProfileInfoCard 
+            title="Configurações" 
+            icon={Settings}
+            className="animate-fade-in"
+            style={{ animationDelay: '200ms' }}
+          >
             <div className="space-y-3">
               <Button 
-                variant="outline" 
                 onClick={() => navigate('/assinatura')} 
-                className="w-full border-white/30 text-white hover:border-white/50 transition-all duration-200 bg-[#F9C820] hover:bg-[#F9C820]/90 text-[#1981A7] font-medium"
+                className="w-full bg-gradient-to-r from-cyan-500 to-cyan-400 
+                           text-[#061a2e] font-semibold
+                           hover:shadow-[0_0_25px_rgba(34,211,238,0.4)]
+                           hover:scale-[1.03]
+                           transition-all duration-300 rounded-xl"
               >
                 <Crown className="mr-2 h-4 w-4" />
                 Status da Assinatura
               </Button>
-              <Button variant="outline" onClick={() => setModalOpen(true)} className="w-full border-white/30 text-white hover:border-white/50 transition-all duration-200 bg-amber-500 hover:bg-amber-400">
+              <Button 
+                variant="outline" 
+                onClick={() => setModalOpen(true)} 
+                className="w-full border-white/30 text-white bg-transparent
+                           hover:bg-white/10 hover:border-white/50
+                           hover:scale-[1.03]
+                           transition-all duration-300 rounded-xl"
+              >
                 <Lock className="mr-2 h-4 w-4" />
                 Alterar senha
               </Button>
@@ -150,7 +195,18 @@ export default function Perfil() {
           </ProfileInfoCard>
 
           {/* Botão de Logout */}
-          <Button variant="destructive" className="w-full bg-red-600 hover:bg-red-700 border border-red-500 text-white transition-all duration-200 animate-fade-in" onClick={handleSignOut}>
+          <Button 
+            variant="destructive" 
+            className="w-full bg-red-600 hover:bg-red-700 
+                       border border-red-500/50 text-white 
+                       rounded-xl shadow-lg
+                       hover:shadow-[0_0_20px_rgba(220,38,38,0.3)]
+                       hover:scale-[1.03]
+                       transition-all duration-300
+                       animate-fade-in"
+            style={{ animationDelay: '300ms' }}
+            onClick={handleSignOut}
+          >
             <LogOut className="mr-2 h-4 w-4" />
             Sair da Conta
           </Button>
@@ -159,10 +215,10 @@ export default function Perfil() {
 
       {/* Modal de Alteração de Senha */}
       <Dialog open={modalOpen} onOpenChange={setModalOpen}>
-        <DialogContent className="bg-gradient-to-br from-[#1981A7] to-[#4A9DB8] text-white border-white/20 backdrop-blur-sm">
+        <DialogContent className="bg-gradient-to-br from-[#0b2a3f] to-[#0e3a52] text-white border-white/10 backdrop-blur-md rounded-2xl shadow-2xl">
           <DialogHeader>
             <DialogTitle className="text-white flex items-center gap-2">
-              <Lock className="h-5 w-5 text-[#F9C820]" />
+              <Lock className="h-5 w-5 text-cyan-400" />
               Alterar senha
             </DialogTitle>
           </DialogHeader>
@@ -172,21 +228,21 @@ export default function Perfil() {
                   {error}
                 </div>}
               <div className="space-y-2">
-                <Label htmlFor="current-password" className="text-white">Senha atual</Label>
+                <Label htmlFor="current-password" className="text-white/70">Senha atual</Label>
                 <Input id="current-password" type="password" value={password.currentPassword} onChange={e => setPassword({
                 ...password,
                 currentPassword: e.target.value
               })} className="bg-white/10 text-white border-white/20" required />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="new-password" className="text-white">Nova senha</Label>
+                <Label htmlFor="new-password" className="text-white/70">Nova senha</Label>
                 <Input id="new-password" type="password" value={password.newPassword} onChange={e => setPassword({
                 ...password,
                 newPassword: e.target.value
               })} className="bg-white/10 text-white border-white/20" required />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="confirm-password" className="text-white">Confirmar nova senha</Label>
+                <Label htmlFor="confirm-password" className="text-white/70">Confirmar nova senha</Label>
                 <Input id="confirm-password" type="password" value={password.confirmPassword} onChange={e => setPassword({
                 ...password,
                 confirmPassword: e.target.value
@@ -194,10 +250,14 @@ export default function Perfil() {
               </div>
             </div>
             <DialogFooter className="gap-2">
-              <Button type="button" variant="outline" onClick={() => setModalOpen(false)} className="border-white/30 text-white hover:bg-white/10">
+              <Button type="button" variant="outline" onClick={() => setModalOpen(false)} className="border-white/30 text-white hover:bg-white/10 rounded-xl">
                 Cancelar
               </Button>
-              <Button type="submit" disabled={isLoading} className="bg-[#F9C820] hover:bg-[#F9C820]/90 text-[#1981A7] font-medium">
+              <Button 
+                type="submit" 
+                disabled={isLoading} 
+                className="bg-gradient-to-r from-cyan-500 to-cyan-400 text-[#061a2e] font-semibold hover:shadow-[0_0_20px_rgba(34,211,238,0.4)] rounded-xl"
+              >
                 {isLoading ? <>
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                     Alterando...
@@ -207,5 +267,6 @@ export default function Perfil() {
           </form>
         </DialogContent>
       </Dialog>
-    </div>;
+    </div>
+  );
 }

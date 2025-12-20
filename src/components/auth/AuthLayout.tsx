@@ -1,4 +1,4 @@
-// Build refresh - força recompilação - 2024-12-20-v7
+// Build refresh - força recompilação - 2024-12-20-v8
 import { ReactNode, useMemo } from "react";
 
 type AuthLayoutProps = {
@@ -34,8 +34,8 @@ export function AuthLayout({
   );
 
   return (
-    <div className={`relative flex flex-col items-center justify-start min-h-screen pt-6 px-4 pb-4 fade-in overflow-y-auto bg-gradient-to-br from-[#0B1F33] via-[#0d2540] to-[#0a1a2e] ${containerClass}`}>
-      {/* Bolhas flutuantes animadas */}
+    <div className={`relative h-screen flex flex-col overflow-hidden bg-gradient-to-br from-[#0B1F33] via-[#0d2540] to-[#0a1a2e] ${containerClass}`}>
+      {/* Bolhas flutuantes animadas - fixas no fundo */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         {bubbles.map((bubble, i) => (
           <div
@@ -54,7 +54,7 @@ export function AuthLayout({
         ))}
       </div>
 
-      {/* Quadrados decorativos flutuantes */}
+      {/* Quadrados decorativos flutuantes - fixos no fundo */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         {squares.map((square, i) => (
           <div
@@ -73,17 +73,21 @@ export function AuthLayout({
         ))}
       </div>
 
-      {/* Efeito de glow central sutil */}
+      {/* Efeito de glow central sutil - fixo no fundo */}
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-cyan-400/[0.03] rounded-full blur-[100px] pointer-events-none" />
       
-      {/* Content */}
-      <div className="relative z-10 w-full max-w-md">
-        <div className="text-center mb-8 animate-fade-in">
-          <h1 className="text-3xl font-bold text-white mb-2">Importadoras da 25 de Março</h1>
-          <p className="text-white/70 text-lg">Seu Aplicativo de fornecedores</p>
-          <div className="mt-4 w-16 h-1 bg-gradient-to-r from-cyan-400 to-cyan-500 mx-auto rounded-full" />
+      {/* WRAPPER INTERNO COM SCROLL */}
+      <div className="flex-1 overflow-y-auto relative z-10">
+        <div className="flex flex-col items-center pt-6 px-4 pb-4 fade-in">
+          <div className="w-full max-w-md">
+            <div className="text-center mb-8 animate-fade-in">
+              <h1 className="text-3xl font-bold text-white mb-2">Importadoras da 25 de Março</h1>
+              <p className="text-white/70 text-lg">Seu Aplicativo de fornecedores</p>
+              <div className="mt-4 w-16 h-1 bg-gradient-to-r from-cyan-400 to-cyan-500 mx-auto rounded-full" />
+            </div>
+            {children}
+          </div>
         </div>
-        {children}
       </div>
     </div>
   );

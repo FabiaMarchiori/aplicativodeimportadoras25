@@ -1,4 +1,4 @@
-
+// Build trigger - força regeneração do deploy - 2024-12-20
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";

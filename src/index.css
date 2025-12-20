@@ -173,17 +173,17 @@
     justify-content: center;
   }
 
-  /* Estilos específicos para as páginas de autenticação - Build refresh v5 */
-  .login-container {
-    @apply bg-gradient-to-br from-[#0B1F33] via-[#0d2540] to-[#0a1a2e] text-white min-h-screen;
+  /* Estilos específicos para as páginas de autenticação - Build refresh v10 */
+  .login-container,
+  .register-container {
+    @apply bg-gradient-to-br from-[#0B1F33] via-[#0d2540] to-[#0a1a2e] text-white;
+    display: block !important;
+    align-items: flex-start !important;
+    justify-content: flex-start !important;
   }
 
   .login-card {
     @apply bg-[#0B1F33]/80 text-white border-white/10;
-  }
-
-  .register-container {
-    @apply bg-gradient-to-br from-[#0B1F33] via-[#0d2540] to-[#0a1a2e] text-white min-h-screen;
   }
 
   .register-card {

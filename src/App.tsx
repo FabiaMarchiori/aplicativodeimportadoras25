@@ -1,9 +1,9 @@
-// Build trigger - força regeneração do deploy - 2024-12-20
+// Build trigger - força regeneração do deploy - 2024-12-20-v6
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
 import { AuthProvider, useAuth } from "./contexts/AuthContext";
 import { AdminBadge } from "./components/AdminBadge";
 import { PWAInstallPrompt } from "./components/PWAInstallPrompt";
@@ -35,19 +35,35 @@ const queryClient = new QueryClient();
 
 function AppContent() {
   const { isAdmin } = useAuth();
+  const location = useLocation();
   
+  // Rotas públicas que NÃO devem ter BottomNavigation nem wrapper pb-16
+  const publicRoutes = ['/login', '/reset-password', '/redefinir-senha', '/acesso-negado'];
+  const isPublicRoute = publicRoutes.includes(location.pathname);
+  
+  // Rotas públicas: renderizar ISOLADO (sem wrapper, sem BottomNavigation)
+  if (isPublicRoute) {
+    return (
+      <>
+        {isAdmin && <AdminBadge />}
+        <PWAInstallPrompt />
+        <Routes>
+          <Route path="/login" element={<Login />} />
+          <Route path="/reset-password" element={<ResetPassword />} />
+          <Route path="/redefinir-senha" element={<ResetPassword />} />
+          <Route path="/acesso-negado" element={<AcessoNegado />} />
+        </Routes>
+      </>
+    );
+  }
+
+  // Rotas privadas: com wrapper pb-16 e BottomNavigation
   return (
     <>
       {isAdmin && <AdminBadge />}
       <PWAInstallPrompt />
       <div className="pb-16">
         <Routes>
-          {/* Rotas públicas */}
-          <Route path="/login" element={<Login />} />
-          <Route path="/reset-password" element={<ResetPassword />} />
-          <Route path="/redefinir-senha" element={<ResetPassword />} />
-          <Route path="/acesso-negado" element={<AcessoNegado />} />
-          
           {/* Rota de redirecionamento */}
           <Route path="/" element={<Index />} />
 

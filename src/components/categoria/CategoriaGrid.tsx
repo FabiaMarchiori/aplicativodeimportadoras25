@@ -25,19 +25,19 @@ import { useAuth } from "@/contexts/AuthContext";
 
 // Mapeamento de categorias para imagens personalizadas
 const categoryImageMap: Record<string, string> = {
-  "ACESSÓRIOS E LAÇOS": "/lovable-uploads/ACESSÓRIOS_E_LAÇOS.png",
+  "ACESSÓRIOS E LAÇOS": "/lovable-uploads/ACESSORIOS_E_LACOS.png",
   "BIJOUTERIAS E SEMIJOIAS": "/lovable-uploads/BIJOUTERIAS_E_SEMIJOIAS.png",
   "COSMÉTICOS E PERFUMES": "/lovable-uploads/COSMETICOS_E_PERFUMES.png",
-  "ELETRÔNICOS": "/lovable-uploads/ELETRÔNICOS.png",
+  "ELETRÔNICOS": "/lovable-uploads/ELETRONICOS.png",
   "EMBALAGENS PERSONALIZADAS": "/lovable-uploads/EMBALAGENS_PERSONALIZADAS.png",
-  "GAMES E ACESSÓRIOS": "/lovable-uploads/GAMES_E_ACESSÓRIOS.png",
+  "GAMES E ACESSÓRIOS": "/lovable-uploads/GAMES_E_ACESSORIOS.png",
   "GARRAFAS E MARMITAS": "/lovable-uploads/GARRAFAS_E_MARMITAS.png",
   "MAQUIAGEM": "/lovable-uploads/MAQUIAGEM.png",
   "MOCHILAS E MALAS": "/lovable-uploads/MOCHILAS_E_MALAS.png",
   "PAPELARIA FOFA": "/lovable-uploads/PAPELARIA_FOFA.png",
-  "PELÍCULAS E CAPINHAS": "/lovable-uploads/PELÍCULAS_E_CAPINHAS.png",
+  "PELÍCULAS E CAPINHAS": "/lovable-uploads/PELICULAS_E_CAPINHAS.png",
   "PERUCAS E CABELOS": "/lovable-uploads/PERUCAS_E_CABELOS.png",
-  "PRESENTES E PELÚCIAS": "/lovable-uploads/PRESENTES_E_PELÚCIAS.png",
+  "PRESENTES E PELÚCIAS": "/lovable-uploads/PRESENTES_E_PELUCIAS.png",
   "UNHAS E CILIOS": "/lovable-uploads/UNHAS_E_CILIOS.png",
   "UTILIDADES DOMESTICAS": "/lovable-uploads/UTILIDADES_DOMESTICAS.png",
 };

@@ -89,8 +89,8 @@ const CategoriaGrid = ({ categorias, onEdit }: CategoriaGridProps) => {
               onClick={() => navigate(`/categoria/${encodeURIComponent(categoria.categoria)}`)}
               className="flex flex-col items-center transition-all duration-300 ease-out hover:scale-105"
             >
-              {/* Anel circular com borda branca grossa */}
-              <div className="w-full aspect-square flex items-center justify-center rounded-full bg-[#0a1628] border-[4px] border-white/60 transition-all duration-300 group-hover:shadow-[0_0_18px_rgba(0,183,255,0.35)] group-hover:border-white/80">
+              {/* Anel circular com borda branca grossa - responsivo */}
+              <div className="w-24 h-24 sm:w-28 sm:h-28 md:w-24 md:h-24 lg:w-20 lg:h-20 flex items-center justify-center rounded-full bg-[#0a1628] border-[4px] border-white/60 transition-all duration-300 group-hover:shadow-[0_0_18px_rgba(0,183,255,0.35)] group-hover:border-white/80">
                 {categoryImageMap[categoria.categoria] ? (
                   <img 
                     src={categoryImageMap[categoria.categoria]} 
@@ -104,8 +104,8 @@ const CategoriaGrid = ({ categorias, onEdit }: CategoriaGridProps) => {
                   />
                 )}
               </div>
-              <div className="p-2 text-center">
-                <h3 className="font-bold text-[#9AE6FF] text-xs transition-all duration-300">{categoria.categoria}</h3>
+              <div className="mt-3 text-center">
+                <h3 className="font-semibold text-[#9AE6FF] text-xs sm:text-sm md:text-sm lg:text-base transition-all duration-300">{categoria.categoria}</h3>
               </div>
             </div>
             

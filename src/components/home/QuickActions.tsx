@@ -1,48 +1,42 @@
-import { useNavigate } from "react-router-dom";
 import { Card, CardContent } from "@/components/ui/card";
-import { Search, Heart, List, Bot } from "lucide-react";
+import { TrendingUp, ShieldCheck, Sparkles, Lock } from "lucide-react";
 
 const QuickActions = () => {
-  const navigate = useNavigate();
-
   const actions = [
     {
-      title: "Buscar Fornecedor",
-      description: "Encontre o fornecedor ideal",
-      icon: Search,
-      action: () => navigate('/buscar')
+      title: "Categorias em Alta",
+      description: "Descubra as mais procuradas",
+      icon: TrendingUp,
     },
     {
-      title: "Busca Categorias",
-      description: "Encontre a Categoria ideal",
-      icon: List,
-      action: () => navigate('/categorias')
+      title: "Fornecedores Verificados",
+      description: "Qualidade garantida",
+      icon: ShieldCheck,
     },
     {
-      title: "Meus Favoritos",
-      description: "Seus fornecedores salvos",
-      icon: Heart,
-      action: () => navigate('/favoritos')
+      title: "Novidades da Semana",
+      description: "Últimas adições",
+      icon: Sparkles,
     },
     {
-      title: "Mentoria Soph",
-      description: "Sua assistente de IA",
-      icon: Bot,
-      action: () => navigate('/mentoria')
+      title: "Dicas de Segurança",
+      description: "Compre com confiança",
+      icon: Lock,
     }
   ];
 
   return (
     <div className="mb-6 animate-section-entry" style={{ animationDelay: '0.2s' }}>
       <h2 className="text-2xl font-bold text-white mb-5 text-center">
-        Ações Rápidas
+        Destaques
       </h2>
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         {actions.map((action, index) => (
           <Card 
             key={index}
-            className="cursor-pointer transition-all duration-300 overflow-hidden group card-action-premium"
-            onClick={action.action}
+            className="overflow-hidden group bg-[#0a1628]/80 border border-white/10 
+                       hover:border-cyan-400/30 hover:shadow-[0_0_20px_rgba(34,211,238,0.15)]
+                       hover:-translate-y-1 transition-all duration-300"
             style={{ animationDelay: `${0.3 + index * 0.1}s` }}
           >
             <CardContent className="p-5 text-center">

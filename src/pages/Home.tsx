@@ -44,7 +44,7 @@ export default function Home() {
       <ParticlesBackground />
       
       {/* Conteúdo */}
-      <div className="relative z-10 pb-20">
+      <div className="relative z-10 pb-24">
         <HeroSection />
         <div className="px-4">
           <QuickActions />

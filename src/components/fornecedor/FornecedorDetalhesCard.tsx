@@ -30,7 +30,7 @@ const FornecedorDetalhesCard: React.FC<Props> = ({ fornecedor, isAdmin, onEditCl
   };
 
   return (
-    <div className="w-full max-w-2xl mx-auto flex flex-col items-center">
+    <div className="w-full max-w-full sm:max-w-2xl mx-auto flex flex-col items-center px-0">
       {/* Action Cards - WhatsApp, Instagram, Endereço */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 w-full mb-6">
         {/* WhatsApp */}
@@ -86,7 +86,7 @@ const FornecedorDetalhesCard: React.FC<Props> = ({ fornecedor, isAdmin, onEditCl
       </div>
 
       {/* Instagram Embed Section */}
-      <Card className="w-full max-w-md p-4 bg-[#0d2847]/80 backdrop-blur-sm border border-[#3CBBC7]/20">
+      <Card className="w-full max-w-full sm:max-w-md p-4 bg-[#0d2847]/80 backdrop-blur-sm border border-[#3CBBC7]/20">
         <h2 className="text-xl text-white font-semibold mb-4 text-center flex items-center justify-center gap-2">
           <Instagram className="h-5 w-5 text-[#3CBBC7]" />
           Instagram
@@ -94,7 +94,7 @@ const FornecedorDetalhesCard: React.FC<Props> = ({ fornecedor, isAdmin, onEditCl
         
         {/* Phone mockup */}
         <div className="flex justify-center">
-          <div className="w-[280px] rounded-[2rem] border-4 border-white/20 bg-[#0a1628] p-2 shadow-2xl">
+          <div className="w-full max-w-[280px] rounded-[2rem] border-4 border-white/20 bg-[#0a1628] p-2 shadow-2xl">
             {/* Phone notch */}
             <div className="flex justify-center mb-2">
               <div className="w-20 h-5 rounded-b-xl bg-black" />

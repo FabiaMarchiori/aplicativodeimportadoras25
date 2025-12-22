@@ -15,7 +15,7 @@ export function FornecedorHeader({ fornecedor, isAdmin, onEditClick }: Fornecedo
   const { toggleFavorito, isFavorito } = useFavoritos();
 
   return (
-    <header className="mb-4 relative">
+    <header className="mb-4 relative w-full max-w-full">
       {/* Action buttons - top right */}
       <div className="absolute top-0 right-0 flex gap-2 z-10">
         <FavoritoButton
@@ -66,7 +66,7 @@ export function FornecedorHeader({ fornecedor, isAdmin, onEditClick }: Fornecedo
         </div>
 
         {/* Name and category */}
-        <h1 className="text-3xl font-bold text-white text-center mb-2">
+        <h1 className="text-2xl sm:text-3xl font-bold text-white text-center mb-2 break-words px-2">
           {fornecedor.nome_loja || fornecedor.nome}
         </h1>
         <p className="text-[#3CBBC7] text-lg font-medium">

@@ -107,7 +107,7 @@ const DetalheFornecedor = () => {
   };
 
   return (
-    <div className="min-h-screen pb-24 bg-gradient-to-br from-[#0a1628] via-[#0d2847] to-[#0f3460] relative">
+    <div className="min-h-screen pb-24 bg-gradient-to-br from-[#0a1628] via-[#0d2847] to-[#0f3460] relative overflow-x-hidden">
       
       {/* Bolhas flutuantes animadas - Background decorativo */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none" style={{ zIndex: 0 }}>
@@ -156,8 +156,8 @@ const DetalheFornecedor = () => {
           top: '50%',
           left: '50%',
           transform: 'translate(-50%, -50%)',
-          width: '600px',
-          height: '600px',
+          width: 'min(600px, 100vw)',
+          height: 'min(600px, 100vh)',
           background: 'rgba(34, 211, 238, 0.03)',
           borderRadius: '50%',
           filter: 'blur(100px)',
@@ -166,7 +166,7 @@ const DetalheFornecedor = () => {
       />
       
       {/* Conteúdo principal */}
-      <div className="px-4 pt-4 pb-6 relative" style={{ zIndex: 1 }}>
+      <div className="px-4 pt-4 pb-6 relative w-full max-w-full" style={{ zIndex: 1 }}>
         {loading ? (
           <div className="flex justify-center py-12">
             <Loader2 className="h-10 w-10 animate-spin text-[#3CBBC7]" />

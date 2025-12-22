@@ -1,5 +1,5 @@
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { useParams } from "react-router-dom";
 import { Fornecedor, supabase, mapFornecedor } from "@/lib/supabase";
 import { useToast } from "@/components/ui/use-toast";
@@ -16,6 +16,29 @@ const DetalheFornecedor = () => {
   const [editDialogOpen, setEditDialogOpen] = useState(false);
   const { toast } = useToast();
   const { isAdmin } = useAuth();
+
+  // Gerar bolhas flutuantes animadas
+  const bubbles = useMemo(() => 
+    [...Array(12)].map((_, i) => ({
+      size: Math.random() * 100 + 40,
+      left: Math.random() * 100,
+      top: Math.random() * 100,
+      delay: Math.random() * 5,
+      duration: 15 + Math.random() * 10,
+    })), []
+  );
+
+  // Gerar quadrados decorativos animados
+  const squares = useMemo(() => 
+    [...Array(8)].map((_, i) => ({
+      size: Math.random() * 20 + 10,
+      left: Math.random() * 100,
+      top: Math.random() * 100,
+      delay: Math.random() * 8,
+      duration: 20 + Math.random() * 15,
+      rotation: Math.random() * 360,
+    })), []
+  );
 
   useEffect(() => {
     if (id) {
@@ -84,8 +107,66 @@ const DetalheFornecedor = () => {
   };
 
   return (
-    <div className="min-h-screen pb-24 bg-gradient-to-br from-[#0a1628] via-[#0d2847] to-[#0f3460]">
-      <div className="px-4 pt-4 pb-6">
+    <div className="min-h-screen pb-24 bg-gradient-to-br from-[#0a1628] via-[#0d2847] to-[#0f3460] relative">
+      
+      {/* Bolhas flutuantes animadas - Background decorativo */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none" style={{ zIndex: 0 }}>
+        {bubbles.map((bubble, i) => (
+          <div
+            key={`bubble-${i}`}
+            className="rounded-full bg-cyan-400/[0.08]"
+            style={{
+              position: 'absolute',
+              width: `${bubble.size}px`,
+              height: `${bubble.size}px`,
+              left: `${bubble.left}%`,
+              top: `${bubble.top}%`,
+              filter: 'blur(30px)',
+              animation: `particleFloat ${bubble.duration}s ease-in-out infinite`,
+              animationDelay: `${bubble.delay}s`,
+            }}
+          />
+        ))}
+      </div>
+
+      {/* Quadrados decorativos flutuantes */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none" style={{ zIndex: 0 }}>
+        {squares.map((square, i) => (
+          <div
+            key={`square-${i}`}
+            className="border border-cyan-400/20"
+            style={{
+              position: 'absolute',
+              width: `${square.size}px`,
+              height: `${square.size}px`,
+              left: `${square.left}%`,
+              top: `${square.top}%`,
+              transform: `rotate(${square.rotation}deg)`,
+              animation: `particleFloat ${square.duration}s ease-in-out infinite`,
+              animationDelay: `${square.delay}s`,
+            }}
+          />
+        ))}
+      </div>
+
+      {/* Efeito de glow central sutil */}
+      <div 
+        className="absolute pointer-events-none"
+        style={{
+          top: '50%',
+          left: '50%',
+          transform: 'translate(-50%, -50%)',
+          width: '600px',
+          height: '600px',
+          background: 'rgba(34, 211, 238, 0.03)',
+          borderRadius: '50%',
+          filter: 'blur(100px)',
+          zIndex: 0,
+        }}
+      />
+      
+      {/* Conteúdo principal */}
+      <div className="px-4 pt-4 pb-6 relative" style={{ zIndex: 1 }}>
         {loading ? (
           <div className="flex justify-center py-12">
             <Loader2 className="h-10 w-10 animate-spin text-[#3CBBC7]" />

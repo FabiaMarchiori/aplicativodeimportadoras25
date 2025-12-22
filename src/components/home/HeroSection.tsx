@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
-import { MapPin, Users, Store, Star } from "lucide-react";
+import { MapPin, Users, Store, Star, Heart } from "lucide-react";
 
 // Partículas sofisticadas para Hero
 const HeroParticles = () => (
@@ -104,7 +104,7 @@ const HeroSection = () => {
               transforme seu negócio no maior centro comercial da América Latina.
             </p>
             
-            {/* CTAs principais - cores ajustadas */}
+            {/* CTAs principais - 3 botões */}
             <div className="flex flex-col sm:flex-row gap-4 mb-10">
               <Button 
                 onClick={() => navigate('/buscar')} 
@@ -119,7 +119,16 @@ const HeroSection = () => {
                 size="lg" 
                 className="border-white/30 text-white font-semibold text-lg px-8 py-4 bg-white/5 hover:bg-white/10 backdrop-blur-sm transition-all duration-300 hover:border-white/50"
               >
-                Ver Categorias
+                Categorias
+              </Button>
+              <Button 
+                onClick={() => navigate('/favoritos')} 
+                variant="outline" 
+                size="lg" 
+                className="border-white/30 text-white font-semibold text-lg px-8 py-4 bg-white/5 hover:bg-white/10 backdrop-blur-sm transition-all duration-300 hover:border-white/50"
+              >
+                <Heart className="h-5 w-5 mr-2" />
+                Meus Favoritos
               </Button>
             </div>
             

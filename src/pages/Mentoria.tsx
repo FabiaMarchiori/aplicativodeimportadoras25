@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router-dom";
-import { ArrowLeft, Bot, Sparkles, MessageCircle, Brain, TrendingUp, PiggyBank } from "lucide-react";
+import { ArrowLeft, Sparkles, MessageCircle, Brain, TrendingUp, PiggyBank } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "sonner";
@@ -85,9 +85,44 @@ const Mentoria = () => {
 
         {/* Hero Section */}
         <div className="text-center mb-10 animate-fade-in">
-          {/* Avatar with cyan border */}
-          <div className="inline-flex items-center justify-center w-20 h-20 rounded-full bg-cyan-500/10 border border-cyan-500/20 mb-5">
-            <Bot className="h-10 w-10 text-cyan-400" />
+          {/* Avatar da Soph - Premium */}
+          <div className="relative inline-block mb-5">
+            {/* Container do avatar com gradiente e borda sutil */}
+            <div 
+              className="w-32 h-32 sm:w-40 sm:h-40 rounded-full overflow-hidden"
+              style={{
+                background: 'linear-gradient(135deg, #0a1628 0%, #0d2847 50%, #0f3460 100%)',
+                padding: '3px',
+                boxShadow: '0 0 30px rgba(34, 211, 238, 0.15), inset 0 0 20px rgba(34, 211, 238, 0.05)',
+              }}
+            >
+              {/* Círculo interno com a imagem */}
+              <div 
+                className="w-full h-full rounded-full overflow-hidden"
+                style={{
+                  background: 'linear-gradient(180deg, #0d2847 0%, #0f3460 100%)',
+                }}
+              >
+                <img 
+                  src="/lovable-uploads/soph-avatar.png" 
+                  alt="Soph - Mentora Inteligente"
+                  className="w-full h-full object-cover"
+                  style={{
+                    objectPosition: 'center 15%',
+                  }}
+                />
+              </div>
+            </div>
+            
+            {/* Glow sutil atrás do avatar */}
+            <div 
+              className="absolute inset-0 rounded-full pointer-events-none"
+              style={{
+                background: 'radial-gradient(circle, rgba(34, 211, 238, 0.1) 0%, transparent 70%)',
+                transform: 'scale(1.2)',
+                zIndex: -1,
+              }}
+            />
           </div>
           
           {/* Title - clean and premium */}

@@ -106,12 +106,12 @@ const Mentoria = () => {
                 }}
               >
                 <img 
-                  src="/lovable-uploads/soph-avatar.png" 
+                  src="/lovable-uploads/soph-avatar-oficial.png" 
                   alt="Soph - Mentora Inteligente"
                   className="w-full h-full object-cover"
                   style={{
-                    objectPosition: 'center 20%',
-                    transform: 'scale(1.15)',
+                    objectPosition: 'center 15%',
+                    transform: 'scale(1.3)',
                   }}
                 />
               </div>

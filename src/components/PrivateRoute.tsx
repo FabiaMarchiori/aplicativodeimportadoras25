@@ -4,6 +4,7 @@ import { Navigate, useLocation } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { useSubscriptionAccess } from '@/hooks/useSubscriptionAccess';
 import { Loader2 } from 'lucide-react';
+import { safeLog } from '@/utils/safeLogger';
 
 interface PrivateRouteProps {
   children: React.ReactNode;
@@ -17,16 +18,14 @@ const PrivateRoute = ({ children }: PrivateRouteProps) => {
   // Considerar carregando se auth está carregando OU dados não foram carregados ainda (quando há usuário)
   const loading = authLoading || subscriptionLoading || (user && !dataLoaded);
 
-  console.log('PrivateRoute - Estado completo:', { 
-    user: !!user, 
-    userEmail: user?.email,
+  safeLog.debug('PrivateRoute - Estado', { 
+    hasUser: !!user, 
     authLoading, 
     subscriptionLoading,
     dataLoaded,
     hasAccess,
     isAdmin,
-    path: location.pathname,
-    timestamp: new Date().toISOString()
+    path: location.pathname
   });
 
   // Se ainda está carregando, mostrar indicador de carregamento
@@ -45,18 +44,18 @@ const PrivateRoute = ({ children }: PrivateRouteProps) => {
 
   // Se o usuário não está autenticado, redirecionar para a página de login
   if (!user) {
-    console.log('PrivateRoute - Redirecionando para login');
+    safeLog.debug('PrivateRoute - Redirecionando para login');
     return <Navigate to="/login" state={{ from: location }} replace />;
   }
 
   // Se o usuário está autenticado mas não tem acesso ativo E não é admin, redirecionar para acesso negado
   if (!hasAccess && !isAdmin) {
-    console.log('PrivateRoute - Usuário sem acesso e não é admin, redirecionando para acesso negado');
+    safeLog.debug('PrivateRoute - Usuário sem acesso, redirecionando para acesso negado');
     return <Navigate to="/acesso-negado" replace />;
   }
 
   // Se o usuário está autenticado e tem acesso (ou é admin), renderizar o conteúdo
-  console.log('PrivateRoute - Usuário autenticado com acesso ou admin, renderizando conteúdo');
+  safeLog.debug('PrivateRoute - Usuário autenticado com acesso, renderizando conteúdo');
   return <>{children}</>;
 };
 

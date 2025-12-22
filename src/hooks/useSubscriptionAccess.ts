@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
+import { safeLog } from '@/utils/safeLogger';
 
 interface SubscriptionAccess {
   hasAccess: boolean;
@@ -17,7 +18,7 @@ export const useSubscriptionAccess = (): SubscriptionAccess => {
 
   const checkAccess = async () => {
     if (!user?.email) {
-      console.log('🔒 [DEBUG] Sem usuário ou email');
+      safeLog.debug('Sem usuário ou email para verificação de acesso');
       setHasAccess(false);
       setLoading(false);
       return;
@@ -26,11 +27,7 @@ export const useSubscriptionAccess = (): SubscriptionAccess => {
     try {
       setLoading(true);
 
-      console.log('🔍 [DEBUG] Iniciando verificação de acesso:', { 
-        userId: user.id, 
-        email: user.email,
-        authUid: (await supabase.auth.getUser()).data.user?.id
-      });
+      safeLog.debug('Iniciando verificação de acesso');
 
       // PRIMEIRO: Verificar se é administrador
       const { data: profile, error: profileError } = await supabase
@@ -39,16 +36,14 @@ export const useSubscriptionAccess = (): SubscriptionAccess => {
         .eq('id', user.id)
         .maybeSingle();
 
-      console.log('👤 [DEBUG] Verificação de admin:', { 
-        userId: user.id, 
-        email: user.email, 
+      safeLog.debug('Verificação de admin concluída', { 
         isAdmin: profile?.is_admin,
-        profileError: profileError?.message
+        hasError: !!profileError
       });
 
       // Se é admin, dar acesso imediato
       if (profile?.is_admin) {
-        console.log('✅ [DEBUG] Admin detectado, liberando acesso');
+        safeLog.debug('Admin detectado, liberando acesso');
         setHasAccess(true);
         setSubscription(null);
         setLoading(false);
@@ -65,11 +60,9 @@ export const useSubscriptionAccess = (): SubscriptionAccess => {
         .limit(1)
         .maybeSingle();
 
-      console.log('📋 [DEBUG] Busca por user_id:', { 
-        userId: user.id,
-        assinatura: assinaturaPorId, 
-        error: errorById?.message,
-        code: errorById?.code
+      safeLog.debug('Busca por user_id concluída', { 
+        hasData: !!assinaturaPorId,
+        hasError: !!errorById
       });
 
       // TERCEIRO: Fallback - Verificar assinatura por email
@@ -82,11 +75,9 @@ export const useSubscriptionAccess = (): SubscriptionAccess => {
         .limit(1)
         .maybeSingle();
 
-      console.log('📧 [DEBUG] Busca por email:', { 
-        email: user.email,
-        assinatura: assinaturaPorEmail, 
-        error: errorByEmail?.message,
-        code: errorByEmail?.code
+      safeLog.debug('Busca por email concluída', { 
+        hasData: !!assinaturaPorEmail,
+        hasError: !!errorByEmail
       });
 
       const assinatura = assinaturaPorId || assinaturaPorEmail;
@@ -100,30 +91,28 @@ export const useSubscriptionAccess = (): SubscriptionAccess => {
 
         const isActive = !expirationDate || expirationDate > now;
         
-        console.log('⏰ [DEBUG] Verificação de expiração:', {
-          dataExpiracao: assinatura.data_expiracao,
-          agora: now.toISOString(),
+        safeLog.debug('Verificação de expiração concluída', {
           isActive,
-          diasRestantes: expirationDate ? Math.ceil((expirationDate.getTime() - now.getTime()) / (1000 * 60 * 60 * 24)) : null
+          hasExpiration: !!expirationDate
         });
         
         if (isActive) {
-          console.log('✅ [DEBUG] Acesso liberado - Assinatura ativa encontrada');
+          safeLog.debug('Acesso liberado - Assinatura ativa encontrada');
           setHasAccess(true);
           setSubscription(assinatura);
           setLoading(false);
           return;
         } else {
-          console.log('❌ [DEBUG] Assinatura expirada');
+          safeLog.debug('Assinatura expirada');
         }
       } else {
-        console.log('❌ [DEBUG] Nenhuma assinatura ativa encontrada');
+        safeLog.debug('Nenhuma assinatura ativa encontrada');
       }
 
       setHasAccess(false);
       setSubscription(null);
     } catch (error) {
-      console.error('💥 [DEBUG] Erro ao verificar acesso:', error);
+      safeLog.error('Erro ao verificar acesso', error);
       setHasAccess(false);
       setSubscription(null);
     } finally {

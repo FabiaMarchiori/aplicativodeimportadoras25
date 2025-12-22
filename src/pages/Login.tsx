@@ -7,6 +7,7 @@ import { LoginForm } from "@/components/auth/LoginForm";
 import { RegisterForm } from "@/components/auth/RegisterForm";
 import { ForgotPasswordDialog } from "@/components/auth/ForgotPasswordDialog";
 import { AuthLayout } from "@/components/auth/AuthLayout";
+import { safeLog } from "@/utils/safeLogger";
 
 export default function Login() {
   const navigate = useNavigate();
@@ -15,13 +16,13 @@ export default function Login() {
   const [forgotPasswordOpen, setForgotPasswordOpen] = useState(false);
   const [activeTab, setActiveTab] = useState("login");
 
-  console.log('Login - Estado:', { user: !!user, loading, dataLoaded, hasActiveSubscription, isAdmin });
+  safeLog.debug('Login - Estado', { hasUser: !!user, loading, dataLoaded, hasActiveSubscription, isAdmin });
 
   // Redirect if already logged in - verificar admin OU assinatura
   // IMPORTANTE: Só redirecionar quando loading=false E dataLoaded=true
   useEffect(() => {
     if (!loading && user && dataLoaded) {
-      console.log('Login - Usuário já logado e dados carregados, verificando acesso...');
+      safeLog.debug('Login - Usuário já logado e dados carregados, verificando acesso');
       if (hasActiveSubscription || isAdmin) {
         const from = location.state?.from?.pathname || '/home';
         navigate(from, { replace: true });

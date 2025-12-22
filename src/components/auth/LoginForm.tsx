@@ -8,6 +8,19 @@ import { AlertCircle, Mail, Lock, Eye, EyeOff } from "lucide-react";
 import { toast } from "@/components/ui/use-toast";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { GoogleAuthButton } from "./GoogleAuthButton";
+import { safeLog } from "@/utils/safeLogger";
+import { z } from "zod";
+
+// Schema de validação para login
+const loginSchema = z.object({
+  email: z.string()
+    .min(1, 'E-mail é obrigatório')
+    .email('E-mail inválido')
+    .max(255, 'E-mail muito longo'),
+  password: z.string()
+    .min(1, 'Senha é obrigatória')
+    .max(128, 'Senha muito longa')
+});
 
 type LoginFormProps = {
   onForgotPassword: () => void;
@@ -65,11 +78,20 @@ export function LoginForm({ onForgotPassword }: LoginFormProps) {
     setIsLoading(true);
     setError("");
 
+    // Validar dados antes de enviar
+    const validationResult = loginSchema.safeParse(loginData);
+    if (!validationResult.success) {
+      const firstError = validationResult.error.errors[0]?.message || 'Dados inválidos';
+      setError(firstError);
+      setIsLoading(false);
+      return;
+    }
+
     try {
-      const { error } = await signIn(loginData.email, loginData.password);
+      const { error } = await signIn(loginData.email.trim(), loginData.password);
       
       if (error) {
-        console.error("Erro no login:", error);
+        safeLog.error('Erro no login', { message: error.message });
         const userFriendlyError = getErrorMessage(error);
         setError(userFriendlyError);
         
@@ -91,7 +113,7 @@ export function LoginForm({ onForgotPassword }: LoginFormProps) {
 
       setIsLoading(false);
     } catch (error) {
-      console.error("Erro inesperado no login:", error);
+      safeLog.error('Erro inesperado no login', error);
       const userFriendlyError = getErrorMessage(error);
       setError(userFriendlyError);
       
@@ -153,6 +175,7 @@ export function LoginForm({ onForgotPassword }: LoginFormProps) {
                 value={loginData.email}
                 onChange={(e) => setLoginData({ ...loginData, email: e.target.value })}
                 required
+                maxLength={255}
                 className="bg-white/10 text-white border-white/20 rounded-xl pl-10 h-12
                            placeholder:text-white/40
                            focus:border-cyan-400/50 focus:ring-cyan-400/20
@@ -182,6 +205,7 @@ export function LoginForm({ onForgotPassword }: LoginFormProps) {
                 value={loginData.password}
                 onChange={(e) => setLoginData({ ...loginData, password: e.target.value })}
                 required
+                maxLength={128}
                 className="bg-white/10 text-white border-white/20 rounded-xl pl-10 pr-10 h-12
                            placeholder:text-white/40
                            focus:border-cyan-400/50 focus:ring-cyan-400/20

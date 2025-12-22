@@ -8,6 +8,8 @@ import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Loader2, ImageIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { safeLog } from "@/utils/safeLogger";
+import { z } from "zod";
 
 type EditFornecedorDialogProps = {
   open: boolean;
@@ -17,6 +19,15 @@ type EditFornecedorDialogProps = {
   onSuccess: () => void;
 };
 
+// Schema de validação para fornecedor
+const fornecedorSchema = z.object({
+  nome_loja: z.string()
+    .min(1, 'Nome do fornecedor é obrigatório')
+    .max(200, 'Nome muito longo (máx. 200 caracteres)')
+    .regex(/^[a-zA-ZÀ-ÿ0-9\s\-_&.'"]+$/, 'Nome contém caracteres inválidos'),
+  logo_url: z.string().url('URL de logo inválida').optional().or(z.literal(''))
+});
+
 export default function EditFornecedorDialog({
   open,
   onOpenChange,
@@ -25,6 +36,7 @@ export default function EditFornecedorDialog({
   onSuccess
 }: EditFornecedorDialogProps) {
   const [uploadingLogo, setUploadingLogo] = useState(false);
+  const [validationError, setValidationError] = useState("");
   const { toast } = useToast();
 
   const handleFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -54,7 +66,7 @@ export default function EditFornecedorDialog({
         });
       }
     } catch (error) {
-      console.error('Erro ao fazer upload da imagem:', error);
+      safeLog.error('Erro ao fazer upload da imagem', error);
       toast({
         variant: "destructive",
         title: "Erro no upload",
@@ -68,11 +80,31 @@ export default function EditFornecedorDialog({
   const handleUpdateFornecedor = async () => {
     if (!editingFornecedor.id) return;
     
+    setValidationError("");
+    
+    // Validar dados
+    const dataToValidate = {
+      nome_loja: editingFornecedor.nome_loja || editingFornecedor.nome || "",
+      logo_url: editingFornecedor.logo_url || ""
+    };
+    
+    const validationResult = fornecedorSchema.safeParse(dataToValidate);
+    if (!validationResult.success) {
+      const firstError = validationResult.error.errors[0]?.message || 'Dados inválidos';
+      setValidationError(firstError);
+      toast({
+        variant: "destructive",
+        title: "Erro de validação",
+        description: firstError
+      });
+      return;
+    }
+    
     try {
       const { error } = await supabase
         .from("fornecedores")
         .update({
-          nome_loja: editingFornecedor.nome_loja,
+          nome_loja: dataToValidate.nome_loja.trim(),
           logo_url: editingFornecedor.logo_url
         } as any)
         .eq("id", editingFornecedor.id as any);
@@ -87,7 +119,7 @@ export default function EditFornecedorDialog({
       onOpenChange(false);
       onSuccess();
     } catch (error) {
-      console.error("Erro ao atualizar fornecedor:", error);
+      safeLog.error("Erro ao atualizar fornecedor", error);
       toast({
         variant: "destructive",
         title: "Erro ao atualizar fornecedor",
@@ -95,6 +127,8 @@ export default function EditFornecedorDialog({
       });
     }
   };
+
+  const currentName = editingFornecedor.nome_loja || editingFornecedor.nome || "";
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -107,9 +141,17 @@ export default function EditFornecedorDialog({
             <Label htmlFor="nome_loja">Nome do Fornecedor</Label>
             <Input
               id="nome_loja"
-              value={editingFornecedor.nome_loja || editingFornecedor.nome || ""}
-              onChange={(e) => setEditingFornecedor({ ...editingFornecedor, nome_loja: e.target.value })}
+              value={currentName}
+              onChange={(e) => {
+                setEditingFornecedor({ ...editingFornecedor, nome_loja: e.target.value });
+                setValidationError("");
+              }}
+              maxLength={200}
+              placeholder="Nome do fornecedor"
             />
+            {validationError && (
+              <span className="text-xs text-red-500">{validationError}</span>
+            )}
           </div>
           
           <div className="space-y-2">
@@ -154,7 +196,7 @@ export default function EditFornecedorDialog({
           <Button variant="outline" onClick={() => onOpenChange(false)}>
             Cancelar
           </Button>
-          <Button onClick={handleUpdateFornecedor} disabled={uploadingLogo}>
+          <Button onClick={handleUpdateFornecedor} disabled={uploadingLogo || !currentName.trim()}>
             {uploadingLogo ? (
               <>
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />

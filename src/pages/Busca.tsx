@@ -4,6 +4,7 @@ import { Fornecedor, supabase, mapFornecedor } from "@/lib/supabase";
 import { useToast } from "@/components/ui/use-toast";
 import SearchHeader from "@/components/search/SearchHeader";
 import SearchResults from "@/components/search/SearchResults";
+import { safeLog } from "@/utils/safeLogger";
 
 export default function Busca() {
   const [fornecedores, setFornecedores] = useState<Fornecedor[]>([]);
@@ -36,7 +37,7 @@ export default function Busca() {
 
       if (error) {
         // Fallback para consulta direta caso a função RPC não exista
-        console.warn("RPC function not found, using direct query with distinct");
+        safeLog.warn("RPC function not found, using direct query with distinct");
         const { data: fallbackData, error: fallbackError } = await supabase
           .from("fornecedores")
           .select("*")
@@ -63,7 +64,7 @@ export default function Busca() {
       
       setLoading(false);
     } catch (error) {
-      console.error("Erro ao buscar fornecedores:", error);
+      safeLog.error("Erro ao buscar fornecedores", error);
       toast({
         variant: "destructive",
         title: "Erro ao buscar fornecedores",

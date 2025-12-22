@@ -85,12 +85,14 @@ const Mentoria = () => {
 
         {/* Hero Section */}
         <div className="text-center mb-10 animate-fade-in">
-          {/* Avatar da Soph - Premium */}
+          {/* Avatar da Soph - Premium 160px */}
           <div className="relative inline-block mb-5">
             {/* Container do avatar com gradiente e borda sutil */}
             <div 
-              className="w-32 h-32 sm:w-40 sm:h-40 rounded-full overflow-hidden"
+              className="rounded-full overflow-hidden"
               style={{
+                width: '160px',
+                height: '160px',
                 background: 'linear-gradient(135deg, #0a1628 0%, #0d2847 50%, #0f3460 100%)',
                 padding: '3px',
                 boxShadow: '0 0 30px rgba(34, 211, 238, 0.15), inset 0 0 20px rgba(34, 211, 238, 0.05)',
@@ -108,7 +110,8 @@ const Mentoria = () => {
                   alt="Soph - Mentora Inteligente"
                   className="w-full h-full object-cover"
                   style={{
-                    objectPosition: 'center 15%',
+                    objectPosition: 'center 20%',
+                    transform: 'scale(1.15)',
                   }}
                 />
               </div>

@@ -3,6 +3,7 @@ import { createContext, useContext, useEffect, useState, useRef } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import type { Database } from '@/integrations/supabase/types';
 import type { Session, User } from '@supabase/supabase-js';
+import { safeLog } from '@/utils/safeLogger';
 
 type Profile = Database['public']['Tables']['profiles']['Row'];
 type Assinatura = Database['public']['Tables']['assinaturas']['Row'];
@@ -35,18 +36,17 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [dataLoaded, setDataLoaded] = useState(false);
   const loadingUserRef = useRef(false);
 
-  console.log('AuthContext - Estado atual:', { 
+  safeLog.debug('AuthContext - Estado atual', { 
     user: !!user, 
     loading, 
     dataLoaded,
     isAdmin,
-    hasActiveSubscription,
-    currentUrl: window.location.href 
+    hasActiveSubscription
   });
 
   async function fetchProfile(userId: string) {
     try {
-      console.log('Buscando profile para usuário:', userId);
+      safeLog.debug('Buscando profile para usuário');
       const { data, error } = await supabase
         .from('profiles')
         .select('*')
@@ -54,11 +54,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         .maybeSingle();
 
       if (error) {
-        console.error('Erro ao buscar profile:', error);
+        safeLog.error('Erro ao buscar profile', error);
         setProfile(null);
         setIsAdmin(false);
       } else if (data) {
-        console.log('Profile encontrado:', data, 'isAdmin:', (data as any)?.is_admin);
+        safeLog.debug('Profile encontrado');
         setProfile(data as Profile);
         setIsAdmin((data as any)?.is_admin === true);
       } else {
@@ -66,7 +66,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         setIsAdmin(false);
       }
     } catch (error) {
-      console.error('Erro inesperado ao buscar profile:', error);
+      safeLog.error('Erro inesperado ao buscar profile', error);
       setProfile(null);
       setIsAdmin(false);
     }
@@ -76,18 +76,17 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     try {
       // Obter email do usuário
       const { data: { user: currentUser } } = await supabase.auth.getUser();
-      const userEmail = currentUser?.email;
       
-      console.log('Buscando assinatura para usuário:', userId, 'email:', userEmail);
+      safeLog.debug('Buscando assinatura para usuário');
       
       // Primeiro, tenta vincular assinaturas pelo e-mail
       try {
         const { data: claimedCount } = await supabase.rpc('claim_subscriptions_for_current_user');
         if (claimedCount && Number(claimedCount) > 0) {
-          console.log(`${claimedCount} assinatura(s) vinculada(s) ao usuário pelo e-mail`);
+          safeLog.debug('Assinaturas vinculadas ao usuário', { count: claimedCount });
         }
       } catch (claimError) {
-        console.warn('Erro ao tentar vincular assinaturas:', claimError);
+        safeLog.warn('Erro ao tentar vincular assinaturas', claimError);
       }
       
       // Buscar assinatura ativa por user_id
@@ -99,25 +98,24 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         .order('created_at', { ascending: false })
         .limit(1);
 
-      console.log('Busca por user_id:', { data: subscriptionsByUserId, error: errorById?.message });
+      safeLog.debug('Busca por user_id concluída', { hasData: !!subscriptionsByUserId?.length });
 
       // Fallback: buscar por email se não encontrou por user_id
       let subscriptionsByEmail: any[] = [];
-      if ((!subscriptionsByUserId || subscriptionsByUserId.length === 0) && userEmail) {
+      if ((!subscriptionsByUserId || subscriptionsByUserId.length === 0) && currentUser?.email) {
         const { data, error: errorByEmail } = await supabase
           .from('assinaturas')
           .select('*')
-          .eq('email', userEmail as any)
+          .eq('email', currentUser.email as any)
           .eq('status', 'ativa' as any)
           .order('created_at', { ascending: false })
           .limit(1);
         
         subscriptionsByEmail = data || [];
-        console.log('Busca por email:', { data: subscriptionsByEmail, error: errorByEmail?.message });
+        safeLog.debug('Busca por email concluída', { hasData: !!subscriptionsByEmail?.length });
       }
 
       const activeSubscription = subscriptionsByUserId?.[0] || subscriptionsByEmail?.[0] || null;
-      console.log('Assinatura encontrada:', activeSubscription);
       
       if (activeSubscription) {
         // Verificar se não expirou
@@ -130,7 +128,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         
         setSubscription(activeSubscription as Assinatura);
         setHasActiveSubscription(isActive);
-        console.log('Assinatura ativa:', isActive, 'Expira em:', expirationDate);
+        safeLog.debug('Assinatura verificada', { isActive });
 
         // Se expirou, atualizar status no banco
         if (!isActive && (activeSubscription as any).status === 'ativa') {
@@ -143,12 +141,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           setHasActiveSubscription(false);
         }
       } else {
-        console.log('Nenhuma assinatura ativa encontrada');
+        safeLog.debug('Nenhuma assinatura ativa encontrada');
         setSubscription(null);
         setHasActiveSubscription(false);
       }
     } catch (error) {
-      console.error('Erro inesperado ao buscar assinatura:', error);
+      safeLog.error('Erro inesperado ao buscar assinatura', error);
       setSubscription(null);
       setHasActiveSubscription(false);
     }
@@ -162,16 +160,16 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     let mounted = true;
-    console.log('AuthContext - Inicializando...');
+    safeLog.debug('AuthContext - Inicializando');
 
     const loadUserData = async (userId: string) => {
       if (loadingUserRef.current) {
-        console.log('Já está carregando dados do usuário, ignorando...');
+        safeLog.debug('Já está carregando dados do usuário, ignorando');
         return;
       }
       
       loadingUserRef.current = true;
-      console.log('Carregando dados do usuário:', userId);
+      safeLog.debug('Carregando dados do usuário');
       
       await Promise.all([
         fetchProfile(userId),
@@ -179,14 +177,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       ]);
       
       if (mounted) {
-        console.log('Dados carregados, setando dataLoaded = true e loading = false');
+        safeLog.debug('Dados carregados');
         setDataLoaded(true);
         setLoading(false);
       }
     };
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
-      console.log('Auth state changed:', event, !!session, 'URL:', window.location.href);
+      safeLog.debug('Auth state changed', { event, hasSession: !!session });
       
       if (!mounted) return;
 
@@ -213,14 +211,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     supabase.auth.getSession().then(({ data: { session }, error }) => {
       if (error) {
-        console.error('Erro ao buscar sessão inicial:', error);
+        safeLog.error('Erro ao buscar sessão inicial', error);
         if (mounted) setLoading(false);
         return;
       }
       
       if (!mounted) return;
 
-      console.log('Sessão inicial:', !!session);
+      safeLog.debug('Sessão inicial', { hasSession: !!session });
       setSession(session);
       setUser(session?.user ?? null);
       
@@ -243,23 +241,23 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const signIn = async (email: string, password: string) => {
     try {
-      console.log('Tentando fazer login com Supabase...');
+      safeLog.debug('Tentando fazer login');
       const { error, data } = await supabase.auth.signInWithPassword({
         email,
         password,
       });
       
-      console.log('Resposta do login:', { error, data: !!data });
+      safeLog.debug('Resposta do login', { success: !error });
       return { error };
     } catch (error) {
-      console.error('Error during sign in:', error);
+      safeLog.error('Erro durante sign in', error);
       return { error };
     }
   };
 
   const signUp = async (email: string, password: string) => {
     try {
-      console.log('Tentando registrar usuário...');
+      safeLog.debug('Tentando registrar usuário');
       const { data, error } = await supabase.auth.signUp({
         email,
         password,
@@ -267,16 +265,16 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           emailRedirectTo: window.location.origin + '/login'
         }
       });
-      console.log('Resposta do registro:', { error, data: !!data });
+      safeLog.debug('Resposta do registro', { success: !error });
       return { data, error };
     } catch (error) {
-      console.error('Error during sign up:', error);
+      safeLog.error('Erro durante sign up', error);
       return { data: null, error };
     }
   };
 
   const signOut = async () => {
-    console.log('Fazendo logout...');
+    safeLog.debug('Fazendo logout');
     loadingUserRef.current = false;
     setDataLoaded(false);
     setSubscription(null);

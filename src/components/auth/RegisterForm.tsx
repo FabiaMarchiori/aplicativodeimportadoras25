@@ -8,6 +8,26 @@ import { AlertCircle, Mail, Lock, UserPlus } from "lucide-react";
 import { toast } from "@/components/ui/use-toast";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { GoogleAuthButton } from "./GoogleAuthButton";
+import { safeLog } from "@/utils/safeLogger";
+import { z } from "zod";
+import { validatePassword, getPasswordStrengthLabel, getPasswordStrengthColor } from "@/utils/passwordValidator";
+import { Progress } from "@/components/ui/progress";
+
+// Schema de validação para registro
+const registerSchema = z.object({
+  email: z.string()
+    .min(1, 'E-mail é obrigatório')
+    .email('E-mail inválido')
+    .max(255, 'E-mail muito longo'),
+  password: z.string()
+    .min(8, 'Senha deve ter no mínimo 8 caracteres')
+    .max(128, 'Senha muito longa'),
+  confirmPassword: z.string()
+    .min(1, 'Confirmação de senha é obrigatória')
+}).refine((data) => data.password === data.confirmPassword, {
+  message: "As senhas não coincidem",
+  path: ["confirmPassword"],
+});
 
 export function RegisterForm() {
   const [isLoading, setIsLoading] = useState(false);
@@ -19,6 +39,10 @@ export function RegisterForm() {
     password: "",
     confirmPassword: ""
   });
+
+  // Validação de senha em tempo real
+  const passwordValidation = validatePassword(registerData.password);
+  const strengthPercent = (passwordValidation.score / 5) * 100;
 
   const getErrorMessage = (error: any) => {
     if (!error) return "Erro desconhecido";
@@ -53,15 +77,26 @@ export function RegisterForm() {
     setIsLoading(true);
     setError("");
 
-    if (registerData.password !== registerData.confirmPassword) {
-      setError("As senhas não coincidem");
+    // Validar dados com Zod
+    const validationResult = registerSchema.safeParse(registerData);
+    if (!validationResult.success) {
+      const firstError = validationResult.error.errors[0]?.message || 'Dados inválidos';
+      setError(firstError);
       setIsLoading(false);
       return;
     }
 
-    const { error, data } = await signUp(registerData.email, registerData.password);
+    // Validar força da senha com passwordValidator
+    if (!passwordValidation.isValid) {
+      setError(passwordValidation.feedback[0] || 'Senha muito fraca');
+      setIsLoading(false);
+      return;
+    }
+
+    const { error, data } = await signUp(registerData.email.trim(), registerData.password);
     
     if (error) {
+      safeLog.error('Erro no registro', { message: error.message });
       setError(getErrorMessage(error));
       setIsLoading(false);
       return;
@@ -126,6 +161,7 @@ export function RegisterForm() {
                 value={registerData.email}
                 onChange={(e) => setRegisterData({ ...registerData, email: e.target.value })}
                 required
+                maxLength={255}
                 className="bg-white/10 text-white border-white/20 rounded-xl pl-10 h-12
                            placeholder:text-white/40
                            focus:border-cyan-400/50 focus:ring-cyan-400/20
@@ -145,6 +181,7 @@ export function RegisterForm() {
                 value={registerData.password}
                 onChange={(e) => setRegisterData({ ...registerData, password: e.target.value })}
                 required
+                maxLength={128}
                 className="bg-white/10 text-white border-white/20 rounded-xl pl-10 h-12
                            placeholder:text-white/40
                            focus:border-cyan-400/50 focus:ring-cyan-400/20
@@ -152,6 +189,22 @@ export function RegisterForm() {
                            transition-all duration-300"
               />
             </div>
+            {/* Password strength indicator */}
+            {registerData.password && (
+              <div className="space-y-1">
+                <Progress value={strengthPercent} className="h-1.5 bg-white/20" />
+                <div className="flex justify-between items-center">
+                  <span className={`text-xs ${getPasswordStrengthColor(passwordValidation.score)}`}>
+                    {getPasswordStrengthLabel(passwordValidation.score)}
+                  </span>
+                  {passwordValidation.feedback.length > 0 && (
+                    <span className="text-xs text-white/50">
+                      {passwordValidation.feedback[0]}
+                    </span>
+                  )}
+                </div>
+              </div>
+            )}
           </div>
           <div className="space-y-2">
             <Label htmlFor="confirm-password" className="text-white/70 text-sm">Confirmar Senha</Label>
@@ -164,6 +217,7 @@ export function RegisterForm() {
                 value={registerData.confirmPassword}
                 onChange={(e) => setRegisterData({ ...registerData, confirmPassword: e.target.value })}
                 required
+                maxLength={128}
                 className="bg-white/10 text-white border-white/20 rounded-xl pl-10 h-12
                            placeholder:text-white/40
                            focus:border-cyan-400/50 focus:ring-cyan-400/20
@@ -171,6 +225,9 @@ export function RegisterForm() {
                            transition-all duration-300"
               />
             </div>
+            {registerData.confirmPassword && registerData.password !== registerData.confirmPassword && (
+              <span className="text-xs text-red-400">As senhas não coincidem</span>
+            )}
           </div>
           <Button 
             type="submit" 
@@ -178,7 +235,7 @@ export function RegisterForm() {
                        hover:shadow-[0_0_25px_rgba(34,211,238,0.3)]
                        hover:scale-[1.02]
                        transition-all duration-300 mt-2" 
-            disabled={isLoading}
+            disabled={isLoading || !passwordValidation.isValid}
           >
             {isLoading ? "Criando conta..." : "Criar Conta"}
           </Button>

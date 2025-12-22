@@ -8,6 +8,8 @@ import { Loader2 } from "lucide-react";
 import { supabase } from "@/lib/supabase";
 import { useToast } from "@/components/ui/use-toast";
 import ImageUploader from "./ImageUploader";
+import { safeLog } from "@/utils/safeLogger";
+import { z } from "zod";
 
 interface AddCategoriaDialogProps {
   open: boolean;
@@ -15,17 +17,33 @@ interface AddCategoriaDialogProps {
   onSuccess: () => void;
 }
 
+// Schema de validação para categoria
+const categoriaSchema = z.object({
+  categoria: z.string()
+    .min(1, 'Nome da categoria é obrigatório')
+    .max(100, 'Nome da categoria muito longo (máx. 100 caracteres)')
+    .regex(/^[a-zA-ZÀ-ÿ0-9\s\-_&]+$/, 'Nome contém caracteres inválidos'),
+  imagem_url: z.string().url('URL de imagem inválida').optional().or(z.literal(''))
+});
+
 const AddCategoriaDialog = ({ open, onOpenChange, onSuccess }: AddCategoriaDialogProps) => {
   const [novaCategoria, setNovaCategoria] = useState({ categoria: "", imagem_url: "" });
   const [uploading, setUploading] = useState(false);
+  const [validationError, setValidationError] = useState("");
   const { toast } = useToast();
 
   const handleAddCategoria = async () => {
-    if (!novaCategoria.categoria) {
+    setValidationError("");
+    
+    // Validar dados
+    const validationResult = categoriaSchema.safeParse(novaCategoria);
+    if (!validationResult.success) {
+      const firstError = validationResult.error.errors[0]?.message || 'Dados inválidos';
+      setValidationError(firstError);
       toast({
         variant: "destructive",
-        title: "Erro",
-        description: "O nome da categoria é obrigatório",
+        title: "Erro de validação",
+        description: firstError,
       });
       return;
     }
@@ -34,7 +52,7 @@ const AddCategoriaDialog = ({ open, onOpenChange, onSuccess }: AddCategoriaDialo
       const { error } = await supabase
         .from("categorias")
         .insert({ 
-          categoria: novaCategoria.categoria,
+          categoria: novaCategoria.categoria.trim(),
           imagem_url: novaCategoria.imagem_url || "https://source.unsplash.com/random/300x200/?shop" 
         } as any);
 
@@ -49,7 +67,7 @@ const AddCategoriaDialog = ({ open, onOpenChange, onSuccess }: AddCategoriaDialo
       setNovaCategoria({ categoria: "", imagem_url: "" });
       onSuccess();
     } catch (error) {
-      console.error("Erro ao adicionar categoria:", error);
+      safeLog.error("Erro ao adicionar categoria", error);
       toast({
         variant: "destructive",
         title: "Erro ao adicionar categoria",
@@ -85,7 +103,7 @@ const AddCategoriaDialog = ({ open, onOpenChange, onSuccess }: AddCategoriaDialo
         });
       }
     } catch (error) {
-      console.error('Erro ao fazer upload da imagem:', error);
+      safeLog.error('Erro ao fazer upload da imagem', error);
       toast({
         variant: "destructive",
         title: "Erro no upload",
@@ -108,8 +126,16 @@ const AddCategoriaDialog = ({ open, onOpenChange, onSuccess }: AddCategoriaDialo
             <Input
               id="categoria"
               value={novaCategoria.categoria}
-              onChange={(e) => setNovaCategoria({ ...novaCategoria, categoria: e.target.value })}
+              onChange={(e) => {
+                setNovaCategoria({ ...novaCategoria, categoria: e.target.value });
+                setValidationError("");
+              }}
+              maxLength={100}
+              placeholder="Ex: Eletrônicos"
             />
+            {validationError && (
+              <span className="text-xs text-red-500">{validationError}</span>
+            )}
           </div>
           <ImageUploader 
             imageUrl={novaCategoria.imagem_url}
@@ -120,7 +146,7 @@ const AddCategoriaDialog = ({ open, onOpenChange, onSuccess }: AddCategoriaDialo
         </div>
         <DialogFooter>
           <Button variant="outline" onClick={() => onOpenChange(false)}>Cancelar</Button>
-          <Button onClick={handleAddCategoria} disabled={uploading}>
+          <Button onClick={handleAddCategoria} disabled={uploading || !novaCategoria.categoria.trim()}>
             {uploading ? (
               <>
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />

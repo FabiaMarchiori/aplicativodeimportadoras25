@@ -85,17 +85,17 @@ const Mentoria = () => {
 
         {/* Hero Section */}
         <div className="text-center mb-10 animate-fade-in">
-          {/* Avatar da Soph - Premium 160px */}
+          {/* Avatar da Soph - Premium 220px */}
           <div className="relative inline-block mb-5">
             {/* Container do avatar com gradiente e borda sutil */}
             <div 
               className="rounded-full overflow-hidden"
               style={{
-                width: '160px',
-                height: '160px',
+                width: '220px',
+                height: '220px',
                 background: 'linear-gradient(135deg, #0a1628 0%, #0d2847 50%, #0f3460 100%)',
-                padding: '3px',
-                boxShadow: '0 0 30px rgba(34, 211, 238, 0.15), inset 0 0 20px rgba(34, 211, 238, 0.05)',
+                padding: '4px',
+                boxShadow: '0 0 40px rgba(34, 211, 238, 0.15), inset 0 0 25px rgba(34, 211, 238, 0.05)',
               }}
             >
               {/* Círculo interno com a imagem */}

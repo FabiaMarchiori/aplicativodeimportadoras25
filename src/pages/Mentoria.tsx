@@ -6,10 +6,6 @@ import {
   Palette, 
   ShoppingCart, 
   Briefcase,
-  BookOpen,
-  MessageSquare,
-  Bot,
-  Zap,
   Target,
   Rocket,
   Gem
@@ -38,19 +34,12 @@ const ParticlesBackground = () => (
   </div>
 );
 
-// Novos dados estruturados
+// Dados estruturados
 const oQueFaz = [
   { icon: Scale, title: "Como abrir MEI e registrar marca", desc: "Guias passo a passo para legalização" },
   { icon: Palette, title: "Criação de logomarca e domínio", desc: "Construa sua identidade profissional" },
   { icon: ShoppingCart, title: "Vendas em marketplaces", desc: "Estratégias para vender online" },
   { icon: Briefcase, title: "Gestão financeira básica", desc: "Organize as finanças do seu negócio" },
-];
-
-const comoFunciona = [
-  { icon: BookOpen, title: "Guias interativos", desc: "Passo a passo com botões clicáveis e links oficiais" },
-  { icon: MessageSquare, title: "Linguagem simples", desc: "Explicações claras que qualquer pessoa entende" },
-  { icon: Bot, title: "Chat inteligente", desc: "Tire dúvidas e receba o material certo na hora" },
-  { icon: Zap, title: "Disponível 24/7", desc: "Acesse quando precisar" },
 ];
 
 const missaoVisaoValores = [
@@ -107,11 +96,11 @@ const Mentoria = () => {
       <div 
         className="absolute pointer-events-none"
         style={{
-          top: '20%',
+          top: '15%',
           left: '50%',
           transform: 'translate(-50%, -50%)',
-          width: 'min(500px, 90vw)',
-          height: '400px',
+          width: 'min(600px, 90vw)',
+          height: '500px',
           background: 'rgba(34, 211, 238, 0.04)',
           borderRadius: '50%',
           filter: 'blur(80px)',
@@ -119,7 +108,7 @@ const Mentoria = () => {
       />
       
       {/* Content */}
-      <div className="relative z-10 container px-4 py-6 max-w-2xl mx-auto pb-24">
+      <div className="relative z-10 container px-4 py-6 max-w-5xl mx-auto pb-24">
         {/* Back button */}
         <Button
           variant="ghost"
@@ -130,166 +119,198 @@ const Mentoria = () => {
           Voltar
         </Button>
 
-        {/* Hero Section */}
-        <div className="text-center mb-10 animate-fade-in">
-          {/* Avatar da Soph - Premium 280px */}
-          <div className="relative inline-block mb-5">
-            <div 
-              className="rounded-full overflow-hidden"
-              style={{
-                width: '280px',
-                height: '280px',
-                background: 'linear-gradient(135deg, #0a1628 0%, #0d2847 50%, #0f3460 100%)',
-                padding: '4px',
-                boxShadow: '0 0 50px rgba(34, 211, 238, 0.15), inset 0 0 30px rgba(34, 211, 238, 0.05)',
-              }}
-            >
+        {/* Hero Section - Two Columns */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-center mb-12 animate-fade-in">
+          {/* Mobile: Avatar first */}
+          <div className="flex justify-center lg:hidden">
+            <div className="relative">
               <div 
-                className="w-full h-full rounded-full overflow-hidden"
+                className="rounded-full overflow-hidden"
                 style={{
-                  background: 'linear-gradient(180deg, #0d2847 0%, #0f3460 100%)',
+                  width: '200px',
+                  height: '200px',
+                  background: 'linear-gradient(135deg, #0a1628 0%, #0891b2 100%)',
+                  padding: '3px',
+                  boxShadow: '0 0 60px rgba(6, 182, 212, 0.15)',
                 }}
               >
-                <img 
-                  src="/lovable-uploads/soph-avatar-oficial.png" 
-                  alt="Soph - Mentora Inteligente"
-                  className="w-full h-full object-cover"
+                <div 
+                  className="w-full h-full rounded-full overflow-hidden"
                   style={{
-                    objectPosition: 'center 25%',
-                    transform: 'scale(1.1)',
+                    background: 'linear-gradient(180deg, #0d2847 0%, #0f3460 100%)',
                   }}
-                />
+                >
+                  <img 
+                    src="/lovable-uploads/soph-avatar-oficial.png" 
+                    alt="Soph - Mentora Inteligente"
+                    className="w-full h-full object-cover"
+                    style={{
+                      objectPosition: 'center 20%',
+                      transform: 'scale(1.15)',
+                    }}
+                  />
+                </div>
               </div>
+              
+              {/* Glow sutil */}
+              <div 
+                className="absolute inset-0 rounded-full pointer-events-none"
+                style={{
+                  background: 'radial-gradient(circle, rgba(6, 182, 212, 0.12) 0%, transparent 70%)',
+                  transform: 'scale(1.3)',
+                  zIndex: -1,
+                }}
+              />
+            </div>
+          </div>
+
+          {/* Text Content - Left Column */}
+          <div className="text-center lg:text-left">
+            <h1 className="text-3xl lg:text-4xl font-bold text-white mb-3">
+              <span className="text-cyan-400">Soph</span> — Mentoria Inteligente
+            </h1>
+            
+            <p className="text-cyan-300/80 text-lg lg:text-xl font-medium mb-4">
+              Sua parceira de negócios do EmpreendeJá
+            </p>
+            
+            <p className="text-white/60 text-sm lg:text-base leading-relaxed max-w-md mx-auto lg:mx-0">
+              A primeira agente de IA brasileira focada em educação empreendedora prática. 
+              Sua assistente inteligente para decisões estratégicas e crescimento profissional do seu negócio.
+            </p>
+          </div>
+
+          {/* Avatar - Right Column (Desktop only) */}
+          <div className="hidden lg:flex justify-center lg:justify-end">
+            <div className="relative">
+              <div 
+                className="rounded-full overflow-hidden"
+                style={{
+                  width: '280px',
+                  height: '280px',
+                  background: 'linear-gradient(135deg, #0a1628 0%, #0891b2 100%)',
+                  padding: '4px',
+                  boxShadow: '0 0 80px rgba(6, 182, 212, 0.15)',
+                }}
+              >
+                <div 
+                  className="w-full h-full rounded-full overflow-hidden"
+                  style={{
+                    background: 'linear-gradient(180deg, #0d2847 0%, #0f3460 100%)',
+                  }}
+                >
+                  <img 
+                    src="/lovable-uploads/soph-avatar-oficial.png" 
+                    alt="Soph - Mentora Inteligente"
+                    className="w-full h-full object-cover"
+                    style={{
+                      objectPosition: 'center 20%',
+                      transform: 'scale(1.15)',
+                    }}
+                  />
+                </div>
+              </div>
+              
+              {/* Glow sutil premium */}
+              <div 
+                className="absolute inset-0 rounded-full pointer-events-none"
+                style={{
+                  background: 'radial-gradient(circle, rgba(6, 182, 212, 0.12) 0%, transparent 70%)',
+                  transform: 'scale(1.4)',
+                  zIndex: -1,
+                }}
+              />
+            </div>
+          </div>
+        </div>
+
+        {/* Grid de Conteúdo - 2 Colunas no Desktop */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+          {/* Seção: O que é a Soph? */}
+          <div className="bg-[#0d2847]/80 backdrop-blur-sm border border-cyan-500/20 rounded-xl p-6 animate-fade-in h-fit">
+            <div className="flex items-center gap-3 mb-5">
+              <div className="w-10 h-10 rounded-lg bg-cyan-500/15 flex items-center justify-center">
+                <Sparkles className="h-5 w-5 text-cyan-400" />
+              </div>
+              <h2 className="text-xl font-semibold text-white">O que é a Soph?</h2>
             </div>
             
-            {/* Glow sutil atrás do avatar */}
-            <div 
-              className="absolute inset-0 rounded-full pointer-events-none"
-              style={{
-                background: 'radial-gradient(circle, rgba(34, 211, 238, 0.1) 0%, transparent 70%)',
-                transform: 'scale(1.2)',
-                zIndex: -1,
-              }}
-            />
+            <p className="text-white/60 mb-5 leading-relaxed text-sm">
+              A Soph é uma agente virtual inteligente desenvolvida para orientar empreendedores 
+              iniciantes e revendedores de todo o Brasil, oferecendo acesso fácil, prático e 
+              gratuito a guias e materiais educativos sobre temas essenciais do mundo dos negócios.
+            </p>
+            
+            <ul className="space-y-3">
+              {oQueFaz.map((item, index) => (
+                <li 
+                  key={index} 
+                  className="flex items-start gap-3 group"
+                >
+                  <div className="w-8 h-8 rounded-lg bg-cyan-500/15 flex items-center justify-center flex-shrink-0 group-hover:bg-cyan-500/25 transition-colors duration-300">
+                    <item.icon className="h-4 w-4 text-cyan-400" />
+                  </div>
+                  <div>
+                    <span className="text-white/90 font-medium text-sm block">{item.title}</span>
+                    <span className="text-white/50 text-xs">{item.desc}</span>
+                  </div>
+                </li>
+              ))}
+            </ul>
           </div>
-          
-          {/* Title */}
-          <h1 className="text-3xl font-bold text-white mb-2">
-            <span className="text-cyan-400">Soph</span> — Mentoria Inteligente
-          </h1>
-          
-          {/* Subtitle */}
-          <p className="text-cyan-300/80 text-lg font-medium mb-3">
-            Sua parceira de negócios do EmpreendeJá
-          </p>
-          
-          {/* Description */}
-          <p className="text-white/60 text-sm leading-relaxed max-w-md mx-auto">
-            A primeira agente de IA brasileira focada em educação empreendedora prática. 
-            Sua assistente inteligente para decisões estratégicas e crescimento profissional do seu negócio.
-          </p>
-        </div>
 
-        {/* Seção: O que é a Soph? */}
-        <div className="bg-[#0d2847]/80 backdrop-blur-sm border border-cyan-500/20 rounded-xl p-6 mb-6 animate-fade-in">
-          <div className="flex items-center gap-3 mb-5">
-            <div className="w-10 h-10 rounded-lg bg-cyan-500/15 flex items-center justify-center">
-              <Sparkles className="h-5 w-5 text-cyan-400" />
+          {/* Seção: Missão, Visão e Valores */}
+          <div className="bg-[#0d2847]/80 backdrop-blur-sm border border-cyan-500/20 rounded-xl p-6 animate-fade-in h-fit">
+            <h2 className="text-xl font-semibold text-white text-center mb-5">Missão, Visão e Valores</h2>
+            
+            <div className="space-y-4">
+              {missaoVisaoValores.map((item, index) => (
+                <div 
+                  key={index} 
+                  className="bg-[#0a1628]/60 border border-cyan-500/10 rounded-lg p-4 hover:border-cyan-400/30 transition-all duration-300"
+                >
+                  <div className="flex items-center gap-3 mb-2">
+                    <div className="w-10 h-10 rounded-full bg-cyan-500/15 flex items-center justify-center flex-shrink-0">
+                      <item.icon className="h-5 w-5 text-cyan-400" />
+                    </div>
+                    <h3 className="text-cyan-400 font-semibold">{item.title}</h3>
+                  </div>
+                  <p className="text-white/60 text-sm leading-relaxed pl-[52px]">{item.desc}</p>
+                </div>
+              ))}
             </div>
-            <h2 className="text-xl font-semibold text-white">O que é a Soph?</h2>
-          </div>
-          
-          <p className="text-white/60 mb-6 leading-relaxed text-sm">
-            A Soph é uma agente virtual inteligente desenvolvida para orientar empreendedores 
-            iniciantes e revendedores de todo o Brasil, oferecendo acesso fácil, prático e 
-            gratuito a guias e materiais educativos sobre temas essenciais do mundo dos negócios.
-          </p>
-          
-          <ul className="space-y-4">
-            {oQueFaz.map((item, index) => (
-              <li 
-                key={index} 
-                className="flex items-start gap-3 group"
-              >
-                <div className="w-9 h-9 rounded-lg bg-cyan-500/15 flex items-center justify-center flex-shrink-0 group-hover:bg-cyan-500/25 transition-colors duration-300">
-                  <item.icon className="h-4 w-4 text-cyan-400" />
-                </div>
-                <div className="pt-0.5">
-                  <span className="text-white/90 font-medium block">{item.title}</span>
-                  <span className="text-white/50 text-sm">{item.desc}</span>
-                </div>
-              </li>
-            ))}
-          </ul>
-        </div>
-
-        {/* Seção: Como a Soph Funciona */}
-        <div className="bg-[#0d2847]/80 backdrop-blur-sm border border-cyan-500/20 rounded-xl p-6 mb-6 animate-fade-in">
-          <div className="flex items-center gap-3 mb-5">
-            <div className="w-10 h-10 rounded-lg bg-cyan-500/15 flex items-center justify-center">
-              <Bot className="h-5 w-5 text-cyan-400" />
-            </div>
-            <h2 className="text-xl font-semibold text-white">Como a Soph Funciona</h2>
-          </div>
-          
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            {comoFunciona.map((item, index) => (
-              <div 
-                key={index} 
-                className="bg-[#0a1628]/60 border border-cyan-500/10 rounded-lg p-4 hover:border-cyan-400/30 hover:scale-[1.02] transition-all duration-300"
-              >
-                <div className="w-10 h-10 rounded-lg bg-cyan-500/15 flex items-center justify-center mb-3">
-                  <item.icon className="h-5 w-5 text-cyan-400" />
-                </div>
-                <h3 className="text-white/90 font-medium mb-1">{item.title}</h3>
-                <p className="text-white/50 text-sm">{item.desc}</p>
-              </div>
-            ))}
           </div>
         </div>
 
-        {/* Seção: Missão, Visão e Valores */}
-        <div className="bg-[#0d2847]/80 backdrop-blur-sm border border-cyan-500/20 rounded-xl p-6 mb-6 animate-fade-in">
-          <h2 className="text-xl font-semibold text-white text-center mb-6">Missão, Visão e Valores</h2>
-          
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-            {missaoVisaoValores.map((item, index) => (
-              <div 
-                key={index} 
-                className="bg-[#0a1628]/60 border border-cyan-500/10 rounded-lg p-4 text-center hover:border-cyan-400/30 hover:scale-[1.02] transition-all duration-300"
-              >
-                <div className="w-12 h-12 rounded-full bg-cyan-500/15 flex items-center justify-center mx-auto mb-3">
-                  <item.icon className="h-6 w-6 text-cyan-400" />
-                </div>
-                <h3 className="text-cyan-400 font-semibold mb-2">{item.title}</h3>
-                <p className="text-white/60 text-sm leading-relaxed">{item.desc}</p>
-              </div>
-            ))}
+        {/* CTA Final - Full Width, Destacado */}
+        <div 
+          className="bg-gradient-to-br from-[#0d2847]/90 to-[#0a1628]/90 backdrop-blur-sm border-2 border-cyan-500/30 rounded-2xl p-8 animate-fade-in"
+          style={{
+            boxShadow: '0 0 40px rgba(6, 182, 212, 0.1), 0 20px 40px rgba(0, 0, 0, 0.3)',
+          }}
+        >
+          <div className="max-w-lg mx-auto text-center">
+            <h3 className="text-2xl lg:text-3xl font-bold text-white mb-3">
+              Pronta para acelerar seu negócio?
+            </h3>
+            
+            <p className="text-white/60 text-sm mb-6">
+              Disponível para assinantes Premium
+            </p>
+            
+            <Button 
+              onClick={handleAccessSoph} 
+              className="w-full sm:w-auto sm:px-12 h-14 text-base rounded-xl bg-gradient-to-r from-cyan-600 to-cyan-400 hover:from-cyan-500 hover:to-cyan-300 text-white font-semibold shadow-lg shadow-cyan-500/25 hover:shadow-cyan-400/40 transition-all duration-300 hover:scale-[1.02]"
+              size="lg"
+            >
+              <Sparkles className="h-5 w-5 mr-2" />
+              Falar com a Soph
+            </Button>
+            
+            <p className="text-white/50 text-xs mt-4">
+              Tire suas dúvidas 24h com inteligência artificial
+            </p>
           </div>
-        </div>
-
-        {/* CTA Final */}
-        <div className="bg-[#0d2847]/80 backdrop-blur-sm border border-cyan-500/25 rounded-xl p-6 animate-fade-in">
-          <h3 className="text-2xl font-bold text-white text-center mb-2">
-            Pronta para acelerar seu negócio?
-          </h3>
-          
-          <p className="text-white/60 text-sm text-center mb-5">
-            Disponível para assinantes Premium
-          </p>
-          
-          <Button 
-            onClick={handleAccessSoph} 
-            className="w-full h-12 text-base rounded-xl bg-gradient-to-r from-cyan-600 to-cyan-400 hover:from-cyan-500 hover:to-cyan-300 text-white font-semibold shadow-lg shadow-cyan-500/25 hover:shadow-cyan-400/40 transition-all duration-300 hover:scale-[1.02]"
-            size="lg"
-          >
-            <Sparkles className="h-5 w-5 mr-2" />
-            Falar com a Soph
-          </Button>
-          
-          <p className="text-center text-white/50 text-xs mt-4">
-            Tire suas dúvidas 24h com inteligência artificial
-          </p>
         </div>
       </div>
     </div>

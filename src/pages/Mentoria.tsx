@@ -13,7 +13,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "sonner";
-
+import sophAvatar from "@/assets/soph-avatar-transparent.png";
 // Floating particles background component - Premium cyan theme
 const ParticlesBackground = () => (
   <div className="absolute inset-0 overflow-hidden pointer-events-none">
@@ -121,45 +121,13 @@ const Mentoria = () => {
 
         {/* Hero Section - Two Columns */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-center mb-12 animate-fade-in">
-          {/* Mobile: Avatar first */}
+          {/* Mobile: Avatar first - Organic, no frame */}
           <div className="flex justify-center lg:hidden">
             <div className="relative">
-              <div 
-                className="rounded-full overflow-hidden"
-                style={{
-                  width: '200px',
-                  height: '200px',
-                  background: 'linear-gradient(135deg, #0a1628 0%, #0891b2 100%)',
-                  padding: '3px',
-                  boxShadow: '0 0 60px rgba(6, 182, 212, 0.15)',
-                }}
-              >
-                <div 
-                  className="w-full h-full rounded-full overflow-hidden"
-                  style={{
-                    background: 'linear-gradient(180deg, #0d2847 0%, #0f3460 100%)',
-                  }}
-                >
-                  <img 
-                    src="/lovable-uploads/soph-avatar-oficial.png" 
-                    alt="Soph - Mentora Inteligente"
-                    className="w-full h-full object-cover"
-                    style={{
-                      objectPosition: 'center 20%',
-                      transform: 'scale(1.15)',
-                    }}
-                  />
-                </div>
-              </div>
-              
-              {/* Glow sutil */}
-              <div 
-                className="absolute inset-0 rounded-full pointer-events-none"
-                style={{
-                  background: 'radial-gradient(circle, rgba(6, 182, 212, 0.12) 0%, transparent 70%)',
-                  transform: 'scale(1.3)',
-                  zIndex: -1,
-                }}
+              <img 
+                src={sophAvatar}
+                alt="Soph - Mentora Inteligente"
+                className="w-64 h-auto object-contain drop-shadow-[0_0_30px_rgba(6,182,212,0.15)]"
               />
             </div>
           </div>
@@ -180,45 +148,13 @@ const Mentoria = () => {
             </p>
           </div>
 
-          {/* Avatar - Right Column (Desktop only) */}
-          <div className="hidden lg:flex justify-center items-center pr-8 xl:pr-12">
+          {/* Avatar - Right Column (Desktop only) - Organic, no frame */}
+          <div className="hidden lg:flex justify-center items-end">
             <div className="relative">
-              <div 
-                className="rounded-full overflow-hidden"
-                style={{
-                  width: '280px',
-                  height: '280px',
-                  background: 'linear-gradient(135deg, #0a1628 0%, #0891b2 100%)',
-                  padding: '4px',
-                  boxShadow: '0 0 80px rgba(6, 182, 212, 0.15)',
-                }}
-              >
-                <div 
-                  className="w-full h-full rounded-full overflow-hidden"
-                  style={{
-                    background: 'linear-gradient(180deg, #0d2847 0%, #0f3460 100%)',
-                  }}
-                >
-                  <img 
-                    src="/lovable-uploads/soph-avatar-oficial.png" 
-                    alt="Soph - Mentora Inteligente"
-                    className="w-full h-full object-cover"
-                    style={{
-                      objectPosition: 'center 20%',
-                      transform: 'scale(1.15)',
-                    }}
-                  />
-                </div>
-              </div>
-              
-              {/* Glow sutil premium */}
-              <div 
-                className="absolute inset-0 rounded-full pointer-events-none"
-                style={{
-                  background: 'radial-gradient(circle, rgba(6, 182, 212, 0.12) 0%, transparent 70%)',
-                  transform: 'scale(1.4)',
-                  zIndex: -1,
-                }}
+              <img 
+                src={sophAvatar}
+                alt="Soph - Mentora Inteligente"
+                className="w-80 xl:w-96 h-auto object-contain drop-shadow-[0_0_40px_rgba(6,182,212,0.12)]"
               />
             </div>
           </div>

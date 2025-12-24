@@ -88,7 +88,14 @@ const Mentoria = () => {
       return;
     }
 
-    navigate("/mentoria/chat");
+    // Exibe mensagem e abre Soph em nova aba (evita conflito OAuth)
+    toast.info("A Mentoria Soph será aberta em uma nova aba para sua segurança.", {
+      duration: 2500
+    });
+    
+    setTimeout(() => {
+      window.open("https://empreendaja-com-soph.lovable.app", "_blank", "noopener,noreferrer");
+    }, 500);
   };
 
   return (

@@ -181,7 +181,7 @@ const Mentoria = () => {
           </div>
 
           {/* Avatar - Right Column (Desktop only) */}
-          <div className="hidden lg:flex justify-center lg:justify-end">
+          <div className="hidden lg:flex justify-center items-center pr-8 xl:pr-12">
             <div className="relative">
               <div 
                 className="rounded-full overflow-hidden"

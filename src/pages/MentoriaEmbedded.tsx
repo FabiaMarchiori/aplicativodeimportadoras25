@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 
-const SOPH_ORIGIN = "https://empreendaja-com-soph.netlify.app";
+const SOPH_ORIGIN = "https://empreendajacomsoph.netlify.app";
 
 export default function MentoriaEmbedded() {
   const iframeRef = useRef<HTMLIFrameElement | null>(null);

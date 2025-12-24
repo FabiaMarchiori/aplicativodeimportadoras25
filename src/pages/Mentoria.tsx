@@ -83,7 +83,7 @@ const Mentoria = () => {
     });
     
     setTimeout(() => {
-      window.open("https://empreendaja-com-soph.lovable.app", "_blank", "noopener,noreferrer");
+      window.open("https://empreendajacomsoph.netlify.app", "_blank", "noopener,noreferrer");
     }, 500);
   };
 

@@ -2,7 +2,7 @@ import { useNavigate } from "react-router-dom";
 import { ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
-const SOPH_URL = "https://empreendaja-com-soph.lovable.app/";
+const SOPH_URL = "https://empreendajacomsoph.netlify.app/";
 
 const MentoriaChat = () => {
   const navigate = useNavigate();

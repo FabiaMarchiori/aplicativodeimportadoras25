@@ -127,7 +127,7 @@ const Mentoria = () => {
               <img 
                 src={sophAvatar}
                 alt="Soph - Mentora Inteligente"
-                className="w-80 sm:w-96 h-auto object-contain drop-shadow-[0_0_35px_rgba(6,182,212,0.18)]"
+                className="w-[340px] sm:w-[400px] h-auto object-contain drop-shadow-[0_0_40px_rgba(6,182,212,0.18)]"
               />
             </div>
           </div>
@@ -154,7 +154,7 @@ const Mentoria = () => {
               <img 
                 src={sophAvatar}
                 alt="Soph - Mentora Inteligente"
-                className="w-[420px] xl:w-[480px] 2xl:w-[520px] h-auto object-contain drop-shadow-[0_0_50px_rgba(6,182,212,0.15)]"
+                className="w-[500px] xl:w-[560px] 2xl:w-[620px] h-auto object-contain drop-shadow-[0_0_60px_rgba(6,182,212,0.15)]"
               />
             </div>
           </div>

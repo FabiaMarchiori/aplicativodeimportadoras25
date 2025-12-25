@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { 
   ArrowLeft, 
@@ -8,11 +9,16 @@ import {
   Briefcase,
   Target,
   Rocket,
-  Gem
+  Gem,
+  KeyRound,
+  Copy,
+  Check,
+  Loader2
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "sonner";
+import { supabase } from "@/integrations/supabase/client";
 import sophAvatar from "@/assets/soph-avatar-transparent.png";
 // Floating particles background component - Premium cyan theme
 const ParticlesBackground = () => (
@@ -63,6 +69,11 @@ const missaoVisaoValores = [
 const Mentoria = () => {
   const navigate = useNavigate();
   const { user, hasActiveSubscription, isAdmin } = useAuth();
+  
+  // Estados para o card de código de acesso
+  const [accessCode, setAccessCode] = useState<string | null>(null);
+  const [isGenerating, setIsGenerating] = useState(false);
+  const [isCopied, setIsCopied] = useState(false);
 
   const handleAccessSoph = () => {
     if (!user) {
@@ -85,6 +96,58 @@ const Mentoria = () => {
     setTimeout(() => {
       window.open("https://empreendajacomsoph.netlify.app", "_blank", "noopener,noreferrer");
     }, 500);
+  };
+
+  // Gerar código de acesso
+  const handleGenerateCode = async () => {
+    if (!user) {
+      toast.error("Você precisa estar logado para gerar o código.");
+      navigate("/login");
+      return;
+    }
+
+    if (!hasActiveSubscription && !isAdmin) {
+      toast.error("Você precisa de uma assinatura ativa para gerar o código.");
+      navigate("/acesso-negado");
+      return;
+    }
+
+    setIsGenerating(true);
+    try {
+      const { data, error } = await supabase.functions.invoke("generate-soph-token");
+      
+      if (error) {
+        console.error("Erro ao gerar token:", error);
+        toast.error("Erro ao gerar código de acesso. Tente novamente.");
+        return;
+      }
+
+      if (data?.token) {
+        setAccessCode(data.token);
+        toast.success("Código gerado com sucesso!");
+      } else {
+        toast.error("Erro ao gerar código. Resposta inválida.");
+      }
+    } catch (err) {
+      console.error("Erro na requisição:", err);
+      toast.error("Erro ao conectar com o servidor.");
+    } finally {
+      setIsGenerating(false);
+    }
+  };
+
+  // Copiar código para clipboard
+  const handleCopyCode = async () => {
+    if (!accessCode) return;
+    
+    try {
+      await navigator.clipboard.writeText(accessCode);
+      setIsCopied(true);
+      toast.success("Código copiado!");
+      setTimeout(() => setIsCopied(false), 2000);
+    } catch (err) {
+      toast.error("Erro ao copiar código.");
+    }
   };
 
   return (
@@ -216,6 +279,70 @@ const Mentoria = () => {
               ))}
             </div>
           </div>
+        </div>
+
+        {/* Card de Código de Acesso Exclusivo */}
+        <div className="bg-[#0f3460]/80 backdrop-blur-sm border border-cyan-500/20 rounded-2xl p-6 mb-8 animate-fade-in">
+          <div className="flex items-center gap-3 mb-4">
+            <div className="w-10 h-10 rounded-lg bg-purple-500/20 flex items-center justify-center">
+              <KeyRound className="h-5 w-5 text-purple-400" />
+            </div>
+            <h2 className="text-xl font-semibold text-white">Acesso exclusivo à Soph</h2>
+          </div>
+          
+          <p className="text-white/70 mb-4 text-sm leading-relaxed">
+            Como assinante do plano anual do App Importadoras, você tem acesso exclusivo à Soph.
+          </p>
+          
+          <div className="inline-flex items-center gap-2 bg-cyan-500/15 text-cyan-300 text-xs font-medium px-3 py-1.5 rounded-full mb-6">
+            <Check className="h-3.5 w-3.5" />
+            Válido por 6 meses
+          </div>
+
+          {!accessCode ? (
+            <Button
+              onClick={handleGenerateCode}
+              disabled={isGenerating}
+              className="w-full sm:w-auto px-8 h-12 text-sm rounded-xl bg-gradient-to-r from-purple-600 to-blue-500 hover:from-purple-500 hover:to-blue-400 text-white font-semibold shadow-lg shadow-purple-500/20 hover:shadow-purple-400/30 transition-all duration-300 hover:scale-[1.02] disabled:opacity-70 disabled:cursor-not-allowed disabled:hover:scale-100"
+            >
+              {isGenerating ? (
+                <>
+                  <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                  Gerando...
+                </>
+              ) : (
+                <>
+                  <KeyRound className="h-4 w-4 mr-2" />
+                  Gerar meu código de acesso
+                </>
+              )}
+            </Button>
+          ) : (
+            <div className="space-y-4">
+              <div className="bg-[#0a1628] border border-cyan-500/30 rounded-xl p-4">
+                <div className="flex items-center gap-3">
+                  <code className="flex-1 text-cyan-300 font-mono text-sm break-all select-all">
+                    {accessCode}
+                  </code>
+                  <Button
+                    onClick={handleCopyCode}
+                    variant="outline"
+                    size="sm"
+                    className="shrink-0 border-cyan-500/30 bg-cyan-500/10 hover:bg-cyan-500/20 text-cyan-300 hover:text-cyan-200"
+                  >
+                    {isCopied ? (
+                      <Check className="h-4 w-4" />
+                    ) : (
+                      <Copy className="h-4 w-4" />
+                    )}
+                  </Button>
+                </div>
+              </div>
+              <p className="text-white/50 text-xs">
+                Copie este código e use após fazer login na Soph.
+              </p>
+            </div>
+          )}
         </div>
 
         {/* CTA Final - Full Width, Destacado */}

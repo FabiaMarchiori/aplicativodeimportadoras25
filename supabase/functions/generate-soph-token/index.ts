@@ -6,50 +6,23 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
-// Base64URL encoding for JWT
-function base64UrlEncode(data: Uint8Array): string {
-  const base64 = btoa(String.fromCharCode(...data));
-  return base64.replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
-}
+// Caracteres permitidos (excluindo 0, O, 1, I, L para evitar confusão visual)
+const ALLOWED_CHARS = 'ABCDEFGHJKMNPQRSTUVWXYZ23456789';
 
-function base64UrlEncodeString(str: string): string {
-  const encoder = new TextEncoder();
-  return base64UrlEncode(encoder.encode(str));
-}
-
-// Create HMAC-SHA256 signature
-async function createHmacSha256Signature(data: string, secret: string): Promise<string> {
-  const encoder = new TextEncoder();
-  const keyData = encoder.encode(secret);
-  const messageData = encoder.encode(data);
+function generateShortCode(): string {
+  let part1 = '';
+  let part2 = '';
   
-  const cryptoKey = await crypto.subtle.importKey(
-    'raw',
-    keyData,
-    { name: 'HMAC', hash: 'SHA-256' },
-    false,
-    ['sign']
-  );
+  for (let i = 0; i < 4; i++) {
+    part1 += ALLOWED_CHARS[Math.floor(Math.random() * ALLOWED_CHARS.length)];
+    part2 += ALLOWED_CHARS[Math.floor(Math.random() * ALLOWED_CHARS.length)];
+  }
   
-  const signature = await crypto.subtle.sign('HMAC', cryptoKey, messageData);
-  return base64UrlEncode(new Uint8Array(signature));
-}
-
-// Generate JWT token
-async function generateJWT(payload: object, secret: string): Promise<string> {
-  const header = { alg: 'HS256', typ: 'JWT' };
-  
-  const encodedHeader = base64UrlEncodeString(JSON.stringify(header));
-  const encodedPayload = base64UrlEncodeString(JSON.stringify(payload));
-  
-  const dataToSign = `${encodedHeader}.${encodedPayload}`;
-  const signature = await createHmacSha256Signature(dataToSign, secret);
-  
-  return `${dataToSign}.${signature}`;
+  return `SOPH-${part1}-${part2}`;
 }
 
 serve(async (req) => {
-  // Handle CORS preflight
+  // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
   }
@@ -57,107 +30,154 @@ serve(async (req) => {
   try {
     console.log('[generate-soph-token] Request received');
     
-    // Get authorization header
     const authHeader = req.headers.get('Authorization');
     if (!authHeader) {
-      console.log('[generate-soph-token] No authorization header');
+      console.log('[generate-soph-token] No auth header');
       return new Response(
-        JSON.stringify({ error: 'Authorization header required' }),
+        JSON.stringify({ error: 'Não autorizado' }),
         { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
 
-    // Initialize Supabase client
     const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
+    const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
     const supabaseAnonKey = Deno.env.get('SUPABASE_ANON_KEY')!;
-    const supabase = createClient(supabaseUrl, supabaseAnonKey, {
+    
+    // Cliente para autenticação do usuário
+    const supabaseAuth = createClient(supabaseUrl, supabaseAnonKey, {
       global: { headers: { Authorization: authHeader } }
     });
+    
+    // Cliente com service role para operações no banco
+    const supabaseAdmin = createClient(supabaseUrl, supabaseServiceKey);
 
-    // Verify user is authenticated
-    const { data: { user }, error: userError } = await supabase.auth.getUser();
+    // Verificar usuário autenticado
+    const { data: { user }, error: userError } = await supabaseAuth.auth.getUser();
+    
     if (userError || !user) {
       console.log('[generate-soph-token] User not authenticated:', userError?.message);
       return new Response(
-        JSON.stringify({ error: 'User not authenticated' }),
+        JSON.stringify({ error: 'Usuário não autenticado' }),
         { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
 
     console.log('[generate-soph-token] User authenticated:', user.id);
 
-    // Check for active subscription
-    const { data: subscription, error: subError } = await supabase
+    // Verificar se tem assinatura ativa ou é admin
+    const { data: subscription } = await supabaseAdmin
       .from('assinaturas')
-      .select('*')
-      .eq('user_id', user.id)
+      .select('id, status')
+      .or(`user_id.eq.${user.id},email.eq.${user.email}`)
       .eq('status', 'ativa')
       .maybeSingle();
 
-    // If no subscription by user_id, try by email
-    let hasActiveSubscription = !!subscription;
-    if (!hasActiveSubscription && user.email) {
-      const { data: emailSub } = await supabase
-        .from('assinaturas')
-        .select('*')
-        .eq('email', user.email)
-        .eq('status', 'ativa')
-        .maybeSingle();
-      
-      hasActiveSubscription = !!emailSub;
-    }
-
-    // Also check if user is admin
-    const { data: profile } = await supabase
+    const { data: profile } = await supabaseAdmin
       .from('profiles')
       .select('is_admin')
       .eq('id', user.id)
       .maybeSingle();
 
     const isAdmin = profile?.is_admin === true;
+    const hasActiveSubscription = !!subscription;
 
     if (!hasActiveSubscription && !isAdmin) {
-      console.log('[generate-soph-token] No active subscription for user:', user.id);
+      console.log('[generate-soph-token] User has no access');
       return new Response(
-        JSON.stringify({ error: 'Active subscription required' }),
+        JSON.stringify({ error: 'Assinatura ativa necessária' }),
         { status: 403, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
 
     console.log('[generate-soph-token] User has access (subscription or admin)');
 
-    // Get JWT secret
-    const jwtSecret = Deno.env.get('SOPH_JWT_SECRET');
-    if (!jwtSecret) {
-      console.error('[generate-soph-token] SOPH_JWT_SECRET not configured');
+    // Verificar se usuário já tem código ativo e válido
+    const { data: existingCode } = await supabaseAdmin
+      .from('soph_access_codes')
+      .select('code, expires_at')
+      .eq('user_id', user.id)
+      .eq('is_active', true)
+      .gt('expires_at', new Date().toISOString())
+      .order('created_at', { ascending: false })
+      .limit(1)
+      .maybeSingle();
+
+    if (existingCode) {
+      console.log('[generate-soph-token] Returning existing code:', existingCode.code);
       return new Response(
-        JSON.stringify({ error: 'Server configuration error' }),
+        JSON.stringify({ 
+          token: existingCode.code,
+          expires_at: existingCode.expires_at,
+          is_existing: true
+        }),
+        { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    // Gerar novo código único
+    let code = generateShortCode();
+    let attempts = 0;
+    const maxAttempts = 10;
+
+    // Garantir unicidade do código
+    while (attempts < maxAttempts) {
+      const { data: existing } = await supabaseAdmin
+        .from('soph_access_codes')
+        .select('id')
+        .eq('code', code)
+        .maybeSingle();
+
+      if (!existing) break;
+      
+      code = generateShortCode();
+      attempts++;
+    }
+
+    if (attempts >= maxAttempts) {
+      console.log('[generate-soph-token] Failed to generate unique code');
+      return new Response(
+        JSON.stringify({ error: 'Erro ao gerar código. Tente novamente.' }),
         { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
 
-    // Generate token with 5-minute expiration
-    const now = Math.floor(Date.now() / 1000);
-    const payload = {
-      user_id: user.id,
-      iat: now,
-      exp: now + (5 * 60) // 5 minutes
-    };
+    // Calcular data de expiração (6 meses)
+    const expiresAt = new Date();
+    expiresAt.setMonth(expiresAt.getMonth() + 6);
 
-    const token = await generateJWT(payload, jwtSecret);
-    console.log('[generate-soph-token] Token generated successfully');
-    console.log('[generate-soph-token] Returning token for postMessage flow');
+    // Inserir novo código
+    const { error: insertError } = await supabaseAdmin
+      .from('soph_access_codes')
+      .insert({
+        code,
+        user_id: user.id,
+        email: user.email,
+        expires_at: expiresAt.toISOString()
+      });
 
-    // Return token only (for postMessage flow - more secure, no URL exposure)
+    if (insertError) {
+      console.log('[generate-soph-token] Insert error:', insertError.message);
+      return new Response(
+        JSON.stringify({ error: 'Erro ao salvar código' }),
+        { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    console.log('[generate-soph-token] New code generated:', code);
+
     return new Response(
-      JSON.stringify({ token }),
-      { status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      JSON.stringify({ 
+        token: code,
+        expires_at: expiresAt.toISOString(),
+        is_existing: false
+      }),
+      { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
 
   } catch (error) {
     console.error('[generate-soph-token] Error:', error);
     return new Response(
-      JSON.stringify({ error: 'Internal server error' }),
+      JSON.stringify({ error: 'Erro interno do servidor' }),
       { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
   }

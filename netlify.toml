@@ -1,0 +1,9 @@
+[build]
+  publish = "dist"
+  command = "npm run build"
+
+[[redirects]]
+  from = "/api/validate-soph-code"
+  to = "https://ospnuclymrxjoqwyolfn.supabase.co/functions/v1/validate-soph-code"
+  status = 200
+  force = true

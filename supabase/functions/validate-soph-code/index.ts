@@ -14,11 +14,11 @@ Deno.serve(async (req) => {
     return new Response(null, { headers: corsHeaders })
   }
 
-  // Apenas POST permitido
+  // Apenas POST permitido - mas sempre retorna HTTP 200
   if (req.method !== 'POST') {
     return new Response(
       JSON.stringify({ valid: false }),
-      { status: 405, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      { status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     )
   }
 

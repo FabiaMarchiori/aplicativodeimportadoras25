@@ -183,25 +183,25 @@ const Mentoria = () => {
         </Button>
 
         {/* Hero Section - Two Columns */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-center mb-12 animate-fade-in">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-start mb-12 animate-fade-in">
           {/* Mobile: Avatar first - Organic, no frame */}
           <div className="flex justify-center lg:hidden">
             <div className="relative">
               <img 
                 src={sophAvatar}
                 alt="Soph - Mentora Inteligente"
-                className="w-[340px] sm:w-[400px] h-auto object-contain drop-shadow-[0_0_40px_rgba(6,182,212,0.18)]"
+                className="w-[442px] sm:w-[520px] h-auto object-contain drop-shadow-[0_0_40px_rgba(6,182,212,0.18)]"
               />
             </div>
           </div>
 
           {/* Text Content - Left Column */}
           <div className="text-center lg:text-left">
-            <h1 className="text-3xl lg:text-4xl font-bold text-white mb-3">
+            <h1 className="text-4xl lg:text-5xl font-bold text-white mb-5">
               <span className="text-cyan-400">Soph</span> — Mentoria Inteligente
             </h1>
             
-            <p className="text-cyan-300/80 text-lg lg:text-xl font-medium mb-4">
+            <p className="text-cyan-300/80 text-lg lg:text-xl font-medium mb-6">
               Sua parceira de negócios do EmpreendeJá
             </p>
             
@@ -212,19 +212,19 @@ const Mentoria = () => {
           </div>
 
           {/* Avatar - Right Column (Desktop only) - Organic, no frame */}
-          <div className="hidden lg:flex justify-center items-end">
+          <div className="hidden lg:flex justify-center items-start">
             <div className="relative">
               <img 
                 src={sophAvatar}
                 alt="Soph - Mentora Inteligente"
-                className="w-[500px] xl:w-[560px] 2xl:w-[620px] h-auto object-contain drop-shadow-[0_0_60px_rgba(6,182,212,0.15)]"
+                className="w-[650px] xl:w-[728px] 2xl:w-[806px] h-auto object-contain drop-shadow-[0_0_60px_rgba(6,182,212,0.15)]"
               />
             </div>
           </div>
         </div>
 
         {/* Grid de Conteúdo - 2 Colunas no Desktop */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8 items-start">
           {/* Seção: O que é a Soph? */}
           <div className="bg-[#0d2847]/80 backdrop-blur-sm border border-cyan-500/20 rounded-xl p-6 animate-fade-in h-fit">
             <div className="flex items-center gap-3 mb-5">

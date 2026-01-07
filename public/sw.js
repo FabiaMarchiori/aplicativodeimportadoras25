@@ -1,5 +1,5 @@
-const CACHE_NAME = 'fornecedor-hub-v3';
-const STATIC_CACHE = 'static-v3';
+const CACHE_NAME = 'fornecedor-hub-v4';
+const STATIC_CACHE = 'static-v4';
 
 // Recursos críticos para cache (app shell)
 const STATIC_RESOURCES = [

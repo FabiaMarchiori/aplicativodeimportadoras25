@@ -54,11 +54,11 @@ export const PWAInstallPrompt = () => {
         <Card className="w-full max-w-md border-primary/20 bg-background shadow-2xl">
           <CardContent className="p-6">
             <div className="text-center space-y-4">
-              <div className="w-16 h-16 rounded-lg flex items-center justify-center mx-auto">
+              <div className="w-16 h-16 flex items-center justify-center mx-auto">
                 <img 
                   src="/icon-192x192.png" 
                   alt="Logo 25 de Março" 
-                  className="w-16 h-16 rounded-lg object-cover"
+                  className="w-16 h-16 object-contain"
                 />
               </div>
               

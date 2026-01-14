@@ -5,6 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { AlertCircle, Mail, Lock, Eye, EyeOff } from "lucide-react";
+import logo25Icon from "@/assets/logo-25-icon.png";
 import { toast } from "@/components/ui/use-toast";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { GoogleAuthButton } from "./GoogleAuthButton";
@@ -133,8 +134,12 @@ export function LoginForm({ onForgotPassword }: LoginFormProps) {
         <div className="mx-auto mb-4 relative">
           <div className="absolute inset-0 bg-cyan-400/30 rounded-full blur-xl"></div>
           <div className="relative w-16 h-16 bg-gradient-to-br from-cyan-500/30 to-cyan-400/20 
-                          border border-cyan-400/30 rounded-full flex items-center justify-center">
-            <Lock className="w-7 h-7 text-cyan-400 drop-shadow-[0_0_8px_rgba(34,211,238,0.5)]" />
+                          border border-cyan-400/30 rounded-full flex items-center justify-center overflow-hidden">
+            <img 
+              src={logo25Icon} 
+              alt="Logo 25" 
+              className="w-full h-full object-cover rounded-full"
+            />
           </div>
         </div>
         <CardTitle className="text-white text-2xl font-bold">Bem-vindo</CardTitle>

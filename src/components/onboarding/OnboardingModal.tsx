@@ -1,7 +1,7 @@
 import { useState, useCallback, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import useEmblaCarousel from 'embla-carousel-react';
-import { Building2, Search, LayoutGrid, Heart, Phone, ArrowRight, Sparkles, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Building2, Search, LayoutGrid, Heart, Phone, ArrowRight, Sparkles, ChevronLeft, ChevronRight, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import sophAvatar from '@/assets/soph-avatar-transparent.png';
 
@@ -99,6 +99,11 @@ export default function OnboardingModal({ onComplete }: OnboardingModalProps) {
     navigate('/categorias');
   };
 
+  const handleSkip = () => {
+    onComplete();
+    navigate('/home');
+  };
+
   const isLastSlide = selectedIndex === slides.length - 1;
 
   return (
@@ -111,42 +116,59 @@ export default function OnboardingModal({ onComplete }: OnboardingModalProps) {
       
       {/* Container principal */}
       <div className="relative z-10 h-full flex flex-col">
-        {/* Indicadores de progresso */}
-        <div className="flex justify-center gap-2 pt-8 pb-4">
-          {slides.map((_, index) => (
-            <div
-              key={index}
-              className={`h-2 rounded-full transition-all duration-300 ${
-                index === selectedIndex
-                  ? 'w-8 bg-cyan-400'
-                  : index < selectedIndex
-                  ? 'w-2 bg-cyan-400/60'
-                  : 'w-2 bg-white/20'
+        {/* Header: Botão Pular + Navegação */}
+        <div className="flex items-center justify-between px-4 pt-6 pb-2">
+          {/* Espaço vazio para balanceamento */}
+          <div className="w-16" />
+          
+          {/* Navegação central: seta + indicadores + seta */}
+          <div className="flex items-center gap-3">
+            {/* Seta Esquerda */}
+            <button
+              onClick={scrollPrev}
+              className={`w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 border border-white/20 flex items-center justify-center transition-all duration-300 backdrop-blur-sm ${
+                canScrollPrev ? 'opacity-100' : 'opacity-0 pointer-events-none'
               }`}
-            />
-          ))}
+              aria-label="Anterior"
+            >
+              <ChevronLeft className="w-4 h-4 text-white" />
+            </button>
+            
+            {/* Indicadores de progresso */}
+            {slides.map((_, index) => (
+              <div
+                key={index}
+                className={`h-2 rounded-full transition-all duration-300 ${
+                  index === selectedIndex
+                    ? 'w-8 bg-cyan-400'
+                    : index < selectedIndex
+                    ? 'w-2 bg-cyan-400/60'
+                    : 'w-2 bg-white/20'
+                }`}
+              />
+            ))}
+            
+            {/* Seta Direita */}
+            <button
+              onClick={scrollNext}
+              className={`w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 border border-white/20 flex items-center justify-center transition-all duration-300 backdrop-blur-sm ${
+                canScrollNext ? 'opacity-100' : 'opacity-0 pointer-events-none'
+              }`}
+              aria-label="Próximo"
+            >
+              <ChevronRight className="w-4 h-4 text-white" />
+            </button>
+          </div>
+          
+          {/* Botão Pular */}
+          <button
+            onClick={handleSkip}
+            className="flex items-center gap-1 text-white/60 hover:text-white transition-colors duration-200 text-sm"
+          >
+            <span>Pular</span>
+            <X className="w-4 h-4" />
+          </button>
         </div>
-
-        {/* Setas de navegação laterais */}
-        {canScrollPrev && (
-          <button
-            onClick={scrollPrev}
-            className="absolute left-4 top-1/2 -translate-y-1/2 z-20 w-12 h-12 rounded-full bg-white/10 hover:bg-white/20 border border-white/20 flex items-center justify-center transition-all duration-300 backdrop-blur-sm"
-            aria-label="Anterior"
-          >
-            <ChevronLeft className="w-6 h-6 text-white" />
-          </button>
-        )}
-
-        {canScrollNext && (
-          <button
-            onClick={scrollNext}
-            className="absolute right-4 top-1/2 -translate-y-1/2 z-20 w-12 h-12 rounded-full bg-white/10 hover:bg-white/20 border border-white/20 flex items-center justify-center transition-all duration-300 backdrop-blur-sm"
-            aria-label="Próximo"
-          >
-            <ChevronRight className="w-6 h-6 text-white" />
-          </button>
-        )}
 
         {/* Carousel */}
         <div className="flex-1 overflow-hidden" ref={emblaRef}>
@@ -154,18 +176,18 @@ export default function OnboardingModal({ onComplete }: OnboardingModalProps) {
             {slides.map((slide, index) => (
               <div
                 key={slide.id}
-                className="flex-[0_0_100%] min-w-0 h-full flex flex-col items-center justify-center px-6"
+                className="flex-[0_0_100%] min-w-0 h-full flex flex-col items-center justify-start pt-8 px-4 md:px-6 overflow-y-auto"
               >
                 {/* Slide 1: Welcome */}
                 {slide.id === 'welcome' && (
-                  <div className="text-center max-w-md animate-fade-in">
-                    <div className="mb-8 inline-flex items-center justify-center w-24 h-24 rounded-full bg-cyan-500/10 border border-cyan-500/30">
-                      <Building2 className="w-12 h-12 text-cyan-400" />
+                  <div className="text-center max-w-sm md:max-w-md animate-fade-in">
+                    <div className="mb-4 md:mb-6 inline-flex items-center justify-center w-16 h-16 md:w-24 md:h-24 rounded-full bg-cyan-500/10 border border-cyan-500/30">
+                      <Building2 className="w-8 h-8 md:w-12 md:h-12 text-cyan-400" />
                     </div>
-                    <h1 className="text-2xl font-bold text-white mb-4">
+                    <h1 className="text-xl md:text-2xl font-bold text-white mb-3 md:mb-4">
                       {slide.title}
                     </h1>
-                    <p className="text-white/70 text-base leading-relaxed">
+                    <p className="text-white/70 text-sm md:text-base leading-relaxed">
                       {slide.description}
                     </p>
                   </div>
@@ -173,23 +195,23 @@ export default function OnboardingModal({ onComplete }: OnboardingModalProps) {
 
                 {/* Slide 2: How to use */}
                 {slide.id === 'how-to-use' && slide.features && (
-                  <div className="text-center max-w-md animate-fade-in">
-                    <div className="mb-8 inline-flex items-center justify-center w-24 h-24 rounded-full bg-cyan-500/10 border border-cyan-500/30">
-                      <Sparkles className="w-12 h-12 text-cyan-400" />
+                  <div className="text-center max-w-sm md:max-w-md animate-fade-in">
+                    <div className="mb-3 md:mb-4 inline-flex items-center justify-center w-14 h-14 md:w-20 md:h-20 rounded-full bg-cyan-500/10 border border-cyan-500/30">
+                      <Sparkles className="w-7 h-7 md:w-10 md:h-10 text-cyan-400" />
                     </div>
-                    <h1 className="text-2xl font-bold text-white mb-8">
+                    <h1 className="text-xl md:text-2xl font-bold text-white mb-4 md:mb-6">
                       {slide.title}
                     </h1>
-                    <div className="space-y-4">
+                    <div className="space-y-3">
                       {slide.features.map((feature, i) => (
                         <div
                           key={i}
-                          className="flex items-center gap-4 p-4 rounded-xl bg-white/5 border border-white/10 backdrop-blur-sm"
+                          className="flex items-center gap-3 p-3 md:p-4 rounded-xl bg-white/5 border border-white/10 backdrop-blur-sm"
                         >
-                          <div className="flex-shrink-0 w-10 h-10 rounded-full bg-cyan-500/20 flex items-center justify-center">
-                            <feature.icon className="w-5 h-5 text-cyan-400" />
+                          <div className="flex-shrink-0 w-8 h-8 md:w-10 md:h-10 rounded-full bg-cyan-500/20 flex items-center justify-center">
+                            <feature.icon className="w-4 h-4 md:w-5 md:h-5 text-cyan-400" />
                           </div>
-                          <span className="text-white/80 text-left text-sm">
+                          <span className="text-white/80 text-left text-xs md:text-sm">
                             {feature.text}
                           </span>
                         </div>
@@ -200,10 +222,10 @@ export default function OnboardingModal({ onComplete }: OnboardingModalProps) {
 
                 {/* Slide 3: SOPH */}
                 {slide.id === 'soph' && (
-                  <div className="text-center max-w-md animate-fade-in">
+                  <div className="text-center max-w-sm md:max-w-md animate-fade-in">
                     {/* Avatar da SOPH */}
-                    <div className="mb-6 relative">
-                      <div className="w-32 h-32 mx-auto rounded-full overflow-hidden border-2 border-cyan-400/30 shadow-[0_0_30px_rgba(34,211,238,0.15)]">
+                    <div className="mb-4 md:mb-6 relative">
+                      <div className="w-24 h-24 md:w-32 md:h-32 mx-auto rounded-full overflow-hidden border-2 border-cyan-400/30 shadow-[0_0_30px_rgba(34,211,238,0.15)]">
                         <div className="w-full h-full bg-gradient-to-br from-[#0d4a6e] to-[#0a2a3f] flex items-center justify-center">
                           <img
                             src={slide.avatar}
@@ -215,29 +237,29 @@ export default function OnboardingModal({ onComplete }: OnboardingModalProps) {
                       </div>
                     </div>
                     
-                    <h1 className="text-2xl font-bold text-white mb-1">
+                    <h1 className="text-xl md:text-2xl font-bold text-white mb-1">
                       {slide.title}
                     </h1>
-                    <p className="text-cyan-400 text-sm mb-6">
+                    <p className="text-cyan-400 text-xs md:text-sm mb-4 md:mb-6">
                       {slide.subtitle}
                     </p>
                     
-                    <p className="text-white/70 text-sm mb-4">
+                    <p className="text-white/70 text-xs md:text-sm mb-3 md:mb-4">
                       A SOPH ensina passo a passo como:
                     </p>
                     
-                    <div className="grid grid-cols-2 gap-3 mb-6">
+                    <div className="grid grid-cols-2 gap-2 md:gap-3 mb-4 md:mb-6">
                       {slide.features?.map((feature, i) => (
                         <div
                           key={i}
-                          className="p-3 rounded-xl bg-white/5 border border-cyan-500/20 backdrop-blur-sm"
+                          className="p-2 md:p-3 rounded-xl bg-white/5 border border-cyan-500/20 backdrop-blur-sm"
                         >
-                          <span className="text-white/80 text-sm">{feature}</span>
+                          <span className="text-white/80 text-xs md:text-sm">{feature}</span>
                         </div>
                       ))}
                     </div>
                     
-                    <p className="text-white/50 text-xs leading-relaxed">
+                    <p className="text-white/50 text-[10px] md:text-xs leading-relaxed">
                       {slide.footer}
                     </p>
                   </div>
@@ -248,22 +270,22 @@ export default function OnboardingModal({ onComplete }: OnboardingModalProps) {
         </div>
 
         {/* Botão de ação */}
-        <div className="p-6 pb-8">
+        <div className="p-4 md:p-6 pb-6 md:pb-8">
           {isLastSlide ? (
             <Button
               onClick={handleComplete}
-              className="w-full py-6 text-base font-semibold bg-gradient-to-r from-cyan-600 to-cyan-400 hover:from-cyan-500 hover:to-cyan-300 text-white rounded-xl shadow-[0_4px_20px_rgba(34,211,238,0.3)] hover:shadow-[0_6px_25px_rgba(34,211,238,0.4)] transition-all duration-300 hover:scale-[1.02]"
+              className="w-full py-5 md:py-6 text-sm md:text-base font-semibold bg-gradient-to-r from-cyan-600 to-cyan-400 hover:from-cyan-500 hover:to-cyan-300 text-white rounded-xl shadow-[0_4px_20px_rgba(34,211,238,0.3)] hover:shadow-[0_6px_25px_rgba(34,211,238,0.4)] transition-all duration-300 hover:scale-[1.02]"
             >
               Escolha uma categoria e encontre seus primeiros fornecedores
-              <ArrowRight className="ml-2 w-5 h-5" />
+              <ArrowRight className="ml-2 w-4 h-4 md:w-5 md:h-5" />
             </Button>
           ) : (
             <Button
               onClick={scrollNext}
-              className="w-full py-6 text-base font-semibold bg-white/10 hover:bg-white/15 text-white border border-white/20 rounded-xl backdrop-blur-sm transition-all duration-300 hover:scale-[1.02]"
+              className="w-full py-5 md:py-6 text-sm md:text-base font-semibold bg-white/10 hover:bg-white/15 text-white border border-white/20 rounded-xl backdrop-blur-sm transition-all duration-300 hover:scale-[1.02]"
             >
               Próximo
-              <ArrowRight className="ml-2 w-5 h-5" />
+              <ArrowRight className="ml-2 w-4 h-4 md:w-5 md:h-5" />
             </Button>
           )}
         </div>

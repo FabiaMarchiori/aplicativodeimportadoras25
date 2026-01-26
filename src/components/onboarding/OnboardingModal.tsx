@@ -1,7 +1,7 @@
 import { useState, useCallback, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import useEmblaCarousel from 'embla-carousel-react';
-import { Building2, Search, LayoutGrid, Heart, Phone, ArrowRight, Sparkles } from 'lucide-react';
+import { Building2, Search, LayoutGrid, Heart, Phone, ArrowRight, Sparkles, ChevronLeft, ChevronRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import sophAvatar from '@/assets/soph-avatar-transparent.png';
 
@@ -68,15 +68,21 @@ export default function OnboardingModal({ onComplete }: OnboardingModalProps) {
   const [emblaRef, emblaApi] = useEmblaCarousel({ loop: false, dragFree: false });
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [canScrollNext, setCanScrollNext] = useState(true);
+  const [canScrollPrev, setCanScrollPrev] = useState(false);
 
   const scrollNext = useCallback(() => {
     if (emblaApi) emblaApi.scrollNext();
+  }, [emblaApi]);
+
+  const scrollPrev = useCallback(() => {
+    if (emblaApi) emblaApi.scrollPrev();
   }, [emblaApi]);
 
   const onSelect = useCallback(() => {
     if (!emblaApi) return;
     setSelectedIndex(emblaApi.selectedScrollSnap());
     setCanScrollNext(emblaApi.canScrollNext());
+    setCanScrollPrev(emblaApi.canScrollPrev());
   }, [emblaApi]);
 
   useEffect(() => {
@@ -120,6 +126,27 @@ export default function OnboardingModal({ onComplete }: OnboardingModalProps) {
             />
           ))}
         </div>
+
+        {/* Setas de navegação laterais */}
+        {canScrollPrev && (
+          <button
+            onClick={scrollPrev}
+            className="absolute left-4 top-1/2 -translate-y-1/2 z-20 w-12 h-12 rounded-full bg-white/10 hover:bg-white/20 border border-white/20 flex items-center justify-center transition-all duration-300 backdrop-blur-sm"
+            aria-label="Anterior"
+          >
+            <ChevronLeft className="w-6 h-6 text-white" />
+          </button>
+        )}
+
+        {canScrollNext && (
+          <button
+            onClick={scrollNext}
+            className="absolute right-4 top-1/2 -translate-y-1/2 z-20 w-12 h-12 rounded-full bg-white/10 hover:bg-white/20 border border-white/20 flex items-center justify-center transition-all duration-300 backdrop-blur-sm"
+            aria-label="Próximo"
+          >
+            <ChevronRight className="w-6 h-6 text-white" />
+          </button>
+        )}
 
         {/* Carousel */}
         <div className="flex-1 overflow-hidden" ref={emblaRef}>

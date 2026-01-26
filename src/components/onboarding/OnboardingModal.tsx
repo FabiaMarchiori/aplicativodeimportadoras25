@@ -1,9 +1,10 @@
 import { useState, useCallback, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import useEmblaCarousel from 'embla-carousel-react';
-import { Building2, Search, LayoutGrid, Heart, Phone, ArrowRight, Sparkles, ChevronLeft, ChevronRight, X } from 'lucide-react';
+import { Search, LayoutGrid, Heart, Phone, ArrowRight, Sparkles, ChevronLeft, ChevronRight, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import sophAvatar from '@/assets/soph-avatar-transparent.png';
+import logo25Icon from '@/assets/logo-25-icon.png';
 
 interface OnboardingModalProps {
   onComplete: () => void;
@@ -33,7 +34,6 @@ const OnboardingParticles = () => (
 const slides = [
   {
     id: 'welcome',
-    icon: Building2,
     title: 'Bem-vindo ao App Importadoras',
     description: 'O App Importadoras reúne importadoras reais da 25 de Março, organizadas por categoria, permitindo comprar direto da fonte com mais segurança e menos risco de golpe.',
   },
@@ -181,8 +181,12 @@ export default function OnboardingModal({ onComplete }: OnboardingModalProps) {
                 {/* Slide 1: Welcome */}
                 {slide.id === 'welcome' && (
                   <div className="text-center max-w-sm md:max-w-md animate-fade-in">
-                    <div className="mb-4 md:mb-6 inline-flex items-center justify-center w-16 h-16 md:w-24 md:h-24 rounded-full bg-cyan-500/10 border border-cyan-500/30">
-                      <Building2 className="w-8 h-8 md:w-12 md:h-12 text-cyan-400" />
+                    <div className="mb-4 md:mb-6 inline-flex items-center justify-center w-20 h-20 md:w-28 md:h-28 rounded-full overflow-hidden border-2 border-cyan-400/40 shadow-[0_0_20px_rgba(34,211,238,0.2)]">
+                      <img 
+                        src={logo25Icon} 
+                        alt="App Importadoras 25" 
+                        className="w-full h-full object-cover"
+                      />
                     </div>
                     <h1 className="text-xl md:text-2xl font-bold text-white mb-3 md:mb-4">
                       {slide.title}
